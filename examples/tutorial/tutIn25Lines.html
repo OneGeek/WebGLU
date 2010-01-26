@@ -12,14 +12,14 @@
     originLines.vertexCount = 6;
 
     var c = $W.constants.colors;
-    originLines.fillArray('vertex', [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
-    originLines.fillArray('color',  [c.RED,   c.RED,    c.GREEN, c.GREEN,  c.BLUE,  c.BLUE]);
+    originLines.fillArray('vertex', [[-5,0,0], [5,0,0], [0,-5,0], [0,5,0], [0,0,-5], [0,0,5]]);
+    originLines.fillArray('color',  [c.RED,    c.RED,   c.GREEN,  c.GREEN, c.BLUE,   c.BLUE]);
 
     setInterval(function() {
             document.getElementById('overlay').innerHTML = $W.FPS;
             $W.update();
             $W.draw();	
-            }, 10);        	
+        }, 10);        	
 ">
 <span id='overlay'</span><canvas id='canvas' width='300' height='300'></canvas>
 </body></html>

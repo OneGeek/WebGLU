@@ -22,11 +22,9 @@ function init() {
     var originLines = new $W.Object($W.GL.LINES);
     originLines.vertexCount = 6;
 
-    originLines.fillArray(VERTEX,
-            [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
     with ($W.constants.colors){
-        originLines.fillArray(COLOR, 
-            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
+        originLines.fillArray(VERTEX, [[-5,0,0], [5,0,0], [0,-5,0], [0,5,0], [0,0,-5], [0,0,5]]);
+        originLines.fillArray(COLOR,  [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
     }
 
     return true
