@@ -1,0 +1,148 @@
+<html><head>
+
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../Sylvester.src.js"></script>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+<script type="text/javascript" src="../../src/gameglu.js"></script>
+
+<script type="application/x-javascript">
+function init() {
+
+    //--Initialize WebGLU, shaders
+    with ($W) {
+        if (!initialize()) return false;
+
+        newProgram('textured');
+        programs['textured'].attachShader('texVS', $W.ShaderDir + 'texture.vert');
+        programs['textured'].attachShader('texFS', $W.ShaderDir + 'texture.frag');
+
+        GL.clearColor(0.9, 0.9, 0.9, 1.0);
+        camera.setPosition(2,1,1);
+        camera.setTarget(1,0.5,0);
+        camera.yfov = 80;
+    }
+
+    return true;
+}
+
+function createObjects() {
+    var VERTEX = "vertex";
+    var COLOR  = "color";
+    var NORMAL = "normal";
+    var TEX_COORD = "texCoord";
+
+    //
+    // AXIS
+    //
+    // Create lines representing the XYZ axes
+    var addAxisLines = function() {
+        var originLines = new $W.Object($W.GL.LINES);
+        originLines.vertexCount = 6;
+
+        originLines.fillArray(VERTEX,
+            [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
+        with ($W.constants.colors){
+          originLines.fillArray(COLOR, 
+            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
+        }
+
+        return originLines
+    }
+
+    var addTexturedCube = function() {
+        // Create a solid object
+        var cube = new $W.Object($W.GL.TRIANGLES);
+
+        // Use the 'textured' shader program defined above
+        cube.setShaderProgram('textured');
+
+        // Texture the cube
+        var cubeTexture = new $W.texture.Image('check', 'check.png');
+
+
+        // Fill the arrays with data for a cube
+        var cubeData = $W.constants.unitCube;
+        cube.fillArray(VERTEX, cubeData.vertices);
+        cube.fillArray(NORMAL, cubeData.normals);
+        cube.fillArray(TEX_COORD, cubeData.textureCoordinates);
+
+        // Use drawElements
+        cube.setElements(cubeData.indices);
+
+        return cube;
+    }
+
+
+    addAxisLines();
+
+    var cube = addTexturedCube();
+
+    // Have the cube use keyframed animation
+    cube.animation = new $W.anim.KeyFrameAnimation();
+
+    // Add keyframes to the cube's set of keyframes
+    with (cube.animation) {
+        addKeyframe(new $W.ObjectState([0,0,0],[0,90,0],[.3,.3,-.3]));
+        addKeyframe(new $W.ObjectState([1,1,0],[0,0,0],[.3,.3,.3]));
+        addKeyframe(new $W.ObjectState([1,1,-1],[0,0,90],[-.2,.6,.5]));
+        addKeyframe(new $W.ObjectState([1,0,-1],[0,0,180],[-.3,.3,.3]));
+        addKeyframe(new $W.ObjectState([0,0,-1],[90,0,0],[.3,.3,.3]));
+    }
+}
+
+function start() {
+        if (init()) {
+            createObjects();
+            
+            var FPS = document.getElementById('overlay');
+
+            function redraw() {
+                FPS.innerHTML = $W.FPS;
+                $W.update();
+                $W.draw();	
+            }
+
+            setInterval(redraw, 10);        	
+        }
+}
+
+</script>
+
+</head>
+
+<body onload='start()'>
+
+
+<div id="glCanvas">
+
+<div id="overlay"> </div>
+
+<canvas id='canvas' width='500' height='500'></canvas><br>
+</div>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->

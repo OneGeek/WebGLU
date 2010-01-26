@@ -1,0 +1,25 @@
+<html><head>
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../Sylvester.src.js"></script>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+</head><body onload="
+    if (!$W.initialize()) return false;
+
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+    $W.camera.setPosition(1,1,1);
+
+    var originLines = new $W.Object($W.GL.LINES);
+    originLines.vertexCount = 6;
+
+    var c = $W.constants.colors;
+    originLines.fillArray('vertex', [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
+    originLines.fillArray('color',  [c.RED,   c.RED,    c.GREEN, c.GREEN,  c.BLUE,  c.BLUE]);
+
+    setInterval(function() {
+            document.getElementById('overlay').innerHTML = $W.FPS;
+            $W.update();
+            $W.draw();	
+            }, 10);        	
+">
+<span id='overlay'</span><canvas id='canvas' width='300' height='300'></canvas>
+</body></html>

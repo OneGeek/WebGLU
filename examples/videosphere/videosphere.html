@@ -1,0 +1,205 @@
+<html><head>
+
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../Sylvester.src.js"></script>
+<script type="text/javascript" src="../../src/gameglu.js"></script>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+
+<style type="text/css">
+    video {
+        display: none;
+    }
+</style>
+
+<script type="application/x-javascript">
+
+// Read a page's GET URL variables and return them as an associative array.
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+
+function init() {
+
+    //--Initialize WebGLU, shaders
+    with ($W) {
+        if (!initialize()) return false;
+
+        newProgram('textured');
+        programs['textured'].attachShader('texVS', $W.ShaderDir + 'texture.vert');
+        programs['textured'].attachShader('texFS', $W.ShaderDir + 'texture.frag');
+
+        GL.clearColor(0.9, 0.9, 0.9, 1.0);
+        camera.setPosition(0,0,0);
+        camera.setTarget(-1,0,0);
+        camera.yfov = 90;
+
+        camera.aspectRatio = $W.canvas.width / $W.canvas.height;
+    }
+
+    return true;
+}
+
+function createObjects() {
+    var VERTEX = "vertex";
+    var COLOR  = "color";
+    var NORMAL = "normal";
+    var TEX_COORD = "texCoord";
+
+    // Create a new renderable object
+    var sphere = new $W.Object($W.GL.TRIANGLES);
+
+    if (getUrlVars()['wireframe'] == 1) {
+        sphere.type = $W.GL.LINE_LOOP;
+    }
+
+    // Have it use the shader program we created above
+    sphere.setShaderProgram('textured');
+
+    // Create and apply the video texture
+    new $W.texture.Video('video', 'videoElement');
+    sphere.textures.push('video');
+
+
+    // Generate a unit sphere with 40 horizontal rings and 40
+    // vertical slices
+    var sphereModel = $W.util.genSphere(40,40);
+
+    // fill the arrays, which correspond to the attribute variables
+    // of the same name.
+    sphere.fillArray(VERTEX, sphereModel.vertices);
+    sphere.fillArray(NORMAL, sphereModel.normals);
+    sphere.fillArray(TEX_COORD, sphereModel.texCoords);
+
+    // Use drawElements
+    sphere.setElements(sphereModel.indices);
+}
+
+function initControl() {
+    var st = $G.state;
+
+    // Using GameGLU to add interactivity
+    st.mouseDown    = false;
+    st.wasMouseDown = false;
+    st.lastM  = $V([0,0]);
+    st.posM   = $V([0,0]);
+    st.deltaM = $V([0,0]);
+    st.totalM = $V([Math.PI * 100,0]);
+
+    $G.event.bind('-m1', function(x,y) {
+            st.mouseDown = false;
+    });
+
+    $G.event.bind('+m1', function(x,y) {
+            st.mouseDown = true;
+            st.lastM.elements = [x, y];
+            st.posM.elements = [x,y];
+    });
+
+    $G.event.bind('mousemove', function(x,y) {
+            if (st.mouseDown) {
+
+            // avoid around when we click then release, move 
+            // the mouse, then click again.
+            if (st.wasMouseDown) {
+            st.lastM.elements = st.posM.elements;
+            }
+
+            st.posM.elements = [x, y];
+            st.deltaM = st.posM.subtract(st.lastM);
+
+
+            st.totalM = st.totalM.add(st.deltaM);
+            }
+
+            st.wasMouseDown = st.mouseDown;
+    });
+
+    $W.camera.update = function() {
+        var x = -1 * st.totalM.e(1) / 100;
+        var y = st.totalM.e(2) / 10;
+
+        this.target.elements = [Math.cos(x), y / 10, Math.sin(x)];
+        st.deltaM.elements = [0,0];
+    }
+}
+
+function initCanvas() {
+    var params = getUrlVars();
+
+    // A different width and height can be defined in the url
+    // as ?width=x&height=y
+    var width  = params['width'];
+    var height = params['height'];
+    var canvas = document.getElementById('canvas');
+    if (width !== undefined && height !== undefined) {
+        canvas.width = width;
+        canvas.height = height;
+    }
+}
+
+function start() {
+    initCanvas();
+
+    if (init()) {
+        createObjects();
+
+        initControl();
+
+        function redraw() {
+            document.getElementById('overlay').innerHTML = $W.FPS;
+            $W.update();
+            $W.draw();	
+        }
+        setInterval(redraw, 10);        	
+    }
+}
+
+</script>
+
+</head>
+
+<body onload='start()'>
+
+<div id="glCanvas">
+
+<div id="overlay"> </div>
+
+<canvas id='canvas' width='800' height='600'></canvas><br>
+<video id='videoElement' src='new_york.ogv' autobuffer='true' loop='true'></video>
+</div>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+    copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following
+    conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+    OTHER DEALINGS IN THE SOFTWARE.
+    -->

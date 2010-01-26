@@ -1,0 +1,118 @@
+<html>
+<head>
+<!--CSS-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/logger/assets/logger.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/yuitest/assets/testlogger.css">
+
+<!-- Dependencies --> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/logger/logger-min.js"></script>
+
+<!-- Source File -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/yuitest/yuitest-min.js"></script>
+
+<!-- WebGLU -->
+<script type="text/javascript" src="../Sylvester.src.js"></script>
+<script type="text/javascript" src="../src/webglu.js"></script>
+<script type="text/javascript" src="../src/gameglu.js"></script>
+
+
+<script type="text/javascript">
+function doTesting() {
+	var YT = YAHOO.tool;
+	var assert = YAHOO.util.Assert;
+	var WebGLUTestSuite = new YT.TestSuite('WebGLU Test Suite');
+
+	WebGLUTestSuite.add(
+		new YT.TestCase({
+			name:'Base Tests',
+
+			test_hasWGLU : function() {
+				assert.isNotUndefined($W, 'Did you remember to include webglu.js?');
+			},
+
+			test_getGLContext : function() {
+				var canvas = document.getElementById('canvas');
+
+				var gl = $W.util.getGLContext(document.getElementById('canvas'));
+
+				assert.isNotUndefined(gl, 'Got undefined context');
+			}
+		})
+	);
+
+	WebGLUTestSuite.add(
+		new YT.TestCase({
+			name:'Init Tests',
+
+            setUp : function() {
+                $W.initialize();
+            },
+
+            tearDown : function() {
+                $W.reset();
+            },
+
+			test_initialize : function() {
+                $W.initialize();
+
+				assert.isNotUndefined($W.GL, 'Got undefined context');
+			},
+
+            test_hasConsole : function() {
+                $W.initialize();
+
+                assert.isNotUndefined(console, 'console does not exist');
+            }
+
+
+		})
+	);
+
+
+	WebGLUTestSuite.add(
+		new YT.TestCase({
+			name:'Shader Tests',
+
+			test_newProgram : function() {
+				
+
+			}
+		})
+	);
+
+	WebGLUTestSuite.add(
+		new YT.TestCase({
+			name:'Object Tests',
+
+			test_newObject : function() {
+
+
+				
+
+			}
+		})
+	);
+
+	logger = new YAHOO.tool.TestLogger();
+	with(YAHOO.tool.TestRunner) {
+		//subscribe(TEST_FAIL_EVENT, handleTestResult);
+		//subscribe(TEST_IGNORE_EVENT, handleTestResult);
+		//subscribe(TEST_PASS_EVENT, handleTestResult);
+		add(WebGLUTestSuite);
+ 		run();
+	}
+}
+
+
+</script>
+</head>
+<body onload='doTesting()'>
+<div id='canvasDiv'>
+<canvas id='canvas' width='1' height='1'></canvas>
+</div>
+<div id='testResults'>
+</div>
+</body
+</html>
+
