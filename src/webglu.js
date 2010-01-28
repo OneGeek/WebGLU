@@ -527,6 +527,7 @@ $W = {
                 }
             }
 
+            /** Called once per frame to calculate and set uniforms. */
             this.processUniforms = function() {
                 for (var i = 0; i < this.uniforms.length; i++) {
                     this.uniforms[i].action($W);
@@ -830,6 +831,46 @@ $W = {
     /** @namespace Utility functions. */
     util:{
 
+        getPickRay : function(x, y) {
+
+        },
+
+        /** Get axis/angle representation of the rotation.
+         * Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htm
+         */
+        getAxisAngle : function(rotation) {
+            if (rotation.elements == [0,0,0]) return {angle:0,axis:[1,0,0]};
+            var c1 = Math.cos(rotation.e(2) / 2); // c1 = cos(heading / 2)
+            var c2 = Math.cos(rotation.e(1) / 2); // c2 = cos(attitude / 2)
+            var c3 = Math.cos(rotation.e(3) / 2); // c3 = cos(bank / 2)
+            var s1 = Math.sin(rotation.e(2) / 2); // s1 = sin(heading / 2) 
+            var s2 = Math.sin(rotation.e(1) / 2); // s2 = sin(attitude / 2)
+            var s3 = Math.sin(rotation.e(3) / 2); // s3 = sin(bank / 2)    
+
+            var result = {};
+
+            result.angle = 2 * Math.acos(c1*c2*c3 - s1*s2*s3);
+
+            result.axis = [];
+            result.axis[0] = s1*s2*c3 + c1*c2*s3;
+            result.axis[1] = s1*c2*c3 + c1*s3*s3;
+            result.axis[2] = c1*s2*c3 - s1*c2*s3;
+
+            // Normalize
+            var mag = Math.sqrt(result.axis[0]*result.axis[0] + result.axis[1]*result.axis[1] + result.axis[2]*result.axis[2]);
+            //if (Math.abs(result.axis[0]) > 1) result.axis[0] /= mag;
+            //if (Math.abs(result.axis[1]) > 1) result.axis[1] /= mag;
+            //if (Math.abs(result.axis[2]) > 1) result.axis[2] /= mag;
+
+            return result;
+        },
+
+        /** Generate vertices, normals, texture coordinates, and element indices
+         * for a sphere.
+         * @param rings Number of horizontal rings that make up the sphere.
+         * @param slices Number of triangles per ring.
+         * @param [r] The radius of the sphere, defaults to 1.0 if omitted.
+         */
         genSphere: function(rings, slices, r) {
             // Default to unit sphere
             if (r === undefined) r = 1;
@@ -876,24 +917,49 @@ $W = {
         }, 
 
 
+        /** XXX Not yet implemented.
+         * Spherical linear interpolation. For interpolating quaternions.
+         * @param {Quaternion} q1 Quaternion to interpolate from.
+         * @param {Quaternion} q2 Quaternion to interpolate to.
+         * @param t How far along to interpolate.
+         */
         slerp:function(t, q1, q2) {
 
         },
 
 
-        /** Linear interpolation
+        /** Linear interpolation between numbers
          * @param {Number} a Value to interpolate from.
          * @param {Number} b Value to interpolate to.
-         * @param {Number} t Value from 0 to 1 representing the percentage
-         * between the two values to interpolate to.
+         * @param {Number} t Value from 0 to 1 representing the fraction
+         * between the two values to interpolate by.
          */
         lerp:function(t,a,b) {
             return a + t * (b - a);
         },
 
+        /** Linear interpolation between triples
+         * @param {Array of 3 elements} a Array of values to interpolate from.
+         * @param {Array of 3 elements} b Array of values to interpolate to.
+         * @param {Number} t Value from 0 to 1 representing the fraction
+         * between the two sets of values to interpolate by.
+         */
+        lerpTriple:function(t,a,b) {
+            return [$W.util.lerp(t, a[0], b[0]),
+                    $W.util.lerp(t, a[1], b[1]),
+                    $W.util.lerp(t, a[2], b[2])
+            ];
+        },
+
         /** Parse a .obj model file
-         * @return model An object containing model data.
-         * @return model.vertices The vertices of the object.
+         * XXX Should I build the vertex/normal/texture coordinate arrays
+         * explicitly from the face data? Can it work otherwise?
+         * @return model An object containing model data as flat
+         * arrays.
+         * @return model.vertices Vertices of the object.
+         * @return model.normals Normals of the object.
+         * @return model.texCoords Texture coordinates of the object.
+         * @return model.faces Element indices of the object.
          */
         parseOBJ:function(obj) {
             console.group("Processing .obj file...");
@@ -1011,6 +1077,10 @@ $W = {
             return model;
         },
 
+        /** Load the file at the given path as text.
+         * @param {String} path The path to the file.
+         * @return {String} Data in the file as text.
+         */
         loadFileAsText:function(path) {
             console.log("Loading file `" + path + "`");
             var xhr = null;
@@ -1030,12 +1100,21 @@ $W = {
             return xhr.responseText;
         },
 
+        /** Calculates the 3x3 inverse transpose of the Model-View matrix.
+         * Returns it in a format suitable to be passed directly as shader
+         * uniform.
+         * @return {WebGLFloatArray} 3x3 inverse transpose, ready to be sent as
+         * a uniform.
+         */
         getNormalMatrixForUniform: function() {
             return new WebGLFloatArray($W.modelview.matrix.inverse().transpose().make3x3().flatten());
         },
 
-        // getGLContext
-        // Create a context for the specified canvas
+        /** Create a WebGL context for the specified canvas.
+         * @param {Canvas} canvas A canvas element.
+         * @return {WebGL Context} A WebGL context for the passed
+         * canvas.
+         */
         getGLContext: function(canvas) {
             var gl = null;
             var type = '';
@@ -1058,6 +1137,7 @@ $W = {
             return gl;
         },
 
+        /** A place to put any code to ensure cross-browser compatability */
         ensureCrossBrowserCompat:function() {
             // This temporary code provides support for Google Chrome, which
             // as of 30 Nov 2009 does not support the new names for the
@@ -1078,22 +1158,42 @@ $W = {
         }
     },
 
+    /** @namespace Contains animation objects */
     anim:{
+        /** A procedurally generated animation. */
         ProceduralAnimation:function() {
             $W.ObjectState.call(this); // subclass of ObjectState
+            var ptyp = $W.anim.ProceduralAnimation.prototype;
 
+            /** The time in milliseconds since this animation began */
             this.age = 0;
 
-            this.update = function(dt) {
-                this.preUpdate(dt);
+            this.update = function(dt){};
 
-                this.age += dt;
+            ptyp._play = function() {
+                return (function(dt) {
+                        this.preUpdate(dt);
 
-                this.updatePosition(dt);
-                this.updateRotation(dt);
-                this.updateScale(dt);
+                        this.age += dt;
 
-                this.postUpdate(dt);
+                        this.updatePosition(dt);
+                        this.updateRotation(dt);
+                        this.updateScale(dt);
+
+                        this.postUpdate(dt);
+                });
+            }
+
+            ptyp._pause = function() {
+                return (function() {});
+            }
+
+            this.play = function() {
+                this.update = ptyp._play();
+            }
+
+            this.pause = function() {
+                this.update = ptyp._pause();
             }
 
             this.preUpdate      = function(dt){}
@@ -1103,95 +1203,67 @@ $W = {
             this.updateScale 	= function(dt){}
 
             this.postUpdate     = function(dt){}
+
+            this.play();
+        },
+
+        KeyFrame:function (pos, rot, scl, atTime) {
+            $W.ObjectState.call(this, pos, rot, scl); // Subclass ObjectState
+            this.atTime = atTime * 1000; // time, in seconds, this keyframe occurs at
         },
 
         KeyFrameAnimation:function() {
-            $W.anim.ProceduralAnimation.call(this); // Subclass ProceduralAnim
+            $W.anim.ProceduralAnimation.call(this); // Subclass ProceduralAnimation
 
             this.keyframes = [];
-            this.nextFrameIndex = 0;
-            this.dtFromLastFrame = 0;
-            this.A; // Frame index to interpolate from
-            this.B; // Frame index to interpolate to
+            this.A = 0; // Frame index to interpolate from
+            this.B = 1; // Frame index to interpolate to
 
-            // TODO variable time between frames
-            this.frameGap = 1000; // 1 second between frames by default
+            this.timeScale = 1;
+
 
             this.preUpdate = function(dt) {
-                this.dtFromLastFrame += dt;
-                if (this.dtFromLastFrame > this.frameGap) {
-                    // Loop the animation
-                    this.nextFrameIndex += 1;
-                    if (this.nextFrameIndex == this.keyframes.length) {
-                        this.nextFrameIndex = 0;
-                    }
+                this.age += dt * this.timeScale;
 
-                    this.dtFromLastFrame -= this.frameGap;
+                // Time for next frame?
+                if (this.age >= (this.keyframes[this.B]).atTime) {
+
+                    // Increment frame counters
+                    this.A = ++this.A % this.keyframes.length;
+                    this.B = ++this.B % this.keyframes.length;
+
+                    // Account for slop (by throwing it out)
+                    this.age = (this.keyframes[this.A]).atTime;
                 }
 
-                var t = this.dtFromLastFrame / this.frameGap;
 
-                var B = this.nextFrameIndex;
-                var A = B - 1;
-                if (A < 0) {
-                    A = this.keyframes.length-1;
-                }
+                var progress = this.age - (this.keyframes[this.A]).atTime;
+                var duration = (this.keyframes[this.B]).atTime - (this.keyframes[this.A]).atTime;
+                var t = progress / duration;
+
+
+                var A = this.A;
+                var B = this.B;
 
                 // Interpolate position
-                this.position.elements[0] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].position.elements[0],
-                        this.keyframes[B].position.elements[0]);
-                this.position.elements[1] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].position.elements[1],
-                        this.keyframes[B].position.elements[1]);
-                this.position.elements[2] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].position.elements[2],
-                        this.keyframes[B].position.elements[2]);
+                this.position.elements = $W.util.lerpTriple(t, 
+                        this.keyframes[A].position.elements,
+                        this.keyframes[B].position.elements);
 
                 // XXX naive interpolation
                 // Interpolate rotation
-                this.rotation.elements[0] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].rotation.elements[0],
-                        this.keyframes[B].rotation.elements[0]);
-                this.rotation.elements[1] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].rotation.elements[1],
-                        this.keyframes[B].rotation.elements[1]);
-                this.rotation.elements[2] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].rotation.elements[2],
-                        this.keyframes[B].rotation.elements[2]);
+                this.rotation.elements = $W.util.lerpTriple(t, 
+                        this.keyframes[A].rotation.elements,
+                        this.keyframes[B].rotation.elements);
 
                 // Interpolate scale
-                this.scale.elements[0] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].scale.elements[0],
-                        this.keyframes[B].scale.elements[0]);
-                this.scale.elements[1] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].scale.elements[1],
-                        this.keyframes[B].scale.elements[1]);
-                this.scale.elements[2] = 
-                    $W.util.lerp( t, 
-                        this.keyframes[A].scale.elements[2],
-                        this.keyframes[B].scale.elements[2]);
+                this.scale.elements = $W.util.lerpTriple(t, 
+                        this.keyframes[A].scale.elements,
+                        this.keyframes[B].scale.elements);
             }
 
             this.addKeyframe = function(keyframe) {
-            /*
-                if (arguments.length === 3) {
-                    keyframe = new WGLUObjectState(arguments[1], arguments[2], arguments[3]);
-                }
-
-                console.log(keyframe);
-            */
-
                 this.keyframes.push(keyframe);
-                this.keyframes[-1] = keyframe;
             }
 
             this.removeKeyframe = function(index) {
@@ -1299,7 +1371,6 @@ $W = {
             this.position	= $V(position);
             this.rotation	= $V(rotation);
             this.scale      = $V(scale);
-
         }else {
             this.position	= Vector.Zero(3);
             this.rotation	= Vector.Zero(3);
@@ -1326,6 +1397,7 @@ $W = {
         this.setScale = function(x, y, z){ 
             this.scale.elements    = [x, y, z]; 
         }
+
 
         this.equals = function(other) {
             if ((other.scale != undefined &&
@@ -1536,7 +1608,12 @@ $W = {
 
         // XXX broken
         this.animatedScale    = function() { 
-            return this.animation.scale; 
+            return $V([
+                this.scale.e(1) * this.animation.scale.e(1),
+                this.scale.e(3) * this.animation.scale.e(2),
+                this.scale.e(3) * this.animation.scale.e(3)
+            ]);
+            //return this.scale.multiply(this.animation.scale);
         }
 
         this.setScaleUniformly = function(s) { 
@@ -1579,8 +1656,11 @@ $W = {
                 this._bufferArrays();
 
                 $W.modelview.pushMatrix();
-                
                 $W.modelview.translate(pos.elements);
+
+                var rotation = $W.util.getAxisAngle(rot);
+                //$W.modelview.rotate(rotation.angle, rotation.axis);
+
                 $W.modelview.rotate(rot.e(1), [0, 1, 0]);
                 $W.modelview.rotate(rot.e(2), [1, 0, 0]);
                 $W.modelview.rotate(rot.e(3), [0, 0, 1]);
@@ -1691,16 +1771,25 @@ $W = {
 
 
     GLU:{
-        //--------------------------------------------------------------------------
-        // MatrixStack
-        //
-        // Operates similarly to the standard OpenGL built in matricies. However
-        // it is not identical. Rather than calling glMatrixMode, you specify the
-        // matrix you want to modify prior to the call.
-        // e.g. if `myTranslationVector` is the vector to translate by then to 
-        // translate the ModelView matrix you would call
-        // `wglu.GL.modelview.translate(myTranslationVector);`
-        //
+        
+
+        unproject:function(winX, winY, winZ, model, proj, view) {
+            if (model === undefined) model = $W.modelview.matrix;
+            if (proj === undefined) proj = $W.projection.matrix;
+            if (view === undefined) view = [0,0, $W.canvas.width, $W.canvas.height];
+
+            var pickMatrix = (model.multiply(proj)).inverse();
+
+        },
+        
+
+       /* Operates similarly to the standard OpenGL built in matricies. 
+        * However * it is not identical. Rather than calling glMatrixMode, 
+        * you specify the matrix you want to modify prior to the call.
+        * e.g. if `myTranslationVector` is the vector to translate by then to 
+        * translate the ModelView matrix you would call
+        * `$W.modelview.translate(myTranslationVector);`
+        */
         MatrixStack:function()  {
             this._matrixStack = [];
             this.matrix = Matrix.I(4);

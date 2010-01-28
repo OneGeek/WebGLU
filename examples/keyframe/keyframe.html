@@ -79,15 +79,26 @@ function createObjects() {
 
     // Have the cube use keyframed animation
     cube.animation = new $W.anim.KeyFrameAnimation();
+    var ca = cube.animation;
 
     // Add keyframes to the cube's set of keyframes
-    with (cube.animation) {
-        addKeyframe(new $W.ObjectState([0,0,0],[0,90,0],[.3,.3,-.3]));
-        addKeyframe(new $W.ObjectState([1,1,0],[0,0,0],[.3,.3,.3]));
-        addKeyframe(new $W.ObjectState([1,1,-1],[0,0,90],[-.2,.6,.5]));
-        addKeyframe(new $W.ObjectState([1,0,-1],[0,0,180],[-.3,.3,.3]));
-        addKeyframe(new $W.ObjectState([0,0,-1],[90,0,0],[.3,.3,.3]));
+    function anim1(){
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0], [0,90,0], [.3,.3,-.3] ,0));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,1,0], [0,0,0], [.3,.3,.3]   ,3));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,1,-1], [0,0,90], [-.2,-.6,.5],10));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,0,-1], [0,0,180], [-.3,.3,.3],15));
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,-1], [90,0,0], [.3,.3,.3] ,20));
     }
+
+    function anim2(){
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0],[0,0,0], [0.3,0.3,0.3],0));
+        ca.addKeyframe(new $W.anim.KeyFrame([0,1,0],[0,0,0], [0.3,0.3,0.3],1));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,1,0],[0,0,0], [0.3,0.3,0.3],10));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,0,0],[0,0,0], [0.3,0.3,0.3],15));
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0],[0,0,0], [0.3,0.3,0.3],20));
+    }
+
+    anim1();
 }
 
 function start() {
