@@ -31,10 +31,19 @@
  * @namespace The primary WebGLU namespace.
  */
 $W = {
-    /** Directory containing default shaders 
-     * "../../shaders" by default. 
+    /** Various paths used by WebGLU. 
+     * Call $W.initPaths before using.
      */
-    ShaderDir : "../../shaders/",
+    paths:{
+        /** Where shaders are stored */
+        shaders : "../../shaders/",
+        /** Where external libraries, like Sylvester, are stored */
+        external : "../../external/",
+        /** Which Sylvester lib to load
+         * Sylvester.src.js or Sylvester.js
+         * */
+        sylvester : "Sylvester.src.js"
+    },
 
     /** The raw WebGL object for low level work.  */
     GL : null,
@@ -633,12 +642,16 @@ $W = {
                         if (ext == 'vert' || ext.slice(2) == 'vp') type = $W.GL.VERTEX_SHADER;
                         if (ext == 'frag' || ext.slice(2) == 'fp') type = $W.GL.FRAGMENT_SHADER;
 
-                        shader = new $W.GLSL.Shader(shader, $W.util.loadFileAsText(path), type); 
+                        try {
+                            shader = new $W.GLSL.Shader(shader, $W.util.loadFileAsText(path), type); 
+                        }catch (e) {
+                            console.error(e);
+                            return;
+                        }
 
                     // Shader from source
                     }else {
                         shader = new $W.GLSL.Shader(shader, path, type);
-
                     }
                 }
 
@@ -1082,7 +1095,7 @@ $W = {
          * @return {String} Data in the file as text.
          */
         loadFileAsText:function(path) {
-            console.log("Loading file `" + path + "`");
+            console.groupCollapsed("Loading file `" + path + "`");
             var xhr = null;
             xhr = new XMLHttpRequest();
             xhr.overrideMimeType("text/xml");
@@ -1090,12 +1103,28 @@ $W = {
             if (!xhr) return null;
 
             try {
+                var nsPM = netscape.security.PrivilegeManager;
+                if (document.location.href.match(/^file:\/\//)) {
+                    if (nsPM !== undefined) {
+                        nsPM.enablePrivilege("UniversalBrowserRead");
+                    }
+                }
+            }catch (e) {
+                console.groupEnd();
+                throw "Browser security has restricted access to local files";
+            }
+
+            try {
                 xhr.open("GET", path, false);
                 xhr.send(null);
-            }catch (e) {
-                console.error(e);
-                return null;
+
+            }catch (e) { 
+                console.groupEnd();
+                throw e; 
             }
+
+            console.log("Completed with status: " + xhr.status);
+            console.groupEnd();
 
             return xhr.responseText;
         },
@@ -1965,6 +1994,7 @@ $W = {
         $W.initLogging();
         console.group("Initializing WebGLU");
 
+        // Prep the shader subsystem
         $W.GLSL.initialize();
 
         // create the matrix stacks we'll be using to store transformations
@@ -1986,25 +2016,69 @@ $W = {
         return success;
     },
 
+    /** 
+     * We'll always need some sort of math lib, so I don't
+     * feel bad semi-hardcoding it.
+     * XXX Not working
+     */
+    loadSylvester:function() {
+        syl = document.createElement("script");
+        syl.type = "text/javascript";
+        syl.src = $W.paths.external + $W.paths.sylvester;
+        document.body.appendChild(syl);
+
+
+        // XXX HACK!
+        var start = new Date();
+        while ((new Date()) - start < 2000){}
+
+        if (typeof(Matrix) !== "undefined") {
+            $W.augmentSylvester();
+            console.log("Sylvester loaded");
+        }else {
+            console.error("Sylvester failed to load");
+        }
+    },
+
+    /** Ensure that we can log, or at least not error if we try to */
     initLogging:function() {
-        if (window.console === undefined) console = {};
-        if (console.log === undefined) console.log = function(){};
-        if (console.warn === undefined) console.warn = function(){};
-        if (console.error === undefined) console.error = function(){};
-        if (console.group === undefined) console.group = function(){};
-        if (console.groupEnd === undefined) console.groupEnd = function(){};
+        if (window.console === undefined) console = {}; // Dummy object
+
+        if (console.log === undefined) {
+            console.log = function(){};
+            if (console.warn === undefined) console.warn = function(){};
+            if (console.error === undefined) console.error = function(){};
+            if (console.group === undefined) console.group = function(){};
+            if (console.groupEnd === undefined) console.groupEnd = function(){};
+        }else {
+            // If console.log exists, but one or more of the others do not,
+            // use console.log in those cases.
+            if (console.warn === undefined) console.warn         = console.log;
+            if (console.error === undefined) console.error       = console.log;
+            if (console.group === undefined) console.group       = console.log;
+            if (console.groupCollapsed === undefined) console.groupCollapsed = console.log;
+            if (console.groupEnd === undefined) console.groupEnd = console.log;
+        }
 
     },
 
-    initWebGL: function(canvasNode) {
-        if (canvasNode === undefined) {
-            canvasNode = document.getElementById('canvas');
-        }
+    /** Setup the WebGL subsytem.
+     * Create a WebGL context on the given canvas.
+     *
+     * XXX Can't yet handle multiple canvii
+     * @param canvas DOM node or element id of a canvas.
+     */
+    initWebGL: function(canvas) {
+        if (canvas === undefined) {
+            $W.canvas = document.getElementById('canvas');
 
-        $W.canvas = canvasNode;
+        }else if (typeof(canvas) == "string") {
+            $W.canvas = document.getElementById(canvas);
+
+        }else { $W.canvas = canvas; }
 
         $W.GL = null;
-        $W.GL = $W.util.getGLContext(canvasNode);
+        $W.GL = $W.util.getGLContext($W.canvas);
 
         if ($W.GL !== null) {
             $W.constants.VERTEX = $W.GL.VERTEX_SHADER;
@@ -2016,8 +2090,8 @@ $W = {
             $W.newProgram('default');
 
             // XXX Fragile paths
-            $W.programs['default'].attachShader('defaultVS', $W.ShaderDir + 'default.vert');
-            $W.programs['default'].attachShader('defaultFS', $W.ShaderDir + 'default.frag');
+            $W.programs['default'].attachShader('defaultVS', $W.paths.shaders + 'default.vert');
+            $W.programs['default'].attachShader('defaultFS', $W.paths.shaders + 'default.frag');
             $W.programs['default'].link();
 
 
@@ -2240,26 +2314,24 @@ Array.prototype.indexOf = function(item) {
 //
 // augment Sylvester some
 // (c) 2009 Vladimir Vukicevic
-//
-//--------------------------------------------------------------------------
 Matrix.Translation = function (v)
 {
-  if (v.elements.length == 2) {
-    var r = Matrix.I(3);
-    r.elements[2][0] = v.elements[0];
-    r.elements[2][1] = v.elements[1];
-    return r;
-  }
+    if (v.elements.length == 2) {
+        var r = Matrix.I(3);
+        r.elements[2][0] = v.elements[0];
+        r.elements[2][1] = v.elements[1];
+        return r;
+    }
 
-  if (v.elements.length == 3) {
-    var r = Matrix.I(4);
-    r.elements[0][3] = v.elements[0];
-    r.elements[1][3] = v.elements[1];
-    r.elements[2][3] = v.elements[2];
-    return r;
-  }
+    if (v.elements.length == 3) {
+        var r = Matrix.I(4);
+        r.elements[0][3] = v.elements[0];
+        r.elements[1][3] = v.elements[1];
+        r.elements[2][3] = v.elements[2];
+        return r;
+    }
 
-  throw "Invalid length for Translation";
+    throw "Invalid length for Translation";
 }
 
 
@@ -2286,12 +2358,12 @@ Matrix.prototype.flatten = function ()
 Matrix.prototype.ensure4x4 = function()
 {
     if (this.elements.length == 4 && 
-        this.elements[0].length == 4) {
+            this.elements[0].length == 4) {
         return this;
     }
 
     if (this.elements.length > 4 ||
-        this.elements[0].length > 4) {
+            this.elements[0].length > 4) {
         return null;
     }
 
@@ -2323,18 +2395,17 @@ Matrix.prototype.ensure4x4 = function()
 Matrix.prototype.make3x3 = function()
 {
     if (this.elements.length != 4 ||
-        this.elements[0].length != 4) {
+            this.elements[0].length != 4) {
         return null;
     }
 
     return Matrix.create([[this.elements[0][0], this.elements[0][1], this.elements[0][2]],
-                          [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
-                          [this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
+            [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
+            [this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
 };
 
 Vector.prototype.flatten = function ()
 {
     return this.elements;
-};
-
+}; 
 //--------------------------------------------------------------------------
