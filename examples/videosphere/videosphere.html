@@ -1,7 +1,7 @@
 <html><head>
 
 <link   type="text/css" rel="stylesheet" href="../example.css">
-<script type="text/javascript" src="../../Sylvester.src.js"></script>
+<script type="text/javascript" src="../../external/Sylvester.src.js"></script>
 <script type="text/javascript" src="../../src/gameglu.js"></script>
 <script type="text/javascript" src="../../src/webglu.js"></script>
 
@@ -34,8 +34,8 @@ function init() {
         if (!initialize()) return false;
 
         newProgram('textured');
-        programs['textured'].attachShader('texVS', $W.ShaderDir + 'texture.vert');
-        programs['textured'].attachShader('texFS', $W.ShaderDir + 'texture.frag');
+        programs['textured'].attachShader('texVS', $W.paths.shaders + 'texture.vert');
+        programs['textured'].attachShader('texFS', $W.paths.shaders + 'texture.frag');
 
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         camera.setPosition(0,0,0);
