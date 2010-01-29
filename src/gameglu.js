@@ -266,6 +266,12 @@ $G = {
             }, false);
         },
 
+        /** 
+         */
+        bindOnElement:function(element, eventName, action) {
+            element.addEventListener(eventName, action, false);
+        },
+
 
         // Add this key to the list of bound keys so we can only
         // try to call functions for keys that have been bound.
@@ -299,17 +305,17 @@ $G = {
 
                 if (key[0] == "+") {
                     key = $G.constants.keycodes[key.slice(1)];
-                    this._actions['+' + key] = action;
+                    $G.event._actions['+' + key] = action;
 
                 }else if (key[0] == "-") {
                     key = $G.constants.keycodes[key.slice(1)];
-                    this._actions['-' + key] = action;
+                    $G.event._actions['-' + key] = action;
                 }
 
             // Default to keydown
             }else {
                 key = $G.constants.keycodes[key];
-                this._actions['+' + key] = action;
+                $G.event._actions['+' + key] = action;
             }
         },
     },
@@ -319,4 +325,3 @@ $G = {
     }
 }
 
-$G.initialize();
