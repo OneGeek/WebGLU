@@ -84,9 +84,11 @@ function createObjects() {
 }
 
 function initControl() {
-    var st = $G.state;
 
     // Using GameGLU to add interactivity
+    $G.initialize();
+    var st = $G.state;
+
     st.mouseDown    = false;
     st.wasMouseDown = false;
     st.lastM  = $V([0,0]);
