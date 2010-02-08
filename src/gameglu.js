@@ -24,9 +24,19 @@
  */
 
 $G = {
+
+    SimulatedWorld:{
+        objects:[]
+    },
+
+    SphereSimulation:{
+
+    },
+
     state:{},
 
     constants:{
+
         keycodes:{
             backspace : 8,
             tab : 9,

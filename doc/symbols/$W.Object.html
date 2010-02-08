@@ -191,11 +191,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
+	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
+	
+	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
+	
+	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -207,7 +217,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLSL.Uniform.html">$W.GLSL.Uniform</a></li>
 	
+	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
+	
+	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
+	
+	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
@@ -252,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.Object.html#constructor">$W.Object</a></b>(type)
+								<b><a href="../symbols/%24W.Object.html#constructor">$W.Object</a></b>(type, shouldAdd)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -263,8 +279,230 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.Object.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Object.html#animation">animation</a></b>
+								</div>
+								<div class="description">The animation for this object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Object.html#arrays">arrays</a></b>
+								</div>
+								<div class="description">WebGL*array's of attribute data.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Object.html#buffers">buffers</a></b>
+								</div>
+								<div class="description">WebGL array buffers for attribute data.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Object.html#shaderProgram">shaderProgram</a></b>
+								</div>
+								<div class="description">Name of shader program used to render this object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Object.html#textures">textures</a></b>
+								</div>
+								<div class="description">Names of textures this object uses.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Object.html#vertexCount">vertexCount</a></b>
+								</div>
+								<div class="description">Number of vertices in this object.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.Object.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#addChild">addChild</a></b>(obj)
+								</div>
+								<div class="description">Add an object as a child to this object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#animatedPosition">animatedPosition</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#animatedRotation">animatedRotation</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#animatedScale">animatedScale</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#bindBuffers">bindBuffers</a></b>()
+								</div>
+								<div class="description">XXX Not working Binds the data buffers for rendering.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#bindTextures">bindTextures</a></b>()
+								</div>
+								<div class="description">Bind the textures for this object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#bufferArrays">bufferArrays</a></b>()
+								</div>
+								<div class="description">XXX Not working Buffers the data for this object once.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#draw">draw</a></b>()
+								</div>
+								<div class="description">draw this object at its internally stored position, rotation, andscale, INCLUDING its current animation state.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#drawAt">drawAt</a></b>(pos, rot, scale)
+								</div>
+								<div class="description">draw this object at the given postion, rotation, and scale</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#fillArray">fillArray</a></b>(name, contents)
+								</div>
+								<div class="description">Fills the array of the given name, where name is a vertex attribute in the shader.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#setElements">setElements</a></b>(elements)
+								</div>
+								<div class="description">Set the indices for the elements of this object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#setScaleUniformly">setScaleUniformly</a></b>(s)
+								</div>
+								<div class="description">Set the x y and z components of the object's scale to the givenvalue.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#setShaderProgram">setShaderProgram</a></b>(program)
+								</div>
+								<div class="description">Set the shader program to the named program</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#update">update</a></b>(dt)
+								</div>
+								<div class="description">Update this object's animation state.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -277,7 +515,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.Object</b>(type)
+						<b>$W.Object</b>(type, shouldAdd)
 				</div>
 				
 				<div class="description">
@@ -298,6 +536,12 @@ ul.inheritsList
 							</dt>
 								<dd>The type of rendering to use for this object, possible valuesare:<br>$W.GL.POINTS         <br>$W.GL.LINES          <br>$W.GL.LINE_LOOP      <br>$W.GL.LINE_STRIP     <br>$W.GL.TRIANGLES      <br>$W.GL.TRIANGLE_STRIP <br>$W.GL.TRIANGLE_FAN   <br></dd>
 						
+							<dt>
+								<span class="light fixedFont">{Boolean}</span>  <b>shouldAdd</b>
+								
+							</dt>
+								<dd>Set to false to not add this the the objectlist in case you want to handle rendering in a specific manner, e.g. asthe child of another object.</dd>
+						
 						</dl>
 					
 					
@@ -312,8 +556,616 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="animation"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>animation</b>
+					
+					</div>
+					<div class="description">
+						The animation for this object.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="arrays"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>arrays</b>
+					
+					</div>
+					<div class="description">
+						WebGL*array's of attribute data.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="buffers"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>buffers</b>
+					
+					</div>
+					<div class="description">
+						WebGL array buffers for attribute data.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="shaderProgram"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>shaderProgram</b>
+					
+					</div>
+					<div class="description">
+						Name of shader program used to render this object
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="textures"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>textures</b>
+					
+					</div>
+					<div class="description">
+						Names of textures this object uses.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="vertexCount"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>vertexCount</b>
+					
+					</div>
+					<div class="description">
+						Number of vertices in this object.Used when rendering with drawArrays.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="addChild"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addChild</b>(obj)
+					
+					</div>
+					<div class="description">
+						Add an object as a child to this object.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>obj</b>
+									
+								</dt>
+								<dd>The object to add as a child.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="animatedPosition"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Vector}</span>
+					<b>animatedPosition</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Vector}</span> The sum of the object's base position and its animation.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="animatedRotation"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Vector}</span>
+					<b>animatedRotation</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Vector}</span> The sum of the object's base rotation and its animation.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="animatedScale"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Vector}</span>
+					<b>animatedScale</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Vector}</span> The product of the object's base scale and its animation.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="bindBuffers"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>bindBuffers</b>()
+					
+					</div>
+					<div class="description">
+						XXX Not working Binds the data buffers for rendering.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="bindTextures"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>bindTextures</b>()
+					
+					</div>
+					<div class="description">
+						Bind the textures for this object.XXX Will only work with single texturing
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="bufferArrays"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>bufferArrays</b>()
+					
+					</div>
+					<div class="description">
+						XXX Not working Buffers the data for this object once.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="draw"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>draw</b>()
+					
+					</div>
+					<div class="description">
+						draw this object at its internally stored position, rotation, andscale, INCLUDING its current animation state.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="drawAt"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawAt</b>(pos, rot, scale)
+					
+					</div>
+					<div class="description">
+						draw this object at the given postion, rotation, and scale
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Vector}</span> <b>pos</b>
+									
+								</dt>
+								<dd>The position to draw at.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Vector}</span> <b>rot</b>
+									
+								</dt>
+								<dd>The rotation to rotate by.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Vector}</span> <b>scale</b>
+									
+								</dt>
+								<dd>The scale to scale by.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="fillArray"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fillArray</b>(name, contents)
+					
+					</div>
+					<div class="description">
+						Fills the array of the given name, where name is a vertex attribute in the shader. Also creates a buffer to hold the data in WebGL.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>The attribute variable name in a shaderattached to the shader program used by this object. (this isnot verified for you)</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>contents</b>
+									
+								</dt>
+								<dd>The data to pass to the attribute.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setElements"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setElements</b>(elements)
+					
+					</div>
+					<div class="description">
+						Set the indices for the elements of this object.Draws this object with drawElements unless set withfalse.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array|Boolean}</span> <b>elements</b>
+									
+								</dt>
+								<dd>The array of indices of theelements or false, which disabled drawElements renderingfor this object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setScaleUniformly"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setScaleUniformly</b>(s)
+					
+					</div>
+					<div class="description">
+						Set the x y and z components of the object's scale to the givenvalue.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>s</b>
+									
+								</dt>
+								<dd>New scale of the object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setShaderProgram"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setShaderProgram</b>(program)
+					
+					</div>
+					<div class="description">
+						Set the shader program to the named program
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>program</b>
+									
+								</dt>
+								<dd>Program name.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="update"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>update</b>(dt)
+					
+					</div>
+					<div class="description">
+						Update this object's animation state.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>dt</b>
+									
+								</dt>
+								<dd>The delta time since the previous call toupdate.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -326,7 +1178,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Jan 25 2010 20:28:17 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:38 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

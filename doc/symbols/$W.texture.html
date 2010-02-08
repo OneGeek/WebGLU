@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL</title>
+		<title>JsDoc Reference - $W.texture</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace $W.GLSL
+				Namespace $W.texture
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,7 +246,7 @@ ul.inheritsList
 				
 				
 			
-				Contains objects for working with GLSL shaders andshader programs
+				Texture classes
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -255,7 +255,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.texture.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.html#constructor">$W.GLSL</a></b>
+								<b><a href="../symbols/%24W.texture.html#constructor">$W.texture</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -284,7 +284,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLSL.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.texture.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -297,9 +297,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.GLSL.<b><a href="../symbols/%24W.GLSL.html#.initialize">initialize</a></b>()
+								<div class="fixedFont">$W.texture.<b><a href="../symbols/%24W.texture.html#.Image">Image</a></b>(name, src)
 								</div>
-								<div class="description">Must be called</div>
+								<div class="description">A static texture from an image file.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.texture.<b><a href="../symbols/%24W.texture.html#.Video">Video</a></b>(name, id)
+								</div>
+								<div class="description">A dynamic texture from a `video` element.</div>
 							</td>
 						</tr>
 					
@@ -320,7 +329,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL</b>
+						<b>$W.texture</b>
 				</div>
 				
 				<div class="description">
@@ -351,21 +360,80 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".initialize"> </a>
+					<a name=".Image"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.GLSL.</span><b>initialize</b>()
+					<span class="light">$W.texture.</span><b>Image</b>(name, src)
 					
 					</div>
 					<div class="description">
-						Must be called
+						A static texture from an image file.
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>The global name this texture will be referencedby elsewhere.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>src</b>
+									
+								</dt>
+								<dd>Path to image file.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".Video"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.texture.</span><b>Video</b>(name, id)
+					
+					</div>
+					<div class="description">
+						A dynamic texture from a `video` element.    XXX Can I use createElement('video') and eliminate need for id?
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>The global name this texture will be referencedby elsewhere.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>id</b>
+									
+								</dt>
+								<dd>Video element id.</dd>
+							
+							</dl>
 						
 						
 						

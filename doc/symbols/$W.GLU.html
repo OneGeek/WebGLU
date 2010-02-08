@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL.Shader</title>
+		<title>JsDoc Reference - $W.GLU</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class $W.GLSL.Shader
+				Namespace $W.GLU
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,7 +246,7 @@ ul.inheritsList
 				
 				
 			
-				Handles compilation, attributes, and uniforms of a GLSLshader.
+				Functions with similar functionaliy to the original GLUlibraries.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -255,8 +255,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.Shader.">
-				<caption>Class Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLU.">
+				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#constructor">$W.GLSL.Shader</a></b>(name, source, type)
+								<b><a href="../symbols/%24W.GLU.html#constructor">$W.GLU</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -279,110 +279,12 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.GLSL.Shader.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#attributes">attributes</a></b>
-								</div>
-								<div class="description">Attributes for this shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#glShader">glShader</a></b>
-								</div>
-								<div class="description">The WebGL shader object.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#isDirty">isDirty</a></b>
-								</div>
-								<div class="description">Tracks if this shader need to be (re)compiled.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#name">name</a></b>
-								</div>
-								<div class="description">Name of the shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#programs">programs</a></b>
-								</div>
-								<div class="description">Names of programs which use this shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#source">source</a></b>
-								</div>
-								<div class="description">Source code of the shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#type">type</a></b>
-								</div>
-								<div class="description">Shader type $W.GL.VERTEX_SHADER or $W.GL.FRAGMENT_SHADER.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#uniforms">uniforms</a></b>
-								</div>
-								<div class="description">Uniforms for this shader.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLSL.Shader.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLU.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -393,74 +295,128 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#addAttribute">addAttribute</a></b>(name, length)
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.frustrum">frustrum</a></b>(left, right, bottom, top, znear, zfar)
 								</div>
-								<div class="description">Store the information about this named attribute.</div>
+								<div class="description">glFrustrum(c) 2009 Vladimir Vukicevic</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#addUniform">addUniform</a></b>(name, action)
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.getForUniform">getForUniform</a></b>()
 								</div>
-								<div class="description">Store the information about this named uniform.</div>
+								<div class="description">converts the matrix to the format we need when we send it to a shader.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#compile">compile</a></b>()
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.invert">invert</a></b>()
 								</div>
-								<div class="description">Compile the shader if able.</div>
+								<div class="description">invert(c) 2009 Vladimir Vukicevic</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#getGLShader">getGLShader</a></b>()
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.loadIdentity">loadIdentity</a></b>()
 								</div>
-								<div class="description"></div>
+								<div class="description">glLoadIdentity(c) 2009 Vladimir Vukicevic</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setModelViewUniform">setModelViewUniform</a></b>(name)
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.lookAt">lookAt</a></b>(ex, ey, ez, tx, ty, tz, ux, uy, uz)
 								</div>
-								<div class="description">Set up a Uniform for the modelview matrix.</div>
+								<div class="description">glLookAt(c) 2009 Vladimir Vukicevic</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setNormalMatrixUniform">setNormalMatrixUniform</a></b>(name)
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.multMatrix">multMatrix</a></b>(m)
 								</div>
-								<div class="description">Set up a Uniform for the normal matrix.</div>
+								<div class="description">glMultMatrix(c) 2009 Vladimir Vukicevic</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setProjectionUniform">setProjectionUniform</a></b>(name)
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.ortho">ortho</a></b>(left, right, bottom, top, znear, zfar)
 								</div>
-								<div class="description">Set up a Uniform for the projection matrix.</div>
+								<div class="description">glOrtho(c) 2009 Vladimir Vukicevic</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setSource">setSource</a></b>(src)
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.perspective">perspective</a></b>(fovy, aspect, znear, zfar)
 								</div>
-								<div class="description">Change the source for this shader</div>
+								<div class="description">glPerpective(c) 2009 Vladimir Vukicevic</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.popMatrix">popMatrix</a></b>()
+								</div>
+								<div class="description">glPopMatrix(c) 2009 Vladimir Vukicevic</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.pushMatrix">pushMatrix</a></b>(m)
+								</div>
+								<div class="description">glPushMatrix(c) 2009 Vladimir Vukicevic</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.rotate">rotate</a></b>(ang, v)
+								</div>
+								<div class="description">glRotate(c) 2009 Vladimir Vukicevic</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.scale">scale</a></b>(v)
+								</div>
+								<div class="description">glScale(c) 2009 Vladimir Vukicevic</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.translate">translate</a></b>(v)
+								</div>
+								<div class="description">glTranslate(c) 2009 Vladimir Vukicevic</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.GLU.<b><a href="../symbols/%24W.GLU.html#.unproject">unproject</a></b>(winX, winY, winZ, model, proj, view)
+								</div>
+								<div class="description">Given a point in screen-space, transform to an object-space point</div>
 							</td>
 						</tr>
 					
@@ -477,11 +433,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Class Detail
+					Namespace Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL.Shader</b>(name, source, type)
+						<b>$W.GLU</b>
 				</div>
 				
 				<div class="description">
@@ -492,29 +448,6 @@ ul.inheritsList
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{String}</span>  <b>name</b>
-								
-							</dt>
-								<dd>All shaders need a unique name</dd>
-						
-							<dt>
-								<span class="light fixedFont">{String}</span>  <b>source</b>
-								
-							</dt>
-								<dd>The source code or the DOM element Id to a script element containing the source code for a shader.</dd>
-						
-							<dt>
-								 <b>type</b>
-								
-							</dt>
-								<dd>The type of shader, valid types are<br>$W.GL.VERTEX_SHADER<br>$W.GL.FRAGMENT_SHADER<br></dd>
-						
-						</dl>
 					
 					
 					
@@ -528,187 +461,6 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name="attributes"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>attributes</b>
-					
-					</div>
-					<div class="description">
-						Attributes for this shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="glShader"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>glShader</b>
-					
-					</div>
-					<div class="description">
-						The WebGL shader object.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="isDirty"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>isDirty</b>
-					
-					</div>
-					<div class="description">
-						Tracks if this shader need to be (re)compiled.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="name"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>name</b>
-					
-					</div>
-					<div class="description">
-						Name of the shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="programs"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>programs</b>
-					
-					</div>
-					<div class="description">
-						Names of programs which use this shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="source"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>source</b>
-					
-					</div>
-					<div class="description">
-						Source code of the shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="type"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>type</b>
-					
-					</div>
-					<div class="description">
-						Shader type $W.GL.VERTEX_SHADER or $W.GL.FRAGMENT_SHADER.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="uniforms"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>uniforms</b>
-					
-					</div>
-					<div class="description">
-						Uniforms for this shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -716,15 +468,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="addAttribute"> </a>
-					<div class="fixedFont">
+					<a name=".frustrum"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>addAttribute</b>(name, length)
+					<span class="light">$W.GLU.</span><b>frustrum</b>(left, right, bottom, top, znear, zfar)
 					
 					</div>
 					<div class="description">
-						Store the information about this named attribute.
+						glFrustrum(c) 2009 Vladimir Vukicevic
 						
 						
 					</div>
@@ -736,16 +488,40 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>left</b>
 									
 								</dt>
-								<dd>The attribute variable name as defined inthe shader source.</dd>
+								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{Integer}</span> <b>length</b>
-									<i>Optional, Default: 3</i>
+									<b>right</b>
+									
 								</dt>
-								<dd>The length of the attribute.</dd>
+								<dd></dd>
+							
+								<dt>
+									<b>bottom</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>top</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>znear</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>zfar</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -758,82 +534,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="addUniform"> </a>
-					<div class="fixedFont">
+					<a name=".getForUniform"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<b>addUniform</b>(name, action)
-					
-					</div>
-					<div class="description">
-						Store the information about this named uniform.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The uniform variable name as defined inthe shader source.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>action</b>
-									<i>Optional, Default: function(){}</i>
-								</dt>
-								<dd>The function to call each frame to prep/send this uniform to the shader.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="compile"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>compile</b>()
+					<span class="light">{WebGLFloatArray}</span>
+					<span class="light">$W.GLU.</span><b>getForUniform</b>()
 					
 					</div>
 					<div class="description">
-						Compile the shader if able.Lets any shader programs which use this shader know they need torelink
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getGLShader"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getGLShader</b>()
-					
-					</div>
-					<div class="description">
-						
+						converts the matrix to the format we need when we send it to a shader.
 						
 						
 					</div>
@@ -848,7 +557,7 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>The raw WebGL shader object</dd>
+								<dd><span class="light fixedFont">{WebGLFloatArray}</span> The matrix as a flattened array.</dd>
 							
 							</dl>
 						
@@ -857,15 +566,65 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setModelViewUniform"> </a>
-					<div class="fixedFont">
+					<a name=".invert"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>setModelViewUniform</b>(name)
+					<span class="light">$W.GLU.</span><b>invert</b>()
 					
 					</div>
 					<div class="description">
-						Set up a Uniform for the modelview matrix.Creates the appropriate action for sending the matrixeach frame.
+						invert(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".loadIdentity"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>loadIdentity</b>()
+					
+					</div>
+					<div class="description">
+						glLoadIdentity(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".lookAt"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>lookAt</b>(ex, ey, ez, tx, ty, tz, ux, uy, uz)
+					
+					</div>
+					<div class="description">
+						glLookAt(c) 2009 Vladimir Vukicevic
 						
 						
 					</div>
@@ -877,10 +636,58 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>ex</b>
 									
 								</dt>
-								<dd>Name of the uniform in the shader.</dd>
+								<dd></dd>
+							
+								<dt>
+									<b>ey</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>ez</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>tx</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>ty</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>tz</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>ux</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>uy</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>uz</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -893,15 +700,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setNormalMatrixUniform"> </a>
-					<div class="fixedFont">
+					<a name=".multMatrix"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>setNormalMatrixUniform</b>(name)
+					<span class="light">$W.GLU.</span><b>multMatrix</b>(m)
 					
 					</div>
 					<div class="description">
-						Set up a Uniform for the normal matrix.Creates the appropriate action for sending the matrixeach frame.
+						glMultMatrix(c) 2009 Vladimir Vukicevic
 						
 						
 					</div>
@@ -913,10 +720,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<span class="light fixedFont">{Vector}</span> <b>m</b>
 									
 								</dt>
-								<dd>Name of the uniform in the shader.</dd>
+								<dd>A Sylvester matrix to multiply by.</dd>
 							
 							</dl>
 						
@@ -929,15 +736,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setProjectionUniform"> </a>
-					<div class="fixedFont">
+					<a name=".ortho"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>setProjectionUniform</b>(name)
+					<span class="light">$W.GLU.</span><b>ortho</b>(left, right, bottom, top, znear, zfar)
 					
 					</div>
 					<div class="description">
-						Set up a Uniform for the projection matrix.Creates the appropriate action for sending the matrixeach frame.
+						glOrtho(c) 2009 Vladimir Vukicevic
 						
 						
 					</div>
@@ -949,10 +756,40 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>left</b>
 									
 								</dt>
-								<dd>Name of the uniform in the shader.</dd>
+								<dd></dd>
+							
+								<dt>
+									<b>right</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>bottom</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>top</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>znear</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>zfar</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -965,15 +802,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setSource"> </a>
-					<div class="fixedFont">
+					<a name=".perspective"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>setSource</b>(src)
+					<span class="light">$W.GLU.</span><b>perspective</b>(fovy, aspect, znear, zfar)
 					
 					</div>
 					<div class="description">
-						Change the source for this shader
+						glPerpective(c) 2009 Vladimir Vukicevic
 						
 						
 					</div>
@@ -985,10 +822,269 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>src</b>
+									<b>fovy</b>
 									
 								</dt>
-								<dd>The source code.</dd>
+								<dd></dd>
+							
+								<dt>
+									<b>aspect</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>znear</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>zfar</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".popMatrix"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>popMatrix</b>()
+					
+					</div>
+					<div class="description">
+						glPopMatrix(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".pushMatrix"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>pushMatrix</b>(m)
+					
+					</div>
+					<div class="description">
+						glPushMatrix(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Matrix}</span> <b>m</b>
+									<i>Optional, Default: this.matrix</i>
+								</dt>
+								<dd>A Sylvester matrix to add on top of the stack.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".rotate"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>rotate</b>(ang, v)
+					
+					</div>
+					<div class="description">
+						glRotate(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>ang</b>
+									
+								</dt>
+								<dd>Angle to rotate by.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Vector}</span> <b>v</b>
+									
+								</dt>
+								<dd>A Sylvester vector to rotate around.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".scale"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>scale</b>(v)
+					
+					</div>
+					<div class="description">
+						glScale(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Vector}</span> <b>v</b>
+									
+								</dt>
+								<dd>A Sylvester vector to scale by.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".translate"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>translate</b>(v)
+					
+					</div>
+					<div class="description">
+						glTranslate(c) 2009 Vladimir Vukicevic
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Vector}</span> <b>v</b>
+									
+								</dt>
+								<dd>A Sylvester vector to translate by</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".unproject"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.GLU.</span><b>unproject</b>(winX, winY, winZ, model, proj, view)
+					
+					</div>
+					<div class="description">
+						Given a point in screen-space, transform to an object-space point
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>winX</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>winY</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>winZ</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>model</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>proj</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>view</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						

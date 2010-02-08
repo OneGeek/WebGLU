@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL.Shader</title>
+		<title>JsDoc Reference - $W.anim.ProceduralAnimation</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class $W.GLSL.Shader
+				Class $W.anim.ProceduralAnimation
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,7 +246,7 @@ ul.inheritsList
 				
 				
 			
-				Handles compilation, attributes, and uniforms of a GLSLshader.
+				A procedurally generated animation. Starts updating immediately.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -255,7 +255,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.Shader.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.anim.ProceduralAnimation.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#constructor">$W.GLSL.Shader</a></b>(name, source, type)
+								<b><a href="../symbols/%24W.anim.ProceduralAnimation.html#constructor">$W.anim.ProceduralAnimation</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -281,7 +281,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.GLSL.Shader.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.anim.ProceduralAnimation.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -295,79 +295,19 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#attributes">attributes</a></b>
+								<b><a href="../symbols/%24W.anim.ProceduralAnimation.html#age">age</a></b>
 								</div>
-								<div class="description">Attributes for this shader.</div>
+								<div class="description">The time in milliseconds since this animation began</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#glShader">glShader</a></b>
+								<b><a href="../symbols/%24W.anim.ProceduralAnimation.html#-ptyp">ptyp</a></b>
 								</div>
-								<div class="description">The WebGL shader object.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#isDirty">isDirty</a></b>
-								</div>
-								<div class="description">Tracks if this shader need to be (re)compiled.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#name">name</a></b>
-								</div>
-								<div class="description">Name of the shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#programs">programs</a></b>
-								</div>
-								<div class="description">Names of programs which use this shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#source">source</a></b>
-								</div>
-								<div class="description">Source code of the shader.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#type">type</a></b>
-								</div>
-								<div class="description">Shader type $W.GL.VERTEX_SHADER or $W.GL.FRAGMENT_SHADER.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#uniforms">uniforms</a></b>
-								</div>
-								<div class="description">Uniforms for this shader.</div>
+								<div class="description">XXX The right way to do this?</div>
 							</td>
 						</tr>
 					
@@ -382,7 +322,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLSL.Shader.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.anim.ProceduralAnimation.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -395,72 +335,72 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#addAttribute">addAttribute</a></b>(name, length)
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#pause">pause</a></b>()
 								</div>
-								<div class="description">Store the information about this named attribute.</div>
+								<div class="description">This animation will not change on subsequent update() calls.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#addUniform">addUniform</a></b>(name, action)
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#play">play</a></b>()
 								</div>
-								<div class="description">Store the information about this named uniform.</div>
+								<div class="description">This animation will advance on subsequent update() calls.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#compile">compile</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#postUpdate">postUpdate</a></b>(dt)
 								</div>
-								<div class="description">Compile the shader if able.</div>
+								<div class="description">Called after all other update calls.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#getGLShader">getGLShader</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#preUpdate">preUpdate</a></b>(dt)
 								</div>
-								<div class="description"></div>
+								<div class="description">Called before `dt` is added to this.age Does nothing by default.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setModelViewUniform">setModelViewUniform</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#update">update</a></b>(dt)
 								</div>
-								<div class="description">Set up a Uniform for the modelview matrix.</div>
+								<div class="description">Call to advance the animation by `dt` milliseconds</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setNormalMatrixUniform">setNormalMatrixUniform</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#updatePosition">updatePosition</a></b>(dt)
 								</div>
-								<div class="description">Set up a Uniform for the normal matrix.</div>
+								<div class="description">Update the position.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setProjectionUniform">setProjectionUniform</a></b>(name)
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#updateRotation">updateRotation</a></b>(dt)
 								</div>
-								<div class="description">Set up a Uniform for the projection matrix.</div>
+								<div class="description">Update the rotation.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#setSource">setSource</a></b>(src)
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.ProceduralAnimation.html#updateScale">updateScale</a></b>(dt)
 								</div>
-								<div class="description">Change the source for this shader</div>
+								<div class="description">Update the scale.</div>
 							</td>
 						</tr>
 					
@@ -481,7 +421,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL.Shader</b>(name, source, type)
+						<b>$W.anim.ProceduralAnimation</b>()
 				</div>
 				
 				<div class="description">
@@ -492,29 +432,6 @@ ul.inheritsList
 				
 				
 				
-					
-						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
-						
-							<dt>
-								<span class="light fixedFont">{String}</span>  <b>name</b>
-								
-							</dt>
-								<dd>All shaders need a unique name</dd>
-						
-							<dt>
-								<span class="light fixedFont">{String}</span>  <b>source</b>
-								
-							</dt>
-								<dd>The source code or the DOM element Id to a script element containing the source code for a shader.</dd>
-						
-							<dt>
-								 <b>type</b>
-								
-							</dt>
-								<dd>The type of shader, valid types are<br>$W.GL.VERTEX_SHADER<br>$W.GL.FRAGMENT_SHADER<br></dd>
-						
-						</dl>
 					
 					
 					
@@ -532,15 +449,15 @@ ul.inheritsList
 					Field Detail
 				</div>
 				
-					<a name="attributes"> </a>
+					<a name="age"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>attributes</b>
+					<b>age</b>
 					
 					</div>
 					<div class="description">
-						Attributes for this shader.
+						The time in milliseconds since this animation began
 						
 						
 					</div>
@@ -554,147 +471,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="glShader"> </a>
-					<div class="fixedFont">
+					<a name="-ptyp"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
 					
-					<b>glShader</b>
-					
-					</div>
-					<div class="description">
-						The WebGL shader object.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="isDirty"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>isDirty</b>
+					<b>ptyp</b>
 					
 					</div>
 					<div class="description">
-						Tracks if this shader need to be (re)compiled.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="name"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>name</b>
-					
-					</div>
-					<div class="description">
-						Name of the shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="programs"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>programs</b>
-					
-					</div>
-					<div class="description">
-						Names of programs which use this shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="source"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>source</b>
-					
-					</div>
-					<div class="description">
-						Source code of the shader.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="type"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>type</b>
-					
-					</div>
-					<div class="description">
-						Shader type $W.GL.VERTEX_SHADER or $W.GL.FRAGMENT_SHADER.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="uniforms"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>uniforms</b>
-					
-					</div>
-					<div class="description">
-						Uniforms for this shader.
+						XXX The right way to do this?
 						
 						
 					</div>
@@ -716,15 +501,65 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="addAttribute"> </a>
+					<a name="pause"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>addAttribute</b>(name, length)
+					<b>pause</b>()
 					
 					</div>
 					<div class="description">
-						Store the information about this named attribute.
+						This animation will not change on subsequent update() calls.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="play"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>play</b>()
+					
+					</div>
+					<div class="description">
+						This animation will advance on subsequent update() calls.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="postUpdate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>postUpdate</b>(dt)
+					
+					</div>
+					<div class="description">
+						Called after all other update calls.Does nothing by default.
 						
 						
 					</div>
@@ -736,16 +571,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>dt</b>
 									
 								</dt>
-								<dd>The attribute variable name as defined inthe shader source.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Integer}</span> <b>length</b>
-									<i>Optional, Default: 3</i>
-								</dt>
-								<dd>The length of the attribute.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -758,15 +587,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="addUniform"> </a>
+					<a name="preUpdate"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>addUniform</b>(name, action)
+					<b>preUpdate</b>(dt)
 					
 					</div>
 					<div class="description">
-						Store the information about this named uniform.
+						Called before `dt` is added to this.age Does nothing by default.
 						
 						
 					</div>
@@ -778,16 +607,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>dt</b>
 									
 								</dt>
-								<dd>The uniform variable name as defined inthe shader source.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Function}</span> <b>action</b>
-									<i>Optional, Default: function(){}</i>
-								</dt>
-								<dd>The function to call each frame to prep/send this uniform to the shader.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -800,72 +623,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="compile"> </a>
+					<a name="update"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>compile</b>()
+					<b>update</b>(dt)
 					
 					</div>
 					<div class="description">
-						Compile the shader if able.Lets any shader programs which use this shader know they need torelink
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getGLShader"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getGLShader</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>The raw WebGL shader object</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="setModelViewUniform"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setModelViewUniform</b>(name)
-					
-					</div>
-					<div class="description">
-						Set up a Uniform for the modelview matrix.Creates the appropriate action for sending the matrixeach frame.
+						Call to advance the animation by `dt` milliseconds
 						
 						
 					</div>
@@ -877,10 +643,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>dt</b>
 									
 								</dt>
-								<dd>Name of the uniform in the shader.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -893,15 +659,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setNormalMatrixUniform"> </a>
+					<a name="updatePosition"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>setNormalMatrixUniform</b>(name)
+					<b>updatePosition</b>(dt)
 					
 					</div>
 					<div class="description">
-						Set up a Uniform for the normal matrix.Creates the appropriate action for sending the matrixeach frame.
+						Update the position. Does nothing by default.
 						
 						
 					</div>
@@ -913,10 +679,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>dt</b>
 									
 								</dt>
-								<dd>Name of the uniform in the shader.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -929,15 +695,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setProjectionUniform"> </a>
+					<a name="updateRotation"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>setProjectionUniform</b>(name)
+					<b>updateRotation</b>(dt)
 					
 					</div>
 					<div class="description">
-						Set up a Uniform for the projection matrix.Creates the appropriate action for sending the matrixeach frame.
+						Update the rotation. Does nothing by default.
 						
 						
 					</div>
@@ -949,10 +715,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>dt</b>
 									
 								</dt>
-								<dd>Name of the uniform in the shader.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -965,15 +731,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setSource"> </a>
+					<a name="updateScale"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>setSource</b>(src)
+					<b>updateScale</b>(dt)
 					
 					</div>
 					<div class="description">
-						Change the source for this shader
+						Update the scale. Does nothing by default.
 						
 						
 					</div>
@@ -985,10 +751,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>src</b>
+									<b>dt</b>
 									
 								</dt>
-								<dd>The source code.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -1013,7 +779,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:38 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:36 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

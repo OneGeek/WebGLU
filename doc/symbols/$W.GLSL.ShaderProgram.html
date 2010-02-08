@@ -191,11 +191,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
+	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
+	
+	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
+	
+	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -207,7 +217,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLSL.Uniform.html">$W.GLSL.Uniform</a></li>
 	
+	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
+	
+	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
+	
+	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
@@ -262,6 +278,94 @@ ul.inheritsList
 			
 
 <!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.GLSL.ShaderProgram.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#attributes">attributes</a></b>
+								</div>
+								<div class="description">Attributes from all attached shaders.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#glProgram">glProgram</a></b>
+								</div>
+								<div class="description">WebGL shader program object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#isDirty">isDirty</a></b>
+								</div>
+								<div class="description">Tracks link state and compile state of all attached shaders.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#isLinked">isLinked</a></b>
+								</div>
+								<div class="description">Link state</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#name">name</a></b>
+								</div>
+								<div class="description">Global name of the shader program.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#shaders">shaders</a></b>
+								</div>
+								<div class="description">Attached shaders</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.GLSL.ShaderProgram.html#uniforms">uniforms</a></b>
+								</div>
+								<div class="description">Uniforms from all attached shaders.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 
 <!-- ============================== methods summary ======================== -->
@@ -320,6 +424,15 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.ShaderProgram.html#link">link</a></b>()
 								</div>
 								<div class="description">Link this shader program to make it useable.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.ShaderProgram.html#processUniforms">processUniforms</a></b>()
+								</div>
+								<div class="description">Called once per frame to calculate and set uniforms.</div>
 							</td>
 						</tr>
 					
@@ -401,6 +514,165 @@ ul.inheritsList
 			
 
 <!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="attributes"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>attributes</b>
+					
+					</div>
+					<div class="description">
+						Attributes from all attached shaders.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="glProgram"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>glProgram</b>
+					
+					</div>
+					<div class="description">
+						WebGL shader program object.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="isDirty"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>isDirty</b>
+					
+					</div>
+					<div class="description">
+						Tracks link state and compile state of all attached shaders.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="isLinked"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>isLinked</b>
+					
+					</div>
+					<div class="description">
+						Link state
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="name"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>name</b>
+					
+					</div>
+					<div class="description">
+						Global name of the shader program.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="shaders"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>shaders</b>
+					
+					</div>
+					<div class="description">
+						Attached shaders
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="uniforms"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>uniforms</b>
+					
+					</div>
+					<div class="description">
+						Uniforms from all attached shaders.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
 			
 
 <!-- ============================== method details ========================= -->		
@@ -590,6 +862,31 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="processUniforms"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>processUniforms</b>()
+					
+					</div>
+					<div class="description">
+						Called once per frame to calculate and set uniforms.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="setUniform"> </a>
 					<div class="fixedFont">
 					
@@ -729,7 +1026,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Jan 25 2010 20:28:17 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:38 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

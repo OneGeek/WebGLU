@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL</title>
+		<title>JsDoc Reference - $W.FPSTracker</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace $W.GLSL
+				Class $W.FPSTracker
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,7 +246,7 @@ ul.inheritsList
 				
 				
 			
-				Contains objects for working with GLSL shaders andshader programs
+				Provides an easy way to track FPS.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -255,8 +255,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.FPSTracker.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.html#constructor">$W.GLSL</a></b>
+								<b><a href="../symbols/%24W.FPSTracker.html#constructor">$W.FPSTracker</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -279,12 +279,60 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.FPSTracker.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.FPSTracker.html#fps">fps</a></b>
+								</div>
+								<div class="description">Frames per second.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.FPSTracker.html#frameAvgCount">frameAvgCount</a></b>
+								</div>
+								<div class="description">Number of frames to average over.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.FPSTracker.html#mspf">mspf</a></b>
+								</div>
+								<div class="description">Milliseconds per frame.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLSL.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.FPSTracker.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -295,11 +343,11 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.GLSL.<b><a href="../symbols/%24W.GLSL.html#.initialize">initialize</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.FPSTracker.html#update">update</a></b>(dt)
 								</div>
-								<div class="description">Must be called</div>
+								<div class="description">Update the FPS.</div>
 							</td>
 						</tr>
 					
@@ -316,11 +364,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL</b>
+						<b>$W.FPSTracker</b>()
 				</div>
 				
 				<div class="description">
@@ -344,6 +392,77 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="fps"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fps</b>
+					
+					</div>
+					<div class="description">
+						Frames per second.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="frameAvgCount"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>frameAvgCount</b>
+					
+					</div>
+					<div class="description">
+						Number of frames to average over.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="mspf"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>mspf</b>
+					
+					</div>
+					<div class="description">
+						Milliseconds per frame.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -351,21 +470,32 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".initialize"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="update"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">$W.GLSL.</span><b>initialize</b>()
+					<b>update</b>(dt)
 					
 					</div>
 					<div class="description">
-						Must be called
+						Update the FPS.
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>dt</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
 						
 						
 						
@@ -388,7 +518,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:38 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:37 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

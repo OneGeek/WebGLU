@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL</title>
+		<title>JsDoc Reference - $W.anim.KeyFrameAnimation</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace $W.GLSL
+				Class $W.anim.KeyFrameAnimation
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,7 +246,7 @@ ul.inheritsList
 				
 				
 			
-				Contains objects for working with GLSL shaders andshader programs
+				A keyframe based animation XXX Works, but doesn't use quaternions for rotation interpolation.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -255,8 +255,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.anim.KeyFrameAnimation.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.html#constructor">$W.GLSL</a></b>
+								<b><a href="../symbols/%24W.anim.KeyFrameAnimation.html#constructor">$W.anim.KeyFrameAnimation</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -279,12 +279,60 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.anim.KeyFrameAnimation.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.KeyFrameAnimation.html#A">A</a></b>
+								</div>
+								<div class="description">Frame index to interpolate from.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.KeyFrameAnimation.html#B">B</a></b>
+								</div>
+								<div class="description">Frame index to interpolate to.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.KeyFrameAnimation.html#timeScale">timeScale</a></b>
+								</div>
+								<div class="description">Time scale multiplier</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLSL.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.anim.KeyFrameAnimation.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -295,11 +343,20 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.GLSL.<b><a href="../symbols/%24W.GLSL.html#.initialize">initialize</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.KeyFrameAnimation.html#addKeyframe">addKeyframe</a></b>(keyframe)
 								</div>
-								<div class="description">Must be called</div>
+								<div class="description">Add a new keyframe.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.anim.KeyFrameAnimation.html#removeKeyframe">removeKeyframe</a></b>(index)
+								</div>
+								<div class="description">Remove the keyframe at index from the list of keyframes.</div>
 							</td>
 						</tr>
 					
@@ -316,11 +373,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL</b>
+						<b>$W.anim.KeyFrameAnimation</b>()
 				</div>
 				
 				<div class="description">
@@ -344,6 +401,77 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="A"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>A</b>
+					
+					</div>
+					<div class="description">
+						Frame index to interpolate from.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="B"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>B</b>
+					
+					</div>
+					<div class="description">
+						Frame index to interpolate to.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="timeScale"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>timeScale</b>
+					
+					</div>
+					<div class="description">
+						Time scale multiplier
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -351,21 +479,68 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".initialize"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="addKeyframe"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">$W.GLSL.</span><b>initialize</b>()
+					<b>addKeyframe</b>(keyframe)
 					
 					</div>
 					<div class="description">
-						Must be called
+						Add a new keyframe. For now it needs to be added in time order as itdoesn't sort on its own.
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Keyframe}</span> <b>keyframe</b>
+									
+								</dt>
+								<dd>The keyframe to add.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeKeyframe"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeKeyframe</b>(index)
+					
+					</div>
+					<div class="description">
+						Remove the keyframe at index from the list of keyframes.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Integer}</span> <b>index</b>
+									
+								</dt>
+								<dd>The index of the keyframe to remove.</dd>
+							
+							</dl>
 						
 						
 						
@@ -388,7 +563,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:38 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:36 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

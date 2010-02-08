@@ -191,11 +191,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
+	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
+	
+	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
+	
+	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -207,7 +217,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLSL.Uniform.html">$W.GLSL.Uniform</a></li>
 	
+	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
+	
+	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
+	
+	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
@@ -281,9 +297,81 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.ensureCrossBrowserCompat">ensureCrossBrowserCompat</a></b>()
+								</div>
+								<div class="description">A place to put any code to ensure cross-browser compatability</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.genSphere">genSphere</a></b>(rings, slices, r)
+								</div>
+								<div class="description">Generate vertices, normals, texture coordinates, and element indices for a sphere.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.getAxisAngle">getAxisAngle</a></b>(rotation)
+								</div>
+								<div class="description">Get axis/angle representation of the rotation.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.getGLContext">getGLContext</a></b>(canvas)
+								</div>
+								<div class="description">Create a WebGL context for the specified canvas.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.getNormalMatrixForUniform">getNormalMatrixForUniform</a></b>()
+								</div>
+								<div class="description">Calculates the 3x3 inverse transpose of the Model-View matrix.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.getPickRay">getPickRay</a></b>(x, y)
+								</div>
+								<div class="description">XXX Not yet implemented.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.lerp">lerp</a></b>(a, b, t)
 								</div>
-								<div class="description">Linear interpolation</div>
+								<div class="description">Linear interpolation between numbers</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.lerpTriple">lerpTriple</a></b>(a, b, t)
+								</div>
+								<div class="description">Linear interpolation between triples</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.loadFileAsText">loadFileAsText</a></b>(path)
+								</div>
+								<div class="description">Load the file at the given path as text.</div>
 							</td>
 						</tr>
 					
@@ -292,7 +380,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.parseOBJ">parseOBJ</a></b>(obj)
 								</div>
-								<div class="description">Parse a .obj model file</div>
+								<div class="description">Parse a .obj model fileXXX Should I build the vertex/normal/texture coordinate arraysexplicitly from the face data? Can it work otherwise?XXX Not quite working.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.slerp">slerp</a></b>(q1, q2, t)
+								</div>
+								<div class="description">XXX Not yet implemented.</div>
 							</td>
 						</tr>
 					
@@ -344,6 +441,247 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
+					<a name=".ensureCrossBrowserCompat"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>ensureCrossBrowserCompat</b>()
+					
+					</div>
+					<div class="description">
+						A place to put any code to ensure cross-browser compatability
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".genSphere"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{, Array, Array, Array, Array}</span>
+					<span class="light">$W.util.</span><b>genSphere</b>(rings, slices, r)
+					
+					</div>
+					<div class="description">
+						Generate vertices, normals, texture coordinates, and element indices for a sphere. Intended to be rendered with setElements.XXX Not a 'sliced' sphere, need to fix that.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>rings</b>
+									
+								</dt>
+								<dd>Number of horizontal rings that make up the sphere.</dd>
+							
+								<dt>
+									<b>slices</b>
+									
+								</dt>
+								<dd>Number of triangles per ring.</dd>
+							
+								<dt>
+									<b>r</b>
+									<i>Optional</i>
+								</dt>
+								<dd>The radius of the sphere, defaults to 1.0 if omitted.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>sphere Object containing sphere data.</dd>
+							
+								<dd><span class="light fixedFont">{Array}</span> sphere.vertices Vertices for sphere of radius r.</dd>
+							
+								<dd><span class="light fixedFont">{Array}</span> sphere.normals Normals for sphere with given numberof rings and slices.</dd>
+							
+								<dd><span class="light fixedFont">{Array}</span> sphere.texCoords Texture coordinates for sphere with given number of rings and slices.</dd>
+							
+								<dd><span class="light fixedFont">{Array}</span> sphere.indices Per element indices.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getAxisAngle"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>getAxisAngle</b>(rotation)
+					
+					</div>
+					<div class="description">
+						Get axis/angle representation of the rotation.Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htm
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>rotation</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getGLContext"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{WebGL Context}</span>
+					<span class="light">$W.util.</span><b>getGLContext</b>(canvas)
+					
+					</div>
+					<div class="description">
+						Create a WebGL context for the specified canvas.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Canvas}</span> <b>canvas</b>
+									
+								</dt>
+								<dd>A canvas element.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{WebGL Context}</span> A WebGL context for the passedcanvas.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getNormalMatrixForUniform"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{WebGLFloatArray}</span>
+					<span class="light">$W.util.</span><b>getNormalMatrixForUniform</b>()
+					
+					</div>
+					<div class="description">
+						Calculates the 3x3 inverse transpose of the Model-View matrix.Returns it in a format suitable to be passed directly as shaderuniform.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{WebGLFloatArray}</span> 3x3 inverse transpose, ready to be sent asa uniform.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getPickRay"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>getPickRay</b>(x, y)
+					
+					</div>
+					<div class="description">
+						XXX Not yet implemented.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".lerp"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -352,7 +690,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Linear interpolation
+						Linear interpolation between numbers
 						
 						
 					</div>
@@ -379,7 +717,7 @@ ul.inheritsList
 									<span class="light fixedFont">{Number}</span> <b>t</b>
 									
 								</dt>
-								<dd>Value from 0 to 1 representing the percentagebetween the two values to interpolate to.</dd>
+								<dd>Value from 0 to 1 representing the fractionbetween the two values to interpolate by.</dd>
 							
 							</dl>
 						
@@ -392,15 +730,106 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".lerpTriple"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>lerpTriple</b>(a, b, t)
+					
+					</div>
+					<div class="description">
+						Linear interpolation between triples
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array of 3 elements}</span> <b>a</b>
+									
+								</dt>
+								<dd>Array of values to interpolate from.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array of 3 elements}</span> <b>b</b>
+									
+								</dt>
+								<dd>Array of values to interpolate to.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>t</b>
+									
+								</dt>
+								<dd>Value from 0 to 1 representing the fractionbetween the two sets of values to interpolate by.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".loadFileAsText"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{String}</span>
+					<span class="light">$W.util.</span><b>loadFileAsText</b>(path)
+					
+					</div>
+					<div class="description">
+						Load the file at the given path as text.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>path</b>
+									
+								</dt>
+								<dd>The path to the file.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> Data in the file as text.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name=".parseOBJ"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{, }</span>
+					<span class="light">{, , , , }</span>
 					<span class="light">$W.util.</span><b>parseOBJ</b>(obj)
 					
 					</div>
 					<div class="description">
-						Parse a .obj model file
+						Parse a .obj model fileXXX Should I build the vertex/normal/texture coordinate arraysexplicitly from the face data? Can it work otherwise?XXX Not quite working.
 						
 						
 					</div>
@@ -426,11 +855,65 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd>model An object containing model data.</dd>
+								<dd>model An object containing model data as flatarrays.</dd>
 							
-								<dd>model.vertices The vertices of the object.</dd>
+								<dd>model.vertices Vertices of the object.</dd>
+							
+								<dd>model.normals Normals of the object.</dd>
+							
+								<dd>model.texCoords Texture coordinates of the object.</dd>
+							
+								<dd>model.faces Element indices of the object.</dd>
 							
 							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".slerp"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>slerp</b>(q1, q2, t)
+					
+					</div>
+					<div class="description">
+						XXX Not yet implemented.Spherical linear interpolation. For interpolating quaternions.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Quaternion}</span> <b>q1</b>
+									
+								</dt>
+								<dd>Quaternion to interpolate from.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Quaternion}</span> <b>q2</b>
+									
+								</dt>
+								<dd>Quaternion to interpolate to.</dd>
+							
+								<dt>
+									<b>t</b>
+									
+								</dt>
+								<dd>How far along to interpolate.</dd>
+							
+							</dl>
+						
+						
+						
+						
 						
 						
 						
@@ -449,7 +932,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Jan 25 2010 20:28:17 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:38 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

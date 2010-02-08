@@ -191,11 +191,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
+	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
+	
+	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
+	
+	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
+	
+	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -207,7 +217,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLSL.Uniform.html">$W.GLSL.Uniform</a></li>
 	
+	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
+	
+	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
+	
+	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
@@ -289,6 +305,16 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								$W.<b><a href="../symbols/%24W.html#.canvas">canvas</a></b>
+								</div>
+								<div class="description">Canvas object being rendered to</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								$W.<b><a href="../symbols/%24W.html#.FPS">FPS</a></b>
 								</div>
 								<div class="description">Quick access to FPS</div>
@@ -339,6 +365,16 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								$W.<b><a href="../symbols/%24W.html#.paths">paths</a></b>
+								</div>
+								<div class="description">Various paths used by WebGLU.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								$W.<b><a href="../symbols/%24W.html#.programs">programs</a></b>
 								</div>
 								<div class="description">GLSL shader programs</div>
@@ -352,16 +388,6 @@ ul.inheritsList
 								$W.<b><a href="../symbols/%24W.html#.projection">projection</a></b>
 								</div>
 								<div class="description">Projection transform matrix</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								$W.<b><a href="../symbols/%24W.html#.ShaderDir">ShaderDir</a></b>
-								</div>
-								<div class="description">Directory containing default shaders ".</div>
 							</td>
 						</tr>
 					
@@ -419,9 +445,90 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.addObject">addObject</a></b>(obj)
+								</div>
+								<div class="description">Add the given object to the object list.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.clear">clear</a></b>()
+								</div>
+								<div class="description">Clear the canvas</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.draw">draw</a></b>()
+								</div>
+								<div class="description">Draw all objects from the camera's perspective.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initialize">initialize</a></b>(canvasNode)
 								</div>
 								<div class="description">Initialize the WebGLU system, optionally initizlizing the WebGLsubsystem.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initLogging">initLogging</a></b>()
+								</div>
+								<div class="description">Ensure that we can log, or at least not error if we try to</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initWebGL">initWebGL</a></b>(canvas)
+								</div>
+								<div class="description">Setup the WebGL subsytem.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.loadSylvester">loadSylvester</a></b>()
+								</div>
+								<div class="description">We'll always need some sort of math lib, so I don'tfeel bad semi-hardcoding it.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.newProgram">newProgram</a></b>(name)
+								</div>
+								<div class="description">Create a new ShaderProgram and add it to the program list.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.ObjectState">ObjectState</a></b>(pos, rot, scl)
+								</div>
+								<div class="description">Common state representation (position, rotation, scale).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.Quaternion">Quaternion</a></b>(m)
+								</div>
+								<div class="description">Quaternion implementation XXX broken</div>
 							</td>
 						</tr>
 					
@@ -437,9 +544,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b>update</b>(dt)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.setPosition">setPosition</a></b>(x, y, z)
 								</div>
-								<div class="description"></div>
+								<div class="description">Set a new position.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.setRotation">setRotation</a></b>(x, y, z)
+								</div>
+								<div class="description">Set a new rotation.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.setScale">setScale</a></b>(x, y, z)
+								</div>
+								<div class="description">Set a new scale.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.update">update</a></b>()
+								</div>
+								<div class="description">Update all objects.</div>
 							</td>
 						</tr>
 					
@@ -497,6 +631,28 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Viewport camera
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".canvas"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>canvas</b>
+					
+					</div>
+					<div class="description">
+						Canvas object being rendered to
 						
 						
 					</div>
@@ -620,6 +776,28 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".paths"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>paths</b>
+					
+					</div>
+					<div class="description">
+						Various paths used by WebGLU. Call $W.initPaths before using.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".programs"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -651,28 +829,6 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Projection transform matrix
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".ShaderDir"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>ShaderDir</b>
-					
-					</div>
-					<div class="description">
-						Directory containing default shaders "../../shaders" by default.
 						
 						
 					</div>
@@ -760,6 +916,92 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
+					<a name=".addObject"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>addObject</b>(obj)
+					
+					</div>
+					<div class="description">
+						Add the given object to the object list.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>obj</b>
+									
+								</dt>
+								<dd>The object to add.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".clear"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>clear</b>()
+					
+					</div>
+					<div class="description">
+						Clear the canvas
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".draw"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>draw</b>()
+					
+					</div>
+					<div class="description">
+						Draw all objects from the camera's perspective.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".initialize"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -781,6 +1023,212 @@ ul.inheritsList
 							
 								<dt>
 									<b>canvasNode</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".initLogging"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>initLogging</b>()
+					
+					</div>
+					<div class="description">
+						Ensure that we can log, or at least not error if we try to
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".initWebGL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>initWebGL</b>(canvas)
+					
+					</div>
+					<div class="description">
+						Setup the WebGL subsytem.Create a WebGL context on the given canvas.XXX Can't yet handle multiple canvii
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>canvas</b>
+									
+								</dt>
+								<dd>DOM node or element id of a canvas.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".loadSylvester"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>loadSylvester</b>()
+					
+					</div>
+					<div class="description">
+						We'll always need some sort of math lib, so I don'tfeel bad semi-hardcoding it.XXX Not working
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".newProgram"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>newProgram</b>(name)
+					
+					</div>
+					<div class="description">
+						Create a new ShaderProgram and add it to the program list.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>The global name for this program.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".ObjectState"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>ObjectState</b>(pos, rot, scl)
+					
+					</div>
+					<div class="description">
+						Common state representation (position, rotation, scale).A position, rotation, and scale.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{3 Array}</span> <b>pos</b>
+									
+								</dt>
+								<dd>Position.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{3 Array}</span> <b>rot</b>
+									
+								</dt>
+								<dd>Rotation.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{3 Array}</span> <b>scl</b>
+									
+								</dt>
+								<dd>Scale.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".Quaternion"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>Quaternion</b>(m)
+					
+					</div>
+					<div class="description">
+						Quaternion implementation XXX broken
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>m</b>
 									
 								</dt>
 								<dd></dd>
@@ -821,15 +1269,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".update"> </a>
+					<a name=".setPosition"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>update</b>(dt)
+					<span class="light">$W.</span><b>setPosition</b>(x, y, z)
 					
 					</div>
 					<div class="description">
-						
+						Set a new position.
 						
 						
 					</div>
@@ -841,12 +1289,145 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>dt</b>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>z</b>
 									
 								</dt>
 								<dd></dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setRotation"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>setRotation</b>(x, y, z)
+					
+					</div>
+					<div class="description">
+						Set a new rotation.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>z</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setScale"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>setScale</b>(x, y, z)
+					
+					</div>
+					<div class="description">
+						Set a new scale.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>z</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".update"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>update</b>()
+					
+					</div>
+					<div class="description">
+						Update all objects.
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -869,7 +1450,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Jan 25 2010 20:28:16 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:36 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

@@ -79,6 +79,7 @@ $W = {
     /** Provides frame timing */
     timer:null,
 
+    /** Canvas object being rendered to */
     canvas:null,
 
     /** Clears the entire WebGLU system to pre-init state */
@@ -129,7 +130,6 @@ $W = {
             }
         },
 
-
         /** @class Holds data for shader uniform variables
          * @param {String} name Uniforms have the name they are given in
          * the shader code.
@@ -156,20 +156,31 @@ $W = {
          * $W.GL.FRAGMENT_SHADER<br>
          */
         Shader: function(name, source, type) {
-            console.group("creating shader '" + name + "'");
+            //console.groupCollapsed("creating shader '" + name + "'");
+            console.log("creating shader '" + name + "'");
             $W.shaders[name] = this;
 
+            /** Name of the shader. */
             this.name 	  = name;
+
+            /** Source code of the shader. */
             this.source   = "";
+
+            /** Shader type $W.GL.VERTEX_SHADER or $W.GL.FRAGMENT_SHADER. */
             this.type 	  = -1;
+
+            /** The WebGL shader object. */
             this.glShader = null;
 
+            /** Attributes for this shader. */
             this.attributes = [];
+            /** Uniforms for this shader. */
             this.uniforms   = [];
 
-            // names of programs which use this shader
+            /** Names of programs which use this shader. */
             this.programs 	= [];
 
+            /** Tracks if this shader need to be (re)compiled. */
             this.isDirty = true;
 
             // TODO Have _dirty and _clean update the dirty status of all
@@ -189,18 +200,26 @@ $W = {
                 this.programs = this.programs.remove(name);
             }
             
-            /** Change the source for this shader */
+            /** Change the source for this shader 
+             * @param {String} src The source code.
+             */
             this.setSource = function(src) {
                 this._dirty();
                 this.source = src;
             }
 
+            /** Set up a Uniform for the modelview matrix.
+             * Creates the appropriate action for sending the matrix
+             * each frame.
+             * @param {String} name Name of the uniform in the shader.
+             */
             this.setModelViewUniform = function(name) {
                 console.log("using '" + name + "' as ModelView uniform");
 
+                var uniform;
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
-                        var uniform = this.uniforms[i];
+                        uniform = this.uniforms[i];
                     }
                 }
 
@@ -211,12 +230,18 @@ $W = {
                 }
             }
 
+            /** Set up a Uniform for the projection matrix.
+             * Creates the appropriate action for sending the matrix
+             * each frame.
+             * @param {String} name Name of the uniform in the shader.
+             */
             this.setProjectionUniform = function(name) {
                 console.log("using '" + name + "' as Projection uniform");
 
+                var uniform;
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
-                        var uniform = this.uniforms[i];
+                        uniform = this.uniforms[i];
                     }
                 }
 
@@ -227,12 +252,18 @@ $W = {
                 }
             }
 
+            /** Set up a Uniform for the normal matrix.
+             * Creates the appropriate action for sending the matrix
+             * each frame.
+             * @param {String} name Name of the uniform in the shader.
+             */
             this.setNormalMatrixUniform = function(name) {
                 console.log("using '" + name + "' as normal transformation matrix");
 
+                var uniform;
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
-                        var uniform = this.uniforms[i];
+                        uniform = this.uniforms[i];
                     }
                 }
 
@@ -242,7 +273,7 @@ $W = {
                 }
             }
 
-            /** @return The raw WebGL shader object */
+            /** @returns The raw WebGL shader object */
             this.getGLShader = function() {
                 // Ensure the shader is valid before we return it
                 if (this.isDirty) {
@@ -258,7 +289,12 @@ $W = {
                 return this.glShader;
             }
 
-            /** Store the information about this named uniform. */
+            /** Store the information about this named uniform. 
+             * @param {String} name The uniform variable name as defined in
+             * the shader source.
+             * @param {Function} [action=function(){}] The function to call 
+             * each frame to prep/send this uniform to the shader.
+             */
             this.addUniform = function(name, action) {
                 console.log("adding uniform '" + name + "'");
                 if (!action) {
@@ -267,7 +303,11 @@ $W = {
                 this.uniforms.push(new $W.GLSL.Uniform(name, action));
             }
 
-            /** Store the information about this named attribute. */
+            /** Store the information about this named attribute. 
+             * @param {String} name The attribute variable name as defined in
+             * the shader source.
+             * @param {Integer} [length=3] The length of the attribute.
+             */
             this.addAttribute = function(name, length) {
                 console.log("adding attribute '" + name + "'");
                 if (!length) { length = 3; }
@@ -340,7 +380,6 @@ $W = {
                 return (this.glShader !== null);
             }
 
-
             // If the source wasn't passed in we assume name is an element
             // ID in the page
             if (!source) {
@@ -398,7 +437,6 @@ $W = {
             console.groupEnd();
         },
 
-
         /** @class Handles data and linking for a shader program.
          * Also ensures all shaders which it uses are compiled and up
          * to date.
@@ -407,13 +445,25 @@ $W = {
         ShaderProgram: function(name) {
             console.log("creating shader program '" + name + "'");
 
+            /** Global name of the shader program. */
             this.name = name;
+
+            /** WebGL shader program object. */
             this.glProgram 	= null;
+
+            /** Link state */
             this.isLinked 	= false;
+            
+            /** Tracks link state and compile state of all attached shaders. */
             this.isDirty 	= true; // So we know when to relink
             
+            /** Attached shaders */
             this.shaders 	= [];
+
+            /** Attributes from all attached shaders. */
             this.attributes = [];
+
+            /** Uniforms from all attached shaders. */
             this.uniforms 	= [];
 
             this._setupAttributes = function() {
@@ -463,9 +513,10 @@ $W = {
             this.setUniformAction = function(name, action) {
                 this.use();
 
+                var uniform;
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
-                        var uniform = this.uniforms[i];
+                        uniform = this.uniforms[i];
                     }
                 }
 
@@ -478,7 +529,6 @@ $W = {
 
                 uniform.action = action;
             }
-
 
             /** Set the named uniform variable to a single value.
              * Overloaded to allow 1-4 values to be passed. This allows 
@@ -494,9 +544,10 @@ $W = {
                 // Program must be active before we can do anything with it
                 this.use();
 
+                var uniform;
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
-                        var uniform = this.uniforms[i];
+                        uniform = this.uniforms[i];
                     }
                 }
 
@@ -547,7 +598,7 @@ $W = {
              * Will [re]compile all attached shaders if necessary.
              */
             this.link = function() {
-                console.group("linking '" + this.name + "'");
+                console.groupCollapsed("linking '" + this.name + "'");
 
                 if (this.isLinked) {
                     console.log("already exists, deleting and relinking");
@@ -689,6 +740,7 @@ $W = {
 
             console.groupEnd();
         }
+
     },
 
     /** @namespace Contains (semi)constant values that generally shouldn't be 
@@ -705,7 +757,11 @@ $W = {
           BLACK:[0.0, 0.0, 0.0]
         },
 
+        /** Data for a unit cube.
+         * Intended to be used with setElements.
+         */
         unitCube:{
+            /** Vertices on the unit cube. */
             vertices : [
                 // Front face
                 -1.0, -1.0,  1.0,
@@ -742,8 +798,10 @@ $W = {
                 -1.0, -1.0,  1.0,
                 -1.0,  1.0,  1.0,
                 -1.0,  1.0, -1.0
+
             ],
               
+            /** Normals on the unit cube. */
             normals : [
                 // Front
                  0.0,  0.0,  1.0,
@@ -780,8 +838,10 @@ $W = {
                 -1.0,  0.0,  0.0,
                 -1.0,  0.0,  0.0,
                 -1.0,  0.0,  0.0
+
             ],
               
+            /** Texture coordinates on the unit cube. */
             textureCoordinates : [
                 // Front
                 0.0,  0.0,
@@ -815,6 +875,7 @@ $W = {
                 0.0,  1.0
             ],
 
+            /** Per element indices for unit cube */
             indices : [
                 0,  1,  2,      0,  2,  3,    // front
                 4,  5,  6,      4,  6,  7,    // back
@@ -823,6 +884,7 @@ $W = {
                 16, 17, 18,     16, 18, 19,   // right
                 20, 21, 22,     20, 22, 23    // left
             ]
+
         },
 
         /** The name that a uniform variable needs to have to be automatically
@@ -844,6 +906,7 @@ $W = {
     /** @namespace Utility functions. */
     util:{
 
+        /** XXX Not yet implemented. */
         getPickRay : function(x, y) {
 
         },
@@ -878,11 +941,20 @@ $W = {
             return result;
         },
 
-        /** Generate vertices, normals, texture coordinates, and element indices
-         * for a sphere.
+        /** Generate vertices, normals, texture coordinates, and element 
+         * indices for a sphere. Intended to be rendered with setElements.
+         * XXX Not a 'sliced' sphere, need to fix that.
          * @param rings Number of horizontal rings that make up the sphere.
          * @param slices Number of triangles per ring.
          * @param [r] The radius of the sphere, defaults to 1.0 if omitted.
+         *
+         * @returns sphere Object containing sphere data.
+         * @returns {Array} sphere.vertices Vertices for sphere of radius r.
+         * @returns {Array} sphere.normals Normals for sphere with given number
+         * of rings and slices.
+         * @returns {Array} sphere.texCoords Texture coordinates for sphere 
+         * with given number of rings and slices.
+         * @returns {Array} sphere.indices Per element indices.
          */
         genSphere: function(rings, slices, r) {
             // Default to unit sphere
@@ -929,7 +1001,6 @@ $W = {
             return sphere;
         }, 
 
-
         /** XXX Not yet implemented.
          * Spherical linear interpolation. For interpolating quaternions.
          * @param {Quaternion} q1 Quaternion to interpolate from.
@@ -939,7 +1010,6 @@ $W = {
         slerp:function(t, q1, q2) {
 
         },
-
 
         /** Linear interpolation between numbers
          * @param {Number} a Value to interpolate from.
@@ -967,6 +1037,7 @@ $W = {
         /** Parse a .obj model file
          * XXX Should I build the vertex/normal/texture coordinate arrays
          * explicitly from the face data? Can it work otherwise?
+         * XXX Not quite working.
          * @return model An object containing model data as flat
          * arrays.
          * @return model.vertices Vertices of the object.
@@ -1025,7 +1096,7 @@ $W = {
             // faces start with `f `
             // `f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 [v4/vt4/vn4]
             model.faces = obj.match(/^f[\s.]+/gm); 
-            if (model.faces != null) {
+            if (model.faces != null) {}
                 model.indices = {};
                 console.log("parsing faces");
                 // face format : v/vt/vn
@@ -1095,7 +1166,7 @@ $W = {
          * @return {String} Data in the file as text.
          */
         loadFileAsText:function(path) {
-            console.groupCollapsed("Loading file `" + path + "`");
+            console.log("Loading file `" + path + "`");
             var xhr = null;
             xhr = new XMLHttpRequest();
             xhr.overrideMimeType("text/xml");
@@ -1119,12 +1190,10 @@ $W = {
                 xhr.send(null);
 
             }catch (e) { 
-                console.groupEnd();
                 throw e; 
             }
 
-            console.log("Completed with status: " + xhr.status);
-            console.groupEnd();
+            console.log("\tCompleted with status: " + xhr.status);
 
             return xhr.responseText;
         },
@@ -1185,20 +1254,31 @@ $W = {
             }
             // End of Chrome compatibility code
         }
+
     },
 
-    /** @namespace Contains animation objects */
+    /** @namespace Contains animation objects 
+     * XXX unnecessary, flatten
+     */
     anim:{
-        /** A procedurally generated animation. */
+        /** @class A procedurally generated animation. 
+         * Starts updating immediately.
+         */
         ProceduralAnimation:function() {
             $W.ObjectState.call(this); // subclass of ObjectState
+
+            /** XXX The right way to do this? */
             var ptyp = $W.anim.ProceduralAnimation.prototype;
 
             /** The time in milliseconds since this animation began */
             this.age = 0;
 
+            /** Call to advance the animation by `dt` milliseconds */
             this.update = function(dt){};
 
+            /** Internal.
+             * @return {Function} Update this animation.
+             */
             ptyp._play = function() {
                 return (function(dt) {
                         this.preUpdate(dt);
@@ -1213,41 +1293,79 @@ $W = {
                 });
             }
 
+            /** Internal.
+             * @return {Function} Do nothing.
+             */
             ptyp._pause = function() {
                 return (function() {});
             }
 
+            /** This animation will advance on subsequent update() 
+             * calls.
+             */
             this.play = function() {
                 this.update = ptyp._play();
             }
 
+            /** This animation will not change on subsequent update() 
+             * calls.
+             */
             this.pause = function() {
                 this.update = ptyp._pause();
             }
 
+            /** Called before `dt` is added to this.age 
+             * Does nothing by default.
+             */
             this.preUpdate      = function(dt){}
 
+            /** Update the position. Does nothing by default. */
             this.updatePosition = function(dt){}
+            /** Update the rotation. Does nothing by default. */
             this.updateRotation = function(dt){}
+            /** Update the scale. Does nothing by default. */
             this.updateScale 	= function(dt){}
 
+            /** Called after all other update calls.
+             * Does nothing by default.
+             */
             this.postUpdate     = function(dt){}
 
             this.play();
         },
 
+
+        /** @class A single frame of animation.
+         * A position, rotation, and scale at a particular point in time.
+         *
+         * @param {3 Array} pos Position.
+         * @param {3 Array} rot Rotation.
+         * @param {3 Array} scl Scale.
+         * @param {Number} atTime Time, in seconds, this keyframe occurs at.
+         */
         KeyFrame:function (pos, rot, scl, atTime) {
-            $W.ObjectState.call(this, pos, rot, scl); // Subclass ObjectState
-            this.atTime = atTime * 1000; // time, in seconds, this keyframe occurs at
+            if (arguments.length == 4) {
+                $W.ObjectState.call(this, pos, rot, scl); // Subclass ObjectState
+                this.atTime = atTime * 1000; // time, in seconds, this keyframe occurs at
+            }else {
+                $W.ObjectState.call(this); 
+                this.atTime = 0;
+            }
         },
 
+        /** @class A keyframe based animation 
+         * XXX Works, but doesn't use quaternions for rotation interpolation.
+         */
         KeyFrameAnimation:function() {
             $W.anim.ProceduralAnimation.call(this); // Subclass ProceduralAnimation
 
             this.keyframes = [];
-            this.A = 0; // Frame index to interpolate from
-            this.B = 1; // Frame index to interpolate to
+            /** Frame index to interpolate from. */
+            this.A = 0; 
+            /** Frame index to interpolate to. */
+            this.B = 1; 
 
+            /** Time scale multiplier */
             this.timeScale = 1;
 
 
@@ -1291,10 +1409,18 @@ $W = {
                         this.keyframes[B].scale.elements);
             }
 
+            /** Add a new keyframe. 
+             * For now it needs to be added in time order as it
+             * doesn't sort on its own.
+             * @param {Keyframe} keyframe The keyframe to add.
+             */
             this.addKeyframe = function(keyframe) {
                 this.keyframes.push(keyframe);
             }
 
+            /** Remove the keyframe at index from the list of keyframes.
+             * @param {Integer} index The index of the keyframe to remove.
+             */
             this.removeKeyframe = function(index) {
                 var result = [];
 
@@ -1308,7 +1434,15 @@ $W = {
         }
     },
 
+
+    /** @namespace Texture classes */
     texture:{
+        /** A dynamic texture from a `video` element.    
+         * XXX Can I use createElement('video') and eliminate need for id?
+         * @param {String} name The global name this texture will be referenced
+         * by elsewhere.
+         * @param {String} id Video element id. 
+         */
         Video: function(name, id) {
             this.texture = $W.GL.createTexture();
             this.video = document.getElementById(id);
@@ -1332,6 +1466,11 @@ $W = {
 
         },
 
+        /** A static texture from an image file.
+         * @param {String} name The global name this texture will be referenced
+         * by elsewhere.
+         * @param {String} src Path to image file.
+         */
         Image: function(name, src) {
             this.texture = $W.GL.createTexture();
             this.image = new Image();
@@ -1365,6 +1504,8 @@ $W = {
     },
 
     // Classes
+
+    /** Quaternion implementation XXX broken */
     Quaternion:function(m) {
         this.vec = Vector.Zero(4);
 
@@ -1395,6 +1536,12 @@ $W = {
         }
     },
 
+    /** Common state representation (position, rotation, scale).
+     * A position, rotation, and scale.
+     * @param {3 Array} pos Position.
+     * @param {3 Array} rot Rotation.
+     * @param {3 Array} scl Scale.
+     */
     ObjectState:function(position, rotation, scale) {
         if (arguments.length == 3) {
             this.position	= $V(position);
@@ -1407,22 +1554,27 @@ $W = {
         }
 
 
+        /*
         var mx = Matrix.RotationX(this.rotation.e(1) * Math.PI / 180.0);
         var my = Matrix.RotationY(this.rotation.e(2) * Math.PI / 180.0);
         var mz = Matrix.RotationZ(this.rotation.e(3) * Math.PI / 180.0);
 
         this.m = (mx.multiply(my)).multiply(mz); // Get complete rotation matrix
+        */
 
         //this.q = new $W.Quaternion(this.m);
 
+        /** Set a new position. */
         this.setPosition = function(x, y, z) { 
             this.position.elements = [x, y, z]; 
         }
 
+        /** Set a new rotation. */
         this.setRotation = function(x, y, z) { 
             this.rotation.elements = [x, y, z]; 
         }
 
+        /** Set a new scale. */
         this.setScale = function(x, y, z){ 
             this.scale.elements    = [x, y, z]; 
         }
@@ -1458,34 +1610,80 @@ $W = {
      * $W.GL.TRIANGLES      <br>
      * $W.GL.TRIANGLE_STRIP <br>
      * $W.GL.TRIANGLE_FAN   <br>
-     *
+     * @param {Boolean} shouldAdd Set to false to not add this the the object
+     * list in case you want to handle rendering in a specific manner, e.g. as
+     * the child of another object.
      */
-    Object:function (type) {
+    Object:function (type, shouldAdd) {
         console.group("Creating object");
-        $W.addObject(this);
 
+        if (!(shouldAdd === false)) {
+            $W.addObject(this);
+        }
+
+        /** Name of shader program used to render this object */
         this.shaderProgram = 'default';
+
+        /** Number of vertices in this object.
+         * Used when rendering with drawArrays.
+         */
         this.vertexCount = 0;
+
+        /* The type of rendering to use for this object, possible values are:<br>
+         * $W.GL.POINTS         <br>
+         * $W.GL.LINES          <br>
+         * $W.GL.LINE_LOOP      <br>
+         * $W.GL.LINE_STRIP     <br>
+         * $W.GL.TRIANGLES      <br>
+         * $W.GL.TRIANGLE_STRIP <br>
+         * $W.GL.TRIANGLE_FAN   <br>
+         */
         this.type = type; // render type (wglu.GL.LINES, wglu.GL.POINTS, wglu.GL.TRIANGLES, etc.)
 
         this._elements = false;
         this._elementBuffer = null;;
         this._elementCount = 0;
 
+        /** WebGL array buffers for attribute data. */
         this.buffers    = [];
+
+        /** WebGL*array's of attribute data. */
         this.arrays 	= [];
         this._debugArrays = [];
+
+        /** Names of textures this object uses. */
         this.textures 	= [];
 
+        this._children = [];
+
         $W.ObjectState.call(this);
+
+        /** The animation for this object. */
         this.animation = new $W.anim.ProceduralAnimation();
 
         this._drawFunction = null;
 
+        /** Set the shader program to the named program 
+         * @param {String} program Program name.
+         */
         this.setShaderProgram = function (program) {
             this.shaderProgram = program
         }
 
+        /** Add an object as a child to this object.
+         * @param {Object} obj The object to add as a child.
+         */
+        this.addChild = function(obj) {
+            this._children.push(obj);
+        }
+
+        /** Set the indices for the elements of this object.
+         * Draws this object with drawElements unless set with
+         * false.
+         * @param {Array|Boolean} elements The array of indices of the
+         * elements or false, which disabled drawElements rendering
+         * for this object.
+         */
         this.setElements = function(elements) {
             // don't use drawElements
             if (elements === false) {
@@ -1501,12 +1699,14 @@ $W = {
             }
         }
 
-                                                    
-        //----------------------------
-        // Fills the array of the given name, where name is a 
-        // vertex attribute in the shader. Be sure to add all your
-        // attributes with the gl.addAttribute call
-        // Also creates a buffer to hold the data in WebGL.
+        /** Fills the array of the given name, where name is a 
+         * vertex attribute in the shader. 
+         * Also creates a buffer to hold the data in WebGL.
+         * @param {String} name The attribute variable name in a shader
+         * attached to the shader program used by this object. (this is
+         * not verified for you)
+         * @param {Array} contents The data to pass to the attribute.
+         */
         this.fillArray = function(name, contents) {
             console.log("Filling `" + name + "` array");
             this._debugArrays = contents;
@@ -1517,8 +1717,7 @@ $W = {
             }
         }
 
-
-
+        /** XXX Not working Buffers the data for this object once. */
         this.bufferArrays = function() {
             var gl = $W.GL;
             var prg= $W.programs[this.shaderProgram];
@@ -1550,6 +1749,7 @@ $W = {
             //}}
         }
 
+        /** XXX Not working Binds the data buffers for rendering. */
         this.bindBuffers = function() {
             var gl = $W.GL;
             var prg= $W.programs[this.shaderProgram];
@@ -1576,11 +1776,11 @@ $W = {
             //}}
         }
 
-        //----------------------------
-        // buffer all the data stored in this object's attribute
-        // arrays and set vertexAttribPointers for them.
-        // XXX I'm pretty sure this is naive. I think I can buffer once,
-        // then just rebind when I draw
+        /** Buffer all the data stored in this object's attribute
+         * arrays and set vertexAttribPointers for them.
+         * XXX I'm pretty sure this is naive. I think I can buffer once,
+         * then just rebind when I draw
+         */
         this._bufferArrays = function() {
             var program = $W.programs[this.shaderProgram];
 
@@ -1616,7 +1816,10 @@ $W = {
             }
         }
 
-        // XXX Will only work with single texturing
+
+        /** Bind the textures for this object.
+         * XXX Will only work with single texturing
+         */
         this.bindTextures = function() {
             var gl = $W.GL;
             for (var i = 0; i < this.textures.length; i++) {
@@ -1627,24 +1830,35 @@ $W = {
         }
 
         // XXX these are also clunky
+        /** @returns {Vector} The sum of the object's base position and its 
+         * animation.
+         */
         this.animatedPosition = function() { 
             return this.position.add(this.animation.position); 
         }
 
+        /** @returns {Vector} The sum of the object's base rotation and its 
+         * animation. 
+         */
         this.animatedRotation = function() { 
             return this.rotation.add(this.animation.rotation); 
         }
 
-        // XXX broken
+        /** @returns {Vector} The product of the object's base scale and its 
+         * animation. 
+         */
         this.animatedScale    = function() { 
             return $V([
                 this.scale.e(1) * this.animation.scale.e(1),
                 this.scale.e(3) * this.animation.scale.e(2),
                 this.scale.e(3) * this.animation.scale.e(3)
             ]);
-            //return this.scale.multiply(this.animation.scale);
         }
 
+        /** Set the x y and z components of the object's scale to the given
+         * value.
+         * @param {Number} s New scale of the object.
+         */
         this.setScaleUniformly = function(s) { 
             this.scale = $V([s,s,s]); 
         }
@@ -1675,37 +1889,44 @@ $W = {
         // drawArrays by default
         this._drawFunction = this._drawArrays();
         
-        //----------------------------
-        // draw this object at the given postion, rotation, and scale
-        // XXX Perhaps I can move the construction of the transformation
-        // matrix into a shader?
+        /** draw this object at the given postion, rotation, and scale
+         * @param {Vector} pos The position to draw at.
+         * @param {Vector} rot The rotation to rotate by.
+         * @param {Vector} scale The scale to scale by.
+         */
         this.drawAt = function(pos, rot, scale) {
-                $W.programs[this.shaderProgram].use();
-                //this.bindBuffers();
-                this._bufferArrays();
-
                 $W.modelview.pushMatrix();
                 $W.modelview.translate(pos.elements);
 
+                /*
                 var rotation = $W.util.getAxisAngle(rot);
-                //$W.modelview.rotate(rotation.angle, rotation.axis);
+                $W.modelview.rotate(rotation.angle, rotation.axis);
+                */
 
                 $W.modelview.rotate(rot.e(1), [0, 1, 0]);
                 $W.modelview.rotate(rot.e(2), [1, 0, 0]);
                 $W.modelview.rotate(rot.e(3), [0, 0, 1]);
                 $W.modelview.scale(scale.elements);
+
+                for (var i = 0; i < this._children.length; i++) {
+                    this._children[i].draw();
+                }
+
+                $W.programs[this.shaderProgram].use();
                 
                 $W.programs[this.shaderProgram].processUniforms();
+                $W.modelview.popMatrix();
+
+                //this.bindBuffers();
+                this._bufferArrays();
                 this.bindTextures();
                 this._drawFunction();
 
-                $W.modelview.popMatrix();
         }
 
-        
-        //----------------------------
-        // draw this object at its internally stored position, rotation, and
-        // scale, INCLUDING its current animation state
+        /** draw this object at its internally stored position, rotation, and
+         * scale, INCLUDING its current animation state.
+         */
         this.draw = function() {
             this.drawAt(
                 this.animatedPosition(), 
@@ -1714,11 +1935,16 @@ $W = {
             );
         }
 
-
-        //----------------------------
-        // update the animation
+        /** Update this object's animation state. 
+         * @param {Number} dt The delta time since the previous call to
+         * update.
+         */
         this.update = function(dt) {
             this.animation.update(dt);
+
+            for (var i = 0; i < this._children.length; i++) {
+                this._children[i].update(dt);
+            }
         }
 
         console.groupEnd();
@@ -1756,12 +1982,26 @@ $W = {
         this.update = function() {}
     },
 
+
+    /** @class Keeps track of time since application start.
+     * Provides delta time between ticks.
+     */
     Timer:function () {
+        /** The time passed since this timer was started to the time of
+         * the most recent tick in milliseconds.
+         */
         this.age = 0;
+
+        /** The current application time in milliseconds. */
         this.t  = (new Date()).getTime();
+
+        /** The delta time between the previous two ticks. */
         this.dt = 0;
+
+        /** The time of the previous tick */
         this.pt = this.t;
 
+        /** Update the timer */
         this.tick = function() {
             this.t = (new Date()).getTime();
             this.dt = this.t - this.pt;
@@ -1769,19 +2009,30 @@ $W = {
             this.age += this.dt;
         }
 
+        /** The time passed since this timer was started to the time of
+         * the most recent tick in seconds.
+         */
         this.ageInSeconds = function() {
             return this.age / 1000;
         }
     },
 
+    /** @class Provides an easy way to track FPS. */
     FPSTracker:function () {
-        this.frameAvgCount = 20; // number of frames to average over
+        /** Number of frames to average over. */
+        this.frameAvgCount = 20;  
 
         // frame timing statistics
-        this.mspf= 0; // milliseconds per frame
+        
+        /** Milliseconds per frame. */
+        this.mspf= 0; 
+
+        /** Frames per second. */
         this.fps = 0;
+
         this.recentFPS = []; // last several FPS calcs to average over
 
+        /** Update the FPS. */
         this.update = function(dt) {
             this.mspf += dt; // add this past frame time and renormalize
             this.mspf /= 2;
@@ -1799,20 +2050,21 @@ $W = {
     },
 
 
+    /** @namespace Functions with similar functionaliy to the original GLU
+     * libraries.
+     */
     GLU:{
+       /** Given a point in screen-space, transform to an object-space point */
+       unproject:function(winX, winY, winZ, model, proj, view) {
+           if (model === undefined) model = $W.modelview.matrix;
+           if (proj === undefined) proj = $W.projection.matrix;
+           if (view === undefined) view = [0,0, $W.canvas.width, $W.canvas.height];
+
+           var pickMatrix = (model.multiply(proj)).inverse();
+
+       },
         
-
-        unproject:function(winX, winY, winZ, model, proj, view) {
-            if (model === undefined) model = $W.modelview.matrix;
-            if (proj === undefined) proj = $W.projection.matrix;
-            if (view === undefined) view = [0,0, $W.canvas.width, $W.canvas.height];
-
-            var pickMatrix = (model.multiply(proj)).inverse();
-
-        },
-        
-
-       /* Operates similarly to the standard OpenGL built in matricies. 
+       /* @class Operates similarly to the standard OpenGL built in matricies. 
         * However * it is not identical. Rather than calling glMatrixMode, 
         * you specify the matrix you want to modify prior to the call.
         * e.g. if `myTranslationVector` is the vector to translate by then to 
@@ -1823,16 +2075,20 @@ $W = {
             this._matrixStack = [];
             this.matrix = Matrix.I(4);
 
-            //----------------------------
-            // converts the matrix to the format we need when we send it to OpenGL
+            /** converts the matrix to the format we need when we send it to 
+             * a shader.
+             * @returns {WebGLFloatArray} The matrix as a flattened array.
+             */
             this.getForUniform = function() {
                return new WebGLFloatArray(this.matrix.flatten());
             }
 
 
-            //----------------------------
-            // glPushMatrix
-            // (c) 2009 Vladimir Vukicevic
+            /** glPushMatrix
+             * (c) 2009 Vladimir Vukicevic
+             * @param {Matrix} [m=this.matrix] A Sylvester matrix to add on 
+             * top of the stack.
+             */
             this.pushMatrix = function (m) {
                 if (m) {
                     this._matrixStack.push(m.dup());
@@ -1842,9 +2098,9 @@ $W = {
                 }
             }
 
-            //----------------------------
-            // glPopMatrix
-            // (c) 2009 Vladimir Vukicevic
+            /** glPopMatrix
+             * (c) 2009 Vladimir Vukicevic
+             */
             this.popMatrix = function () {
                 if (this._matrixStack.length === 0) {
                     throw "Invalid popMatrix!";
@@ -1853,47 +2109,53 @@ $W = {
                 return this.matrix;
             }
 
-            //----------------------------
-            // glMultMatrix
-            // (c) 2009 Vladimir Vukicevic
+            /** glMultMatrix
+             * (c) 2009 Vladimir Vukicevic
+             * @param {Vector} m A Sylvester matrix to multiply by.
+             */
             this.multMatrix = function (m) {
                 this.matrix = this.matrix.x(m);
             }
-            //----------------------------
-            // glTranslate
-            // (c) 2009 Vladimir Vukicevic
+
+            /** glTranslate
+             * (c) 2009 Vladimir Vukicevic
+             * @param {Vector} v A Sylvester vector to translate by
+             */
             this.translate = function (v) {
                 var m = Matrix.Translation($V([v[0],v[1],v[2]])).ensure4x4();
                 this.multMatrix(m);
             }
 
-            //----------------------------
-            // glRotate
-            // (c) 2009 Vladimir Vukicevic
+            /** glRotate
+             * (c) 2009 Vladimir Vukicevic
+             * @param {Number} ang Angle to rotate by.
+             * @param {Vector} v A Sylvester vector to rotate around.
+             */
             this.rotate = function (ang, v) {
                 var arad = ang * Math.PI / 180.0;
                 var m = Matrix.Rotation(arad, $V([v[0], v[1], v[2]])).ensure4x4();
                 this.multMatrix(m);
             }
 
-            //----------------------------
-            // glScale
-            // (c) 2009 Vladimir Vukicevic
+            /** glScale
+             * (c) 2009 Vladimir Vukicevic
+             * @param {Vector} v A Sylvester vector to scale by.
+             */
             this.scale = function (v) {
                 var m = Matrix.Diagonal([v[0], v[1], v[2], 1]);
                 this.multMatrix(m);
             }
 
-            //----------------------------
-            // invert
-            // (c) 2009 Vladimir Vukicevic
+            /** invert
+             * (c) 2009 Vladimir Vukicevic
+             */
             this.invert = function () {
                 this.matrix = this.matrix.inv();
             }
 
-            //----------------------------
-            // glLoadIdentity
-            // (c) 2009 Vladimir Vukicevic
+            /** glLoadIdentity
+             * (c) 2009 Vladimir Vukicevic
+             */
             this.loadIdentity = function () {
                 this.matrix = Matrix.I(4);
             }
@@ -1902,9 +2164,9 @@ $W = {
         //----------------------------
         // these are like the OpenGL functions of the same name
         
-        //----------------------------
-        // glLookAt
-        // (c) 2009 Vladimir Vukicevic
+        /** glLookAt
+         * (c) 2009 Vladimir Vukicevic
+         */
         lookAt : function (ex, ey, ez,
                                 tx, ty, tz,
                                 ux, uy, uz) {
@@ -1928,9 +2190,9 @@ $W = {
             return m.x(t);
         },
 
-        //----------------------------
-        // glOrtho
-        // (c) 2009 Vladimir Vukicevic
+        /** glOrtho
+         * (c) 2009 Vladimir Vukicevic
+         */
         ortho : 
             function (left, right,
                     bottom, top,
@@ -1946,9 +2208,9 @@ $W = {
                         [0, 0, 0, 1]]);
             },
 
-        //----------------------------
-        // glFrustrum
-        // (c) 2009 Vladimir Vukicevic
+        /** glFrustrum
+         * (c) 2009 Vladimir Vukicevic
+         */
         frustrum : 
             function (left, right,
                     bottom, top,
@@ -1967,9 +2229,9 @@ $W = {
                         [0, 0, -1, 0]]);
             },
 
-        //----------------------------
-        // glPerpective
-        // (c) 2009 Vladimir Vukicevic
+        /** glPerpective
+         * (c) 2009 Vladimir Vukicevic
+         */
         perspective : 
             function (fovy, aspect, znear, zfar)
             {
@@ -1982,7 +2244,6 @@ $W = {
             }
     },
 
-
     /** 
      * Initialize the WebGLU system, optionally initizlizing the WebGL
      * subsystem.
@@ -1992,7 +2253,7 @@ $W = {
      */
     initialize:function(canvasNode) {
         $W.initLogging();
-        console.group("Initializing WebGLU");
+        console.groupCollapsed("Initializing WebGLU");
 
         // Prep the shader subsystem
         $W.GLSL.initialize();
@@ -2104,14 +2365,22 @@ $W = {
     },
 
 
+    /** Create a new ShaderProgram and add it to the program list.
+     * @param {String} name The global name for this program.
+     */
     newProgram: function(name) {
         this.programs[name] = new $W.GLSL.ShaderProgram(name);
     },
             
+    /** Add the given object to the object list.
+     * @param {Object} obj The object to add.
+     */
     addObject: function(obj) {
         this.objects.push(obj);
     },
 
+
+    /** Draw all objects from the camera's perspective. */
     draw: function() {
         $W.clear();
 
@@ -2137,13 +2406,13 @@ $W = {
         $W._drawObjects();                            
     },
 
-
 	_updateState : function() {
 		$W.timer.tick();
 		$W.fpsTracker.update($W.timer.dt);
 		$W.FPS = Math.round($W.fpsTracker.fps);
 	},
 
+    /** Update all objects. */
 	update : function() {
 		$W._updateState();
 
@@ -2160,20 +2429,14 @@ $W = {
         }
     },
 
+    /** Clear the canvas */
 	clear : function() {
 		// clearing the color buffer is really slow
 		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
 	}
 }
 
-//--------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------
 // Utility functions
-
-
 //--------------------------------------------------------------------------
 // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
 //--------------------------------------------------------------------------

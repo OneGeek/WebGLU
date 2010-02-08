@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL</title>
+		<title>JsDoc Reference - $W.Timer</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace $W.GLSL
+				Class $W.Timer
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,7 +246,7 @@ ul.inheritsList
 				
 				
 			
-				Contains objects for working with GLSL shaders andshader programs
+				Keeps track of time since application start.Provides delta time between ticks.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -255,8 +255,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.Timer.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.html#constructor">$W.GLSL</a></b>
+								<b><a href="../symbols/%24W.Timer.html#constructor">$W.Timer</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -279,12 +279,70 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.Timer.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#age">age</a></b>
+								</div>
+								<div class="description">The time passed since this timer was started to the time ofthe most recent tick in milliseconds.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#dt">dt</a></b>
+								</div>
+								<div class="description">The delta time between the previous two ticks.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#pt">pt</a></b>
+								</div>
+								<div class="description">The time of the previous tick</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#t">t</a></b>
+								</div>
+								<div class="description">The current application time in milliseconds.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.GLSL.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.Timer.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -295,11 +353,20 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.GLSL.<b><a href="../symbols/%24W.GLSL.html#.initialize">initialize</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.Timer.html#ageInSeconds">ageInSeconds</a></b>()
 								</div>
-								<div class="description">Must be called</div>
+								<div class="description">The time passed since this timer was started to the time ofthe most recent tick in seconds.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Timer.html#tick">tick</a></b>()
+								</div>
+								<div class="description">Update the timer</div>
 							</td>
 						</tr>
 					
@@ -316,11 +383,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL</b>
+						<b>$W.Timer</b>()
 				</div>
 				
 				<div class="description">
@@ -344,6 +411,99 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="age"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>age</b>
+					
+					</div>
+					<div class="description">
+						The time passed since this timer was started to the time ofthe most recent tick in milliseconds.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="dt"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>dt</b>
+					
+					</div>
+					<div class="description">
+						The delta time between the previous two ticks.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="pt"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>pt</b>
+					
+					</div>
+					<div class="description">
+						The time of the previous tick
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="t"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>t</b>
+					
+					</div>
+					<div class="description">
+						The current application time in milliseconds.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -351,15 +511,40 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".initialize"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="ageInSeconds"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">$W.GLSL.</span><b>initialize</b>()
+					<b>ageInSeconds</b>()
 					
 					</div>
 					<div class="description">
-						Must be called
+						The time passed since this timer was started to the time ofthe most recent tick in seconds.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="tick"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>tick</b>()
+					
+					</div>
+					<div class="description">
+						Update the timer
 						
 						
 					</div>
