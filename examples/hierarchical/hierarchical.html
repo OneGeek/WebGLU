@@ -1,0 +1,478 @@
+<html><head>
+
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../external/Sylvester.src.js"></script>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+<script type="text/javascript" src="../../src/gameglu.js"></script>
+
+<script type="application/x-javascript">
+function init() {
+
+    //--Initialize WebGLU, shaders
+    with ($W) {
+        if (!initialize()) return false;
+
+        newProgram('textured');
+        programs['textured'].attachShader('texVS', $W.paths.shaders + 'texture.vert');
+        programs['textured'].attachShader('texFS', $W.paths.shaders + 'texture.frag');
+
+        GL.clearColor(0.9, 0.9, 0.9, 1.0);
+        camera.setPosition(2,2,2);
+        camera.setTarget(1,0,0);
+        camera.yfov = 80;
+    }
+
+    return true;
+}
+
+function createObjects() {
+    var VERTEX = "vertex";
+    var COLOR  = "color";
+    var NORMAL = "normal";
+    var TEX_COORD = "texCoord";
+    new $W.texture.Image('check', 'check.png');
+    new $W.texture.Image('tiger', '../texture/tiger.png');
+
+    //
+    // AXIS
+    //
+    // Create lines representing the XYZ axes
+    var addAxisLines = function() {
+        var originLines = new $W.Object($W.GL.LINES);
+        originLines.vertexCount = 6;
+
+        originLines.fillArray(VERTEX,
+            [[0,0,0], [.3,0,0], [0,0,0], [0,.2,0], [0,0,0], [0,0,.2]]);
+        with ($W.constants.colors){
+          originLines.fillArray(COLOR, 
+            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
+        }
+
+        return originLines
+    }
+
+    var addTexturedCube = function() {
+        // Create a solid object
+        var cube = new $W.Object($W.GL.TRIANGLES);
+
+        // Use the 'textured' shader program defined above
+        cube.setShaderProgram('textured');
+
+        // Texture the cube
+        cube.textures.push('check');
+
+
+        // Fill the arrays with data for a cube
+        var cubeData = $W.constants.unitCube;
+        cube.fillArray(VERTEX, cubeData.vertices);
+        cube.fillArray(NORMAL, cubeData.normals);
+        cube.fillArray(TEX_COORD, cubeData.textureCoordinates);
+
+        // Use drawElements
+        cube.setElements(cubeData.indices);
+
+        return cube;
+    }
+
+    var makeCube = function(obj) {
+        // Fill the arrays with data for a cube
+        var cubeData = $W.constants.unitCube;
+        obj.fillArray(VERTEX, cubeData.vertices);
+        obj.fillArray(NORMAL, cubeData.normals);
+        obj.fillArray(TEX_COORD, cubeData.textureCoordinates);
+
+        // Use drawElements
+        obj.setElements(cubeData.indices);
+    }
+
+    addAxisLines();
+
+
+    // Create a solid object
+    var cube = new $W.Object($W.GL.TRIANGLES);
+    cube.setShaderProgram('textured');
+    cube.textures.push('check');
+    makeCube(cube);
+
+    var child = new $W.Object($W.GL.TRIANGLES, false);
+    child.setShaderProgram('textured');
+    child.textures.push('tiger');
+    child.setScaleUniformly(0.5);
+    makeCube(child);
+
+    child.setPosition(0,0,1.5);
+    child.animation.updateRotation = function(){this.rotation.elements[2] =
+    this.age / 20;}
+
+    cube.addChild(child);
+
+
+
+
+    // Have the cube use keyframed animation
+    cube.animation = new $W.anim.KeyFrameAnimation();
+    var ca = cube.animation;
+
+    // Add keyframes to the cube's set of keyframes
+    function anim1(){
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0], [0,90,0], [.3,.3,-.3] ,0));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,1,0], [0,0,0], [.3,.3,.3]   ,3));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,1,-1], [0,0,90], [-.2,-.6,.5],10));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,0,-1], [0,0,180], [-.3,.3,.3],15));
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,-1], [90,0,0], [.3,.3,.3] ,20));
+    }
+
+    function anim2(){
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0],[0,0,0], [0.3,0.3,0.3],0));
+        ca.addKeyframe(new $W.anim.KeyFrame([0,1,0],[0,0,0], [0.3,0.3,0.3],1));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,1,0],[0,0,0], [0.3,0.3,0.3],10));
+        ca.addKeyframe(new $W.anim.KeyFrame([1,0,0],[0,0,0], [0.3,0.3,0.3],15));
+        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0],[0,0,0], [0.3,0.3,0.3],20));
+    }
+
+    anim2();
+
+
+/*
+    var posX = 0;
+    var posY = 1;
+    var posZ = 2;
+    var rotX = 3;
+    var rotY = 4;
+    var rotZ = 5;
+
+    var setForChannel = function(obj, channel, value) {
+        if (channel <= 2) {
+            obj.position.elements[channel] = value;
+
+        }else if (channel <= 5) {
+            channel -= 3;
+            obj.rotation.elements[channel] = value;
+        }
+    };
+    
+    
+    var bvh = $W.util.loadFileAsText("http://www.cs.wisc.edu/graphics/Courses/cs-838-1999/Jeff/Example1.bvh");
+
+    // Grab everything from HIERARCHY to MOTION
+    var hierarchy = bvh.match(/HIERARCHY[-{}:_\s\n\w\t.]+MOTION/gim);
+
+    // consolodate line breaks
+    hierarchy[0] = hierarchy[0].replace(/\r\n/gim, "\n");
+
+    // Tokenize
+    hierarchy = hierarchy[0].match(/(Frame Time:|End Site|[-{}:.\w]+)/gim);
+
+
+    // Grab everything from MOTION onwards
+    var motion = bvh.match(/MOTION[-{}:_\s\n\w\t.]+/gim);
+
+    // consolodate line breaks
+    motion[0] = motion[0].replace(/\r\n/gim, "\n");
+
+    // Split into lines
+    motion = motion[0].split("\n");
+
+    // Remove "MOTION"
+    motion.shift();
+
+    // Parse the number of frames
+    var frameCount = motion.shift().match(/\d+/)[0];
+
+    // Parse the frame time
+    var frameTime = motion.shift().match(/[-\d.]+/)[0];
+
+    // Split each line into an array of values
+    motion.pop();
+    for (var i = 0; i < motion.length; i++) {
+        motion[i] = motion[i].replace(/[\t\s]+/gim, "/");
+        motion[i] = motion[i].split("/");
+        motion[i].shift();
+        motion[i].pop();
+    }
+
+    var Joint = function(name) {
+        $W.ObjectState.call(this);
+
+        this.name = name;
+        this.offset = [];
+        this.channels = [];
+        this.frames = [];
+
+        this.parent = null;
+        this.firstChild = null;
+        this.nextSibling = null;
+        this.children = [];
+
+        this.level = 0;
+        this.color = [1,0,1];
+
+        this.initialize = function() {
+            this.position.elements = this.offset;
+        }
+    };
+    
+    var colors = [$W.constants.colors.RED, $W.constants.colors.GREEN, $W.constants.colors.BLUE];
+    var LINKED_LIST = 1;
+    var TREE = 2;
+    var parseHierarchy = function (hierarchy) {
+        var root;
+        var current = null;
+        var action;
+        var pToken;
+        var token;
+        var atEndSite = false;
+        var level = 0;
+        for (var i = 0; i < hierarchy.length; i++) {
+            pToken = token;
+            token = hierarchy[i];
+
+            if (action == "End Site") {
+                atEndSite = true;
+            }
+
+            if (  token == "ROOT" ||    
+                  token == "OFFSET" ||    
+                  token == "CHANNELS" ||  
+                  token == "JOINT" ||     
+                  token == "End Site"     ) { 
+                action = token;
+
+            }else if (token == "{") {
+                //if (parseAs == LINKED_LIST)
+                level++;
+
+            }else if (token == "}") {
+                //if (parseAs == LINKED_LIST) 
+                level--;
+
+                if (atEndSite) {
+                    atEndSite = false;
+                }else if (current.name != "ROOT"){
+                    // if (parseAs == TREE) { current = current.parent; }
+                }
+
+            }else if (action == "ROOT") {
+                root = new Joint("ROOT");
+                current = root;
+
+            }else if (action == "JOINT") {
+                var joint = new Joint(token);
+                joint.level = level;
+                joint.color = colors[level % 3];
+
+                //if (parseAs == LINKED_LIST) {
+                    current.next = joint;
+                //}
+
+                if (joint.level > current.level) {
+                    joint.parent = current;
+                }else {
+                    joint.parent = current.parent;
+                }
+
+
+                /*
+                if (parseAs == TREE) {
+                    if (current.firstChild == null) {
+                        current.firstChild = joint;
+                    }else {
+                        var lastChild = current.firstChild;
+
+                        while (lastChild.nextSibling != null) lastChild = lastChild.nextSibling;
+
+                        joint.parent = lastChild.parent;
+                        lastChild.nextSibling = joint;
+                    }
+                }
+                * /
+
+                //current.children.push(joint);
+                current = joint;
+
+            }else if (action == "OFFSET") {
+                current.offset.push(parseFloat(token));
+
+            }else if (action == "CHANNELS" && pToken != "CHANNELS") {
+                var chn;
+                if (token == "Xposition") {
+                    chn = posX;
+                }else if (token = "Yposition") {
+                    chn = posY;
+                }else if (token = "Zposition") {
+                    chn = posZ;
+                }else if (token = "Zrotation") {
+                    chn = rotX;
+                }else if (token = "Yrotation") {
+                    chn = rotY;
+                }else if (token = "Zrotation") {
+                    chn = rotZ;
+                }
+                current.channels.push(chn);
+
+            }else if (action == "End Site") {
+                atEndSite = true;
+            }
+        }
+
+        return root;
+    }
+
+    root = parseHierarchy(hierarchy);
+
+    var time = 0;
+    var frame;
+
+    // each frame's data
+    for (var i = 0; i < frameCount; i++) {
+        var current = root;
+        var channel = 0;
+
+        // each channel value
+        for (var j = 0; j < motion[i].length; j++) {
+
+            // When we move to a new joint, create a new keyframe
+            if (channel == 0) {
+                frame = new $W.anim.KeyFrame();
+                frame.atTime = time;
+            }
+                
+            var value = motion[i][j];
+            setForChannel(frame, current.channels[channel], value);
+
+            channel++;
+
+            // When we've set all the channel values for this joint,
+            // add the constructed keyframe to this joint,
+            // go to the next joint, and reset the channel number
+            if (channel == current.channels.length) {
+                current.frames.push(frame);
+                current = current.next;
+                channel = 0;
+            }
+        }
+
+        // Advance the time for the next frame
+        time += frameTime;
+    }
+
+    for (var current = root; current != null; current = current.next){
+        var co = current.offset;
+        if (co.length > 3) {
+            current.end = [co[3],co[4],co[5]];
+            current.offset = [co[0],co[1],co[2]];
+        }
+
+        current.initialize();
+
+        var str = current.name;
+        for (var i=0;i<current.level;i++) str = "\t" + str;
+        str += " " + current.offset;
+        console.log(str);
+
+    }
+
+    current = root;
+
+    var model= new $W.Object($W.GL.LINES);
+    model.vertexCount = 2;
+    model.setScaleUniformly(0.04);
+    //model.scale.elements[2] = 0.01;
+    //model.animation = new $W.anim.KeyFrameAnimation();
+
+
+    var boneColor = [1,0,0, 0,0,1];
+    var boneVertices = [root.offset, root.next.offset];
+    model.fillArray(VERTEX, boneVertices); 
+    model.fillArray(COLOR, boneColor);     
+    var lastPos = $V([0,0,0]);
+    for (var current = root; current != null; current = current.next){
+        var bone = new $W.Object($W.GL.LINES, false);
+        bone.vertexCount = 2;
+
+        var start; 
+        start = current.offset;
+
+        var end;
+        if (current.end != undefined) {
+            end = current.end;
+        }else {
+            end = current.next.offset;
+        }
+
+
+
+
+        boneVertices = [start, end];
+
+        bone.fillArray(VERTEX, boneVertices);
+        bone.fillArray(COLOR, [current.color, current.color]);
+
+        //bone.animation = new $W.anim.KeyFrameAnimation();
+        //bone.animation.keyframes = current.frames;
+        
+        model.addChild(bone);
+    }
+    */
+
+}
+
+function start() {
+        if (init()) {
+            createObjects();
+            
+            var FPS = document.getElementById('overlay');
+
+            $G.initialize();
+            $G.event.bind("a", function(){$W.objects[0].rotation.elements[0] += 3;})
+
+            function redraw() {
+                FPS.innerHTML = $W.FPS;
+                $W.update();
+                $W.draw();	
+            }
+
+            setInterval(redraw, 10);        	
+        }
+}
+
+</script>
+
+</head>
+
+<body onload='start()'>
+
+
+<div id="glCanvas">
+
+<div id="overlay"> </div>
+
+<canvas id='canvas' width='500' height='500'></canvas><br>
+</div>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
