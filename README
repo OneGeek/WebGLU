@@ -1,0 +1,107 @@
+=============================================================
+=           __      __   _     ___  __    __  __            =
+=           \ \    / /__| |__ / __)(  )  (  )(  )           =
+=            \ \/\/ / -_) '_ ( (_-. )(__  )(__)(            =
+=             \_/\_/\___|_.__/\___/(____)(______)           =
+=           =====================================           =
+=============================================================
+
+I AM TAKING FEATURE/DEMO/IMPLEMENTATION DETAIL SUGGESTIONS
+Email: bpd9116+WebGLU@gmail.com
+AIM: BenjaminDeLilo
+
+WebGLU is both a set of low-level utilities and a high-level
+engine for developing WebGL based applications. 
+
+WebGLU is designed such that a developer can focus on the 
+end result with a minimum of fuss and code, but doesn't hand
+hold developers who want more control. This is achieved by 
+exposing the raw GL object and also many lower-level 
+functions for working with it and the WebGL API.
+
+WebGLU's "point" is to seperate the act of rendering from
+the act of defining what to render and how to render it.
+This means all objects, shaders, attributes, uniforms, etc.
+and their interactions, can be dealt with up-front as 
+opposed to strewn throughout the rendering code. As far as
+rendering code goes, unless you want to mess around with
+low level, the only rendering related call you need to
+worry yourself about is $W.draw().
+
+A partial list of features includes:
+
+ * Designed with performance in mind. Any performance
+ criticisms are taken very seriously.
+
+For shaders and shader programs
+ * Can load directly from .frag/.vert/.vp/.fp files 
+ (and automatically assign the right shader type)
+
+ * Create on attach - loads and sets-up the shader from 
+ within shaderProgram.attachShader()
+
+ * All compiling and linking is handled automatically, as
+ needed
+
+ * Automatically sets up any projection/modelview uniforms
+
+For rendering
+ * Provides projection and modelview matrix-stacks which 
+ approximate the behavior of OpenGL matrix modes
+
+For renderable objects
+ * Automaticaly creates array/element buffers as necessary
+ and binds them as needed during rendering.
+
+ * Each object can be assigned a different shader program
+
+ * Store data for shader attributes simply with a single
+ call
+
+ * A partial .obj parser is implemented to load objects
+
+ * Now supports object hierarchies!
+
+ * Static image and video textures 
+ (canvas textures are planned)
+
+For animation
+ * Procedural animations are as easy as overriding
+ myobject.animation.update()
+
+ * Keyframe animations are almost as simple
+ myobject.animation = new $W.anim.KeyFrameAnimation();
+ myFrame = new $W.anim.KeyFrame(pos, rot, scale, time);
+ myobject.animation.addKeyframe(myFrame);
+
+ * You can mix animation types within an object hierarchy
+
+For interaction
+ * GameGLU companion library provides for easy keybinding
+
+
+
+============================================================
+
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
