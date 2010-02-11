@@ -1408,9 +1408,11 @@ $W = {
 
                 // XXX naive interpolation
                 // Interpolate rotation
-                this.rotation.elements = $W.util.lerpTriple(t, 
+                //this.rotation.elements = $W.util.lerpTriple(t, 
+                // Call setRotation so the quaternion is recalculated
+                this.setRotation($W.util.lerpTriple(t, 
                         this.keyframes[A].rotation.elements,
-                        this.keyframes[B].rotation.elements);
+                        this.keyframes[B].rotation.elements));
 
                 // Interpolate scale
                 this.scale.elements = $W.util.lerpTriple(t, 
@@ -1663,16 +1665,21 @@ $W = {
             this.scale      = $V([1,1,1]);
         }
 
+        this.recalculateQuaternion = function() {
+            // No need to calc for no rotation
+            if (this.rotation.eql(Vector.Zero(3))) {
+                this.q = new $W.Quaternion();
 
-        /*
-        var mx = Matrix.RotationX(this.rotation.e(1) * Math.PI / 180.0);
-        var my = Matrix.RotationY(this.rotation.e(2) * Math.PI / 180.0);
-        var mz = Matrix.RotationZ(this.rotation.e(3) * Math.PI / 180.0);
+            }else {
+                var qh = new $W.Quaternion(0, 1, 0, this.rotation.e(1));
+                var qp = new $W.Quaternion(1, 0, 0, this.rotation.e(2));
+                var qr = new $W.Quaternion(0, 0, 1, this.rotation.e(3));
 
-        this.m = (mx.multiply(my)).multiply(mz); // Get complete rotation matrix
-        */
-
-        //this.q = new $W.Quaternion(this.m);
+                this.q = (qr.multiply(qp)).multiply(qh);
+            }
+        }
+        
+        this.recalculateQuaternion();
 
         /** Set a new position. */
         this.setPosition = function(x, y, z) { 
@@ -1680,8 +1687,17 @@ $W = {
         }
 
         /** Set a new rotation. */
-        this.setRotation = function(x, y, z) { 
-            this.rotation.elements = [x, y, z]; 
+        this.setRotation = function() { 
+            // Called as setRotation(x, y, z)
+            if (arguments.length == 3) {
+                this.rotation.elements = arguments; 
+
+            // Called as setRotation([x, y, z])
+            }else {
+                this.rotation.elements = arguments[0];
+            }
+
+            this.recalculateQuaternion();
         }
 
         /** Set a new scale. */
@@ -1951,7 +1967,8 @@ $W = {
          * animation. 
          */
         this.animatedRotation = function() { 
-            return this.rotation.add(this.animation.rotation); 
+            //return this.rotation.add(this.animation.rotation); 
+            return this.q.multiply(this.animation.q);
         }
 
         /** @returns {Vector} The product of the object's base scale and its 
@@ -2008,14 +2025,8 @@ $W = {
                 $W.modelview.pushMatrix();
                 $W.modelview.translate(pos.elements);
 
-                /*
-                var rotation = $W.util.getAxisAngle(rot);
-                $W.modelview.rotate(rotation.angle, rotation.axis);
-                */
-
-                $W.modelview.rotate(rot.e(1), [0, 1, 0]);
-                $W.modelview.rotate(rot.e(2), [1, 0, 0]);
-                $W.modelview.rotate(rot.e(3), [0, 0, 1]);
+                //$W.modelview.multMatrix(this.animation.q.matrix());
+                $W.modelview.multMatrix(rot.matrix());
                 $W.modelview.scale(scale.elements);
 
                 for (var i = 0; i < this._children.length; i++) {
