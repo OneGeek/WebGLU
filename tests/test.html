@@ -12,7 +12,7 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/yuitest/yuitest-min.js"></script>
 
 <!-- WebGLU -->
-<script type="text/javascript" src="../Sylvester.src.js"></script>
+<script type="text/javascript" src="../external/Sylvester.src.js"></script>
 <script type="text/javascript" src="../src/webglu.js"></script>
 <script type="text/javascript" src="../src/gameglu.js"></script>
 
@@ -73,6 +73,13 @@ function doTesting() {
 	WebGLUTestSuite.add(
 		new YT.TestCase({
 			name:'Shader Tests',
+            setUp : function() {
+                $W.initialize();
+            },
+
+            tearDown : function() {
+                $W.reset();
+            },
 
 			test_newProgram : function() {
 				
@@ -84,6 +91,13 @@ function doTesting() {
 	WebGLUTestSuite.add(
 		new YT.TestCase({
 			name:'Object Tests',
+            setUp : function() {
+                $W.initialize();
+            },
+
+            tearDown : function() {
+                $W.reset();
+            },
 
 			test_newObject : function() {
 
@@ -91,6 +105,94 @@ function doTesting() {
 				
 
 			}
+		})
+	);
+
+	WebGLUTestSuite.add(
+		new YT.TestCase({
+			name:'Math Tests',
+            setUp : function() {
+                $W.initialize();
+            },
+
+            tearDown : function() {
+                $W.reset();
+            },
+
+			test_newQuaternion : function() {
+                var q;
+
+                var error1 = "Quaternion(x, y, z, theta) failed";
+                var x1 = 1;
+                var y1 = 0;
+                var z1 = 0;
+                var theta = 90;
+                var expected_q1x = 0.7071;
+                var expected_q1y = 0;  
+                var expected_q1z = 0;  
+                var expected_q1w = 0.7071;
+
+                var error2 = "Quaternion([w, x, y, z]) failed";
+                var w2 = 0.1;
+                var x2 = 0.3;
+                var y2 = 0.3;
+                var z2 = 0.5;
+
+                var error3 = "Quaternion() failed";
+
+                // Test Quaternion(x, y, z, theta)
+                q = new $W.Quaternion(x1, y1, z1, theta);
+                assert.areEqual(expected_q1x, q.x.toPrecision(4), error1);
+                assert.areEqual(expected_q1y, q.y.toPrecision(4), error1);
+                assert.areEqual(expected_q1z, q.z.toPrecision(4), error1);
+                assert.areEqual(expected_q1w, q.w.toPrecision(4), error1);
+
+                // Test Quaternion([w, x, y, z])
+                q = new $W.Quaternion([w2, x2, y2, z2]);
+                assert.areEqual(w2, q.w, error2);
+                assert.areEqual(x2, q.x, error2);
+                assert.areEqual(y2, q.y, error2);
+                assert.areEqual(z2, q.z, error2);
+                
+                // Test Quaternion()
+                q = new $W.Quaternion();
+                assert.areEqual(1, q.w, error3);
+                assert.areEqual(0, q.x, error3);
+                assert.areEqual(0, q.y, error3);
+                assert.areEqual(0, q.z, error3);
+			},
+
+            test_multQuaternions : function() {
+                var roll    = 30;
+                var pitch   = 45;
+                var heading = 30;
+                var expected_glMatrix = 
+                    [0.57322332027622536, 0.73919890801437749, 
+                    -0.3535533898605015, 0.0, -0.3535533898605015, 
+                    0.61237244705783134, 0.70710677171312086, 0.0, 
+                    0.73919890801437749, -0.28033009198934633, 
+                    0.61237244705783134, 0.0, 0, 0, 0, 1.0]
+
+                var q1 = new $W.Quaternion(0, 0, 1, roll);
+                var q2 = new $W.Quaternion(1, 0, 0, pitch);
+                var q3 = new $W.Quaternion(0, 1, 0, heading);
+
+                var qr = (q1.multiply(q2)).multiply(q3);
+
+                var result_glMatrix = qr.matrix().elements.flatten();
+
+                console.log(expected_glMatrix);
+                console.log(result_glMatrix);
+
+                for (var i = 0; i < expected_glMatrix.length; i++) {
+                    // 7 digit precision because reference values were 
+                    // calculated with Pi accurate to just 7 digits.
+                    assert.areEqual(
+                        expected_glMatrix[i].toPrecision(7), 
+                        result_glMatrix[i].toPrecision(7),
+                        "Quaternion multiplation failure");
+                }
+            }
 		})
 	);
 

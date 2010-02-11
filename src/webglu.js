@@ -48,6 +48,12 @@ $W = {
     /** The raw WebGL object for low level work.  */
     GL : null,
 
+    /** Simulated world */
+    world: {
+        /** Physical objects */
+        objects: []
+    },
+
     /** Renderable objects */
     objects  : [],
 
@@ -905,6 +911,9 @@ $W = {
 
     /** @namespace Utility functions. */
     util:{
+        integrateEuler:function(fun, t, dt) {
+            return fun(t + dt);
+        },
 
         /** XXX Not yet implemented. */
         getPickRay : function(x, y) {
@@ -1431,7 +1440,31 @@ $W = {
                     }
                 }
             }
+        },
+
+        /** @class A physical simulation.
+         */
+        Simulation:function() {
+            $W.anim.ProceduralAnimation.call(this); // subclass of ProceduralAnimation
+
+            /** Bounding sphere radius */
+            this.radius = 1;
+            /** Object mass */
+            this.mass = 1;
+            /** Object velocity */
+            this.velocity = Vector.Zero(3);
+            /** Angular velocity */
+            this.omega = Vector.Zero(3);
+
+            this.update = function(dt) {
+                // calculate forces
+                // integrate position/rotation
+                // update momentum
+                // calculate velocities
+            }
+
         }
+
     },
 
 
@@ -1504,8 +1537,84 @@ $W = {
     },
 
     // Classes
+    /** @class Quaternion implementation.
+     * based on reference implementation at 
+     * http://3dengine.org/Quaternions
+     */
+    Quaternion:function() {
+        // Called as Quaternion(x, y, z, theta)
+        if (arguments.length == 4) {
+            var angle = (arguments[3] / 180.0) * Math.PI;
+            var result = Math.sin(angle / 2);
+            this.w = Math.cos(angle / 2);
+            this.x = arguments[0] * result;
+            this.y = arguments[1] * result;
+            this.z = arguments[2] * result;
+
+        // Called as Quaternion([w, x, y, z])
+        }else if (arguments[0] != undefined && arguments[0].length == 4) {
+            this.w = arguments[0][0];
+            this.x = arguments[0][1];
+            this.y = arguments[0][2];
+            this.z = arguments[0][3];
+
+        // Called as Quaternion()
+        }else {
+            this.w = 1;
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }
+
+        this.matrix = function() {
+            var w = this.w;
+            var x = this.x;
+            var y = this.y;
+            var z = this.z;
+            var xx = x * x;
+            var yy = y * y;
+            var zz = z * z;
+            var xy = x * y;
+            var xz = x * z;
+            var xw = x * w;
+            var yz = y * z;
+            var yw = y * w;
+            var zw = z * w;
+
+            var m = [[],[],[],[]];
+
+            m[0][0] = 1 - 2 * (yy + zz);
+            m[0][1] = 2 * (xy + zw);
+            m[0][2] = 2 * (xz - yw);
+            m[0][3] = 0;
+            m[1][0] = 2 * (xy - zw);
+            m[1][1] = 1 - 2 * (xx + zz);
+            m[1][2] = 2 * (yz + xw);
+            m[1][3] = 0;
+            m[2][0] = 2 * (xz + yw);
+            m[2][1] = 2 * (yz - xw);
+            m[2][2] = 1 - 2 * (xx + yy);
+            m[2][3] = 0;
+            m[3][0] = 0;
+            m[3][1] = 0;
+            m[3][2] = 0;
+            m[3][3] = 1;
+            
+            return $M(m);
+        }
+
+        this.multiply = function(q) {
+            var result = new $W.Quaternion();
+            result.w = this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z;
+            result.x = this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y;
+            result.y = this.w * q.y + this.y * q.w + this.z * q.x - this.x * q.z;
+            result.z = this.w * q.z + this.z * q.w + this.x * q.y - this.y * q.x;
+            return result;
+        }
+    },
 
     /** @class Quaternion implementation XXX broken */
+    /*
     Quaternion:function(m) {
         this.vec = Vector.Zero(4);
 
@@ -1535,6 +1644,7 @@ $W = {
             return result;
         }
     },
+    */
 
     /** @class Common state representation (position, rotation, scale).
      * A position, rotation, and scale.
