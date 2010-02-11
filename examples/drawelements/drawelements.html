@@ -39,7 +39,8 @@ function createObjects() {
 	pyramid = new $W.Object($W.GL.TRIANGLES);
     pyramid.setPosition(0, 1, 0);
 	pyramid.animation.updateRotation = function(dt) { 
-        this.rotation.elements[0] = (this.age/60) % 360; 
+        this.setRotation((this.age/60) % 360, 0, 0);
+        //this.rotation.elements[0] = (this.age/60) % 360; 
     }
 
 	pyramid.fillArray(vertexAttr, 
