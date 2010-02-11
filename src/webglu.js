@@ -1505,7 +1505,7 @@ $W = {
 
     // Classes
 
-    /** Quaternion implementation XXX broken */
+    /** @class Quaternion implementation XXX broken */
     Quaternion:function(m) {
         this.vec = Vector.Zero(4);
 
@@ -1536,7 +1536,7 @@ $W = {
         }
     },
 
-    /** Common state representation (position, rotation, scale).
+    /** @class Common state representation (position, rotation, scale).
      * A position, rotation, and scale.
      * @param {3 Array} pos Position.
      * @param {3 Array} rot Rotation.
