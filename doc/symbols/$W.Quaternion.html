@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.texture</title>
+		<title>JsDoc Reference - $W.Quaternion</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -244,7 +244,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace $W.texture
+				Class $W.Quaternion
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 				
 				
 			
-				Texture classes
+				Quaternion implementation.based on reference implementation at http://3dengine.org/Quaternions
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -261,8 +261,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.texture.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.Quaternion.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -274,7 +274,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.texture.html#constructor">$W.texture</a></b>
+								<b><a href="../symbols/%24W.Quaternion.html#constructor">$W.Quaternion</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -288,42 +288,6 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.texture.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.texture.<b><a href="../symbols/%24W.texture.html#.Image">Image</a></b>(name, src)
-								</div>
-								<div class="description">A static texture from an image file.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.texture.<b><a href="../symbols/%24W.texture.html#.Video">Video</a></b>(name, id)
-								</div>
-								<div class="description">A dynamic texture from a `video` element.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -331,11 +295,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.texture</b>
+						<b>$W.Quaternion</b>()
 				</div>
 				
 				<div class="description">
@@ -361,95 +325,6 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name=".Image"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.texture.</span><b>Image</b>(name, src)
-					
-					</div>
-					<div class="description">
-						A static texture from an image file.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The global name this texture will be referencedby elsewhere.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>src</b>
-									
-								</dt>
-								<dd>Path to image file.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".Video"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.texture.</span><b>Video</b>(name, id)
-					
-					</div>
-					<div class="description">
-						A dynamic texture from a `video` element.    XXX Can I use createElement('video') and eliminate need for id?
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The global name this texture will be referencedby elsewhere.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>id</b>
-									
-								</dt>
-								<dd>Video element id.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		

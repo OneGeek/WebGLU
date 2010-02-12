@@ -199,6 +199,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
 	
+	<li><a href="../symbols/%24W.anim.Simulation.html">$W.anim.Simulation</a></li>
+	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
@@ -220,6 +222,10 @@ ul.inheritsList
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
+	
+	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
+	
+	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
 	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
@@ -421,6 +427,16 @@ ul.inheritsList
 							</td>
 						</tr>
 					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								$W.<b><a href="../symbols/%24W.html#.world">world</a></b>
+								</div>
+								<div class="description">Simulated world</div>
+							</td>
+						</tr>
+					
 					</tbody>
 				</table>
 				
@@ -517,54 +533,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.ObjectState">ObjectState</a></b>(pos, rot, scl)
-								</div>
-								<div class="description">Common state representation (position, rotation, scale).</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.Quaternion">Quaternion</a></b>(m)
-								</div>
-								<div class="description">Quaternion implementation XXX broken</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.reset">reset</a></b>()
 								</div>
 								<div class="description">Clears the entire WebGLU system to pre-init state</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.setPosition">setPosition</a></b>(x, y, z)
-								</div>
-								<div class="description">Set a new position.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.setRotation">setRotation</a></b>(x, y, z)
-								</div>
-								<div class="description">Set a new rotation.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.setScale">setScale</a></b>(x, y, z)
-								</div>
-								<div class="description">Set a new scale.</div>
 							</td>
 						</tr>
 					
@@ -906,6 +877,28 @@ ul.inheritsList
 						
 						
 
+					<hr />
+				
+					<a name=".world"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>world</b>
+					
+					</div>
+					<div class="description">
+						Simulated world
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
 					
 				
 			
@@ -1160,90 +1153,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".ObjectState"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>ObjectState</b>(pos, rot, scl)
-					
-					</div>
-					<div class="description">
-						Common state representation (position, rotation, scale).A position, rotation, and scale.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{3 Array}</span> <b>pos</b>
-									
-								</dt>
-								<dd>Position.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{3 Array}</span> <b>rot</b>
-									
-								</dt>
-								<dd>Rotation.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{3 Array}</span> <b>scl</b>
-									
-								</dt>
-								<dd>Scale.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".Quaternion"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>Quaternion</b>(m)
-					
-					</div>
-					<div class="description">
-						Quaternion implementation XXX broken
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>m</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name=".reset"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -1259,150 +1168,6 @@ ul.inheritsList
 					
 					
 					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".setPosition"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>setPosition</b>(x, y, z)
-					
-					</div>
-					<div class="description">
-						Set a new position.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>z</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".setRotation"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>setRotation</b>(x, y, z)
-					
-					</div>
-					<div class="description">
-						Set a new rotation.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>z</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".setScale"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>setScale</b>(x, y, z)
-					
-					</div>
-					<div class="description">
-						Set a new scale.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>z</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
 						
 						
 						
@@ -1450,7 +1215,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Mon Feb 08 2010 15:15:36 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Fri Feb 12 2010 16:45:08 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

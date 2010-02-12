@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.texture</title>
+		<title>JsDoc Reference - $W.anim.Simulation</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -244,7 +244,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace $W.texture
+				Class $W.anim.Simulation
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -252,7 +252,7 @@ ul.inheritsList
 				
 				
 			
-				Texture classes
+				A physical simulation.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -261,8 +261,8 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.texture.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.anim.Simulation.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -274,7 +274,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.texture.html#constructor">$W.texture</a></b>
+								<b><a href="../symbols/%24W.anim.Simulation.html#constructor">$W.anim.Simulation</a></b>()
 							</div>
 							<div class="description"></div>
 						</td>
@@ -285,36 +285,65 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-
-<!-- ============================== methods summary ======================== -->
-			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.texture.">
-					<caption>Method Summary</caption>
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.anim.Simulation.">
+					<caption>Field Summary</caption>
 					<thead>
 						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
 						</tr>
 					</thead>
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.texture.<b><a href="../symbols/%24W.texture.html#.Image">Image</a></b>(name, src)
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.Simulation.html#G">G</a></b>
 								</div>
-								<div class="description">A static texture from an image file.</div>
+								<div class="description">Gravitational acceleration</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.texture.<b><a href="../symbols/%24W.texture.html#.Video">Video</a></b>(name, id)
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.Simulation.html#mass">mass</a></b>
 								</div>
-								<div class="description">A dynamic texture from a `video` element.</div>
+								<div class="description">Object mass</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.Simulation.html#omega">omega</a></b>
+								</div>
+								<div class="description">Angular velocity</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.Simulation.html#radius">radius</a></b>
+								</div>
+								<div class="description">Bounding sphere radius</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.anim.Simulation.html#velocity">velocity</a></b>
+								</div>
+								<div class="description">Object velocity</div>
 							</td>
 						</tr>
 					
@@ -324,6 +353,9 @@ ul.inheritsList
 				
 				
 			
+
+<!-- ============================== methods summary ======================== -->
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -331,11 +363,11 @@ ul.inheritsList
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.texture</b>
+						<b>$W.anim.Simulation</b>()
 				</div>
 				
 				<div class="description">
@@ -359,48 +391,25 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-
-<!-- ============================== method details ========================= -->		
-			
 				<div class="sectionTitle">
-					Method Detail
+					Field Detail
 				</div>
 				
-					<a name=".Image"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="G"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">$W.texture.</span><b>Image</b>(name, src)
+					<b>G</b>
 					
 					</div>
 					<div class="description">
-						A static texture from an image file.
+						Gravitational acceleration
 						
 						
 					</div>
 					
 					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The global name this texture will be referencedby elsewhere.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>src</b>
-									
-								</dt>
-								<dd>Path to image file.</dd>
-							
-							</dl>
-						
-						
-						
+
 						
 						
 						
@@ -408,41 +417,87 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".Video"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="mass"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">$W.texture.</span><b>Video</b>(name, id)
+					<b>mass</b>
 					
 					</div>
 					<div class="description">
-						A dynamic texture from a `video` element.    XXX Can I use createElement('video') and eliminate need for id?
+						Object mass
 						
 						
 					</div>
 					
 					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="omega"> </a>
+					<div class="fixedFont">
 					
+					
+					<b>omega</b>
+					
+					</div>
+					<div class="description">
+						Angular velocity
 						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The global name this texture will be referencedby elsewhere.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>id</b>
-									
-								</dt>
-								<dd>Video element id.</dd>
-							
-							</dl>
+						
+					</div>
+					
+					
+
 						
 						
 						
+						
+
+					<hr />
+				
+					<a name="radius"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>radius</b>
+					
+					</div>
+					<div class="description">
+						Bounding sphere radius
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="velocity"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>velocity</b>
+					
+					</div>
+					<div class="description">
+						Object velocity
+						
+						
+					</div>
+					
+					
+
 						
 						
 						
@@ -450,6 +505,9 @@ ul.inheritsList
 
 					
 				
+			
+
+<!-- ============================== method details ========================= -->		
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -462,7 +520,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Fri Feb 12 2010 16:45:09 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Fri Feb 12 2010 16:45:08 GMT-0500 (EST)
 		</div>
 	</body>
 </html>
