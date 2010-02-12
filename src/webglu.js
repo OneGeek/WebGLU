@@ -1012,12 +1012,48 @@ $W = {
 
         /** XXX Not yet implemented.
          * Spherical linear interpolation. For interpolating quaternions.
+         * Based on reference implementation at http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
          * @param {Quaternion} q1 Quaternion to interpolate from.
          * @param {Quaternion} q2 Quaternion to interpolate to.
          * @param t How far along to interpolate.
          */
         slerp:function(t, q1, q2) {
+            var result = new $W.Quaternion();
 
+            var cosHalfTheta = q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z;
+
+            // q1 == q2
+            if (Math.abs(cosHalfTheta) >= 1) {
+                result.w = q1.w;
+                result.x = q1.x;
+                result.y = q1.y;
+                result.z = q1.z;
+
+            }else {
+                var halfTheta = Math.acos(cosHalfTheta);
+                var sinHalfTheta = Math.sqrt(1 - cosHalfTheta * cosHalfTheta);
+
+                // Theta = 180, any direction is valid
+                if (Math.abs(sinHalfTheta) < 0.001) {
+                    result.w = q1.w * 0.5 + q2.w * 0.5;
+                    result.x = q1.x * 0.5 + q2.x * 0.5;
+                    result.y = q1.y * 0.5 + q2.y * 0.5;
+                    result.z = q1.z * 0.5 + q2.z * 0.5;
+
+                // Spherical linear interpolation
+                }else {
+                    // Ratios
+                    var a = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
+                    var b = Math.sin(t * halfTheta) / sinHalfTheta;
+
+                    result.w = q1.w * a + q2.w * b;
+                    result.x = q1.x * a + q2.x * b;
+                    result.y = q1.y * a + q2.y * b;
+                    result.z = q1.z * a + q2.z * b;
+                }
+            }
+
+            return result;
         },
 
         /** Linear interpolation between numbers
@@ -1363,7 +1399,7 @@ $W = {
         },
 
         /** @class A keyframe based animation 
-         * XXX Works, but doesn't use quaternions for rotation interpolation.
+         * Rotations interpolation uses quaternions.
          */
         KeyFrameAnimation:function() {
             $W.anim.ProceduralAnimation.call(this); // Subclass ProceduralAnimation
@@ -1398,26 +1434,20 @@ $W = {
                 var t = progress / duration;
 
 
-                var A = this.A;
-                var B = this.B;
-
                 // Interpolate position
                 this.position.elements = $W.util.lerpTriple(t, 
-                        this.keyframes[A].position.elements,
-                        this.keyframes[B].position.elements);
+                        this.keyframes[this.A].position.elements,
+                        this.keyframes[this.B].position.elements);
 
-                // XXX naive interpolation
-                // Interpolate rotation
-                //this.rotation.elements = $W.util.lerpTriple(t, 
-                // Call setRotation so the quaternion is recalculated
-                this.setRotation($W.util.lerpTriple(t, 
-                        this.keyframes[A].rotation.elements,
-                        this.keyframes[B].rotation.elements));
+                // Interpolate quaternions for rotation
+                this.q = $W.util.slerp(t,
+                        this.keyframes[this.A].q,
+                        this.keyframes[this.B].q);
 
                 // Interpolate scale
                 this.scale.elements = $W.util.lerpTriple(t, 
-                        this.keyframes[A].scale.elements,
-                        this.keyframes[B].scale.elements);
+                        this.keyframes[this.A].scale.elements,
+                        this.keyframes[this.B].scale.elements);
             }
 
             /** Add a new keyframe. 
@@ -1449,6 +1479,8 @@ $W = {
         Simulation:function() {
             $W.anim.ProceduralAnimation.call(this); // subclass of ProceduralAnimation
 
+            /** Gravitational acceleration */
+            this.G = $V([0, -0.01, 0]);
             /** Bounding sphere radius */
             this.radius = 1;
             /** Object mass */
@@ -1461,6 +1493,10 @@ $W = {
             this.update = function(dt) {
                 // calculate forces
                 // integrate position/rotation
+                this.velocity = this.velocity.add(this.G.multiply(dt));
+                this.position = this.position.add(this.velocity);
+
+                if (this.position.e(2) < 0) this.position.elements[1] = 0;
                 // update momentum
                 // calculate velocities
             }
