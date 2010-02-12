@@ -1219,15 +1219,21 @@ $W = {
             if (!xhr) return null;
 
             try {
-                var nsPM = netscape.security.PrivilegeManager;
+                var nsPM = null;
+                if (typeof(netscape) !== 'undefined' && 
+                    typeof(netscape.security) !== 'undefined' && 
+                    typeof(netscape.security.PrivilegeManager) !== 'undefined') {
+                    nsPM = netscape.security.PrivilegeManager;
+                }
                 if (document.location.href.match(/^file:\/\//)) {
-                    if (nsPM !== undefined) {
+                    if (nsPM !== null) {
                         nsPM.enablePrivilege("UniversalBrowserRead");
                     }
                 }
             }catch (e) {
                 console.groupEnd();
-                throw "Browser security has restricted access to local files";
+                console.error(e);
+                throw "Browser security may be restrcting access to local files";
             }
 
             try {
