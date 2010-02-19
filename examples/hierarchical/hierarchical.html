@@ -59,7 +59,6 @@ function createObjects() {
         cube.setShaderProgram('textured');
 
         // Texture the cube
-        cube.textures.push('check');
 
 
         // Fill the arrays with data for a cube
@@ -91,12 +90,12 @@ function createObjects() {
     // Create a solid object
     var cube = new $W.Object($W.GL.TRIANGLES);
     cube.setShaderProgram('textured');
-    cube.textures.push('check');
+    cube.setTexture('check', 'sampler');
     makeCube(cube);
 
     var child = new $W.Object($W.GL.TRIANGLES, false);
     child.setShaderProgram('textured');
-    child.textures.push('tiger');
+    child.setTexture('tiger', 'sampler');
     child.setScaleUniformly(0.5);
     makeCube(child);
 

@@ -48,11 +48,6 @@ $W = {
     /** The raw WebGL object for low level work.  */
     GL : null,
 
-    /** Simulated world */
-    world: {
-        /** Physical objects */
-        objects: []
-    },
 
     /** Renderable objects */
     objects  : [],
@@ -110,6 +105,7 @@ $W = {
      * shader programs
      */
     GLSL: {
+
         /** Must be called */
         initialize:function() {
             // XXX get these at shader compile time instead
@@ -229,9 +225,8 @@ $W = {
                     }
                 }
 
-                uniform.action = function(wglu) {
-                    //wglu.log('processing modelview uniform');
-                    wglu.GL.uniformMatrix4fv(this.location, false, 
+                uniform.action = function() {
+                    $W.GL.uniformMatrix4fv(this.location, false, 
                             $W.modelview.getForUniform());
                 }
             }
@@ -251,9 +246,8 @@ $W = {
                     }
                 }
 
-                uniform.action = function(wglu) {
-                    //wglu.log('processing projection uniform');
-                    wglu.GL.uniformMatrix4fv(this.location, false, 
+                uniform.action = function() {
+                    $W.GL.uniformMatrix4fv(this.location, false, 
                             $W.projection.getForUniform());
                 }
             }
@@ -273,8 +267,8 @@ $W = {
                     }
                 }
 
-                uniform.action = function(wglu) {
-                    wglu.GL.uniformMatrix3fv(this.location, false, 
+                uniform.action = function() {
+                    $W.GL.uniformMatrix3fv(this.location, false, 
                             $W.util.getNormalMatrixForUniform());
                 }
             }
@@ -594,9 +588,9 @@ $W = {
             }
 
             /** Called once per frame to calculate and set uniforms. */
-            this.processUniforms = function() {
+            this.processUniforms = function(obj) {
                 for (var i = 0; i < this.uniforms.length; i++) {
-                    this.uniforms[i].action($W);
+                    this.uniforms[i].action(obj);
                 }
             }
 
@@ -604,7 +598,7 @@ $W = {
              * Will [re]compile all attached shaders if necessary.
              */
             this.link = function() {
-                console.groupCollapsed("linking '" + this.name + "'");
+                console.group("linking '" + this.name + "'");
 
                 if (this.isLinked) {
                     console.log("already exists, deleting and relinking");
@@ -911,6 +905,10 @@ $W = {
 
     /** @namespace Utility functions. */
     util:{
+        sphereCollide:function(p1, p2, r1, r2) {
+            return p1.distanceFrom(p2) < r1 + r2;
+        },
+
         integrateEuler:function(fun, t, dt) {
             return fun(t + dt);
         },
@@ -1280,8 +1278,12 @@ $W = {
                       type = 'webkit-3d';          
                       gl = canvas.getContext(type);
             }} catch (e){}
+            try { if (!gl) {                       
+                      type = 'webgl';          
+                      gl = canvas.getContext(type);
+            }} catch (e){}
 
-            console.log('using ' + type);
+            if (!!gl) console.log('using ' + type);
 
             return gl;
         },
@@ -1326,6 +1328,7 @@ $W = {
 
             /** Call to advance the animation by `dt` milliseconds */
             this.update = function(dt){};
+            this._update = function(dt){};
 
             /** Internal.
              * @return {Function} Update this animation.
@@ -1335,6 +1338,8 @@ $W = {
                         this.preUpdate(dt);
 
                         this.age += dt;
+
+                        this._update(dt);
 
                         this.updatePosition(dt);
                         this.updateRotation(dt);
@@ -1420,7 +1425,7 @@ $W = {
             this.timeScale = 1;
 
 
-            this.preUpdate = function(dt) {
+            this.update = function(dt) {
                 this.age += dt * this.timeScale;
 
                 // Time for next frame?
@@ -1478,35 +1483,6 @@ $W = {
                     }
                 }
             }
-        },
-
-        /** @class A physical simulation.
-         */
-        Simulation:function() {
-            $W.anim.ProceduralAnimation.call(this); // subclass of ProceduralAnimation
-
-            /** Gravitational acceleration */
-            this.G = $V([0, -0.01, 0]);
-            /** Bounding sphere radius */
-            this.radius = 1;
-            /** Object mass */
-            this.mass = 1;
-            /** Object velocity */
-            this.velocity = Vector.Zero(3);
-            /** Angular velocity */
-            this.omega = Vector.Zero(3);
-
-            this.update = function(dt) {
-                // calculate forces
-                // integrate position/rotation
-                this.velocity = this.velocity.add(this.G.multiply(dt));
-                this.position = this.position.add(this.velocity);
-
-                if (this.position.e(2) < 0) this.position.elements[1] = 0;
-                // update momentum
-                // calculate velocities
-            }
-
         }
 
     },
@@ -1521,7 +1497,7 @@ $W = {
          * @param {String} id Video element id. 
          */
         Video: function(name, id) {
-            this.texture = $W.GL.createTexture();
+            this.glTexture = $W.GL.createTexture();
             this.video = document.getElementById(id);
 
             this.video.texture = this;
@@ -1529,7 +1505,7 @@ $W = {
 
             this.update = function() {
                 with ($W.GL) {
-                    bindTexture(TEXTURE_2D, this.texture.texture);
+                    bindTexture(TEXTURE_2D, this.texture.glTexture);
                     texImage2D(TEXTURE_2D, 0, this.texture.video);
                     texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
                     texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
@@ -1549,7 +1525,7 @@ $W = {
          * @param {String} src Path to image file.
          */
         Image: function(name, src) {
-            this.texture = $W.GL.createTexture();
+            this.glTexture = $W.GL.createTexture();
             this.image = new Image();
 
             this.image.texture = this;
@@ -1559,11 +1535,11 @@ $W = {
                 with ($W) {
                     console.group('Loading texture `' + name + "`");
                     with (GL) {
-                        bindTexture(TEXTURE_2D, this.texture.texture);
+                        bindTexture(TEXTURE_2D, this.texture.glTexture);
                         texImage2D(TEXTURE_2D, 0, this.texture.image);
                         texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
                         texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
-                        //bindTexture(TEXTURE_2D, null); // clean up after ourselves
+                        bindTexture(TEXTURE_2D, null); // clean up after ourselves
                     }
                     console.log('Done');
                     console.groupEnd();
@@ -1889,7 +1865,6 @@ $W = {
         this.bufferArrays = function() {
             var gl = $W.GL;
             var prg= $W.programs[this.shaderProgram];
-            //with ($W.GL){ with ($W.programs[this.shaderProgram]) {
 
             for (var i = 0; i < prg.attributes.length; i++) {
                 try{
@@ -1914,7 +1889,6 @@ $W = {
                         gl.STATIC_DRAW);
             }
 
-            //}}
         }
 
         /** XXX Not working Binds the data buffers for rendering. */
@@ -1966,6 +1940,7 @@ $W = {
                     $W.GL.vertexAttribPointer(attribute, length, $W.GL.FLOAT, false, 0, 0);
                     $W.GL.enableVertexAttribArray(attribute);
                 }catch (err) {
+                    console.error(err);
                     
                     if (this.arrays[name] === undefined) {
                         // Fail silently
@@ -1985,17 +1960,34 @@ $W = {
         }
 
 
+        this.setTexture = function(texture, sampler) {
+            this.textures[0] = texture;
+            console.log("Applying `" + texture + "` texture");
+            $W.programs[this.shaderProgram].setUniformAction(sampler, 
+                    function(obj) {
+                        var gl = $W.GL;
+                        gl.activeTexture(gl.TEXTURE0);
+                        gl.bindTexture(gl.TEXTURE_2D, 
+                            $W.textures[obj.textures[0]].glTexture);
+                        gl.uniform1i(this.location, 0);
+                    });
+        }
+
+
         /** Bind the textures for this object.
          * XXX Will only work with single texturing
+         * @deprecated Use setTexture(texture, sampler) instead.
          */
         this.bindTextures = function() {
+            return;
             var gl = $W.GL;
             for (var i = 0; i < this.textures.length; i++) {
                 gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, $W.textures[this.textures[i]].texture);
+                gl.bindTexture(gl.TEXTURE_2D, $W.textures[this.textures[i]].glTexture);
                 gl.uniform1i(gl.getUniformLocation($W.programs[this.shaderProgram].glProgram, 'sampler'), 0);
             }
         }
+
 
         // XXX these are also clunky
         /** @returns {Vector} The sum of the object's base position and its 
@@ -2065,9 +2057,8 @@ $W = {
          */
         this.drawAt = function(pos, rot, scale) {
                 $W.modelview.pushMatrix();
-                $W.modelview.translate(pos.elements);
 
-                //$W.modelview.multMatrix(this.animation.q.matrix());
+                $W.modelview.translate(pos.elements);
                 $W.modelview.multMatrix(rot.matrix());
                 $W.modelview.scale(scale.elements);
 
@@ -2076,15 +2067,17 @@ $W = {
                 }
 
                 $W.programs[this.shaderProgram].use();
-                
-                $W.programs[this.shaderProgram].processUniforms();
+                $W.programs[this.shaderProgram].processUniforms(this);
+
                 $W.modelview.popMatrix();
 
                 //this.bindBuffers();
                 this._bufferArrays();
-                this.bindTextures();
-                this._drawFunction();
+                //this.bindTextures();
+                
 
+                this._drawFunction();
+                $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
         }
 
         /** draw this object at its internally stored position, rotation, and
@@ -2112,6 +2105,187 @@ $W = {
 
         console.groupEnd();
     },
+
+    Boid:function() {
+        $W.Object.call(this, $W.GL.TRIANGLES);
+
+        this.velocity = Vector.Zero(3);
+        this.speed = 0;
+        this.radius = 1;
+        this.maxForce = 1;
+        this.forward;
+        this.side;
+        this.up;
+
+        this.predictFuturePosition = function(atTime) {
+        }
+
+
+    },
+
+    /** @class A physical simulation.  */
+    SimulatedObject:function(physType) {
+        $W.Object.call(this, $W.GL.TRIANGLES);
+
+        if (typeof($W.world) == 'undefined') {
+            $W.world = { 
+                objects:[],
+                age:0,
+
+                update:function(dt) {
+                    // Cleared per frame
+                    for (var i = 0; i < this.objects.length; i++) {
+                        this.objects[i].alreadyCollidedWith = [];
+                    }
+                    for (var i = 0; i < this.objects.length; i++) {
+                        this.objects[i].updateSim(dt);
+                    }
+                }
+            }
+        }
+        this.index = $W.world.objects.length;
+        $W.world.objects.push(this); // Add this to global physical object list
+
+        /** Forces to be applied this frame.
+         * Cleared with each call to update()
+         */
+        this.impulses = [];
+        
+        this.alreadyCollidedWith = [];
+
+        /** Type of object to simulate
+         * "sphere" or "wall" are valid
+         */
+        this.physType = physType;
+
+        /** Bounding sphere radius */
+        this.radius = 1;
+        /** Object mass */
+        this.mass = 1;
+        /** Object velocity */
+        this.velocity = Vector.Zero(3);
+        /** Angular velocity */
+        this.omega = Vector.Zero(3);
+        /** Coefficient of restitution */
+        this.restitution = 1;
+
+        this.applyImpulse = function(impulse) {
+            this.impulses.push(impulse);
+        }
+
+        this.shouldTestCollisionWith = function(object) {
+            // Walls don't collide
+            if (this.physType == "wall" && object.physType == "wall") return false;
+
+            // Don't test collision against self
+            if (this.index == object.index) return false;
+
+            // Don't recalc collisions if we've already tested
+            for (var j = 0; j < object.alreadyCollidedWith.length; j++) {
+                if (this.index == object.alreadyCollidedWith[j]) {
+                    //return false;
+                }
+            }
+
+            return true;
+        }
+
+        this.tempSphereForWallCollision = function(other) {
+            var sphere = {};
+            sphere.velocity = this.velocity;
+            sphere.impulses = [];
+            sphere.applyImpulse = function(){};
+            sphere.radius = this.radius;
+            sphere.position = this.line.pointClosestTo(other.position);
+            sphere.physType = "wall";
+            return sphere;
+        }
+
+        this.performCollisions = function(dt) {
+            for (var i = 0; i < $W.world.objects.length; i++) {
+                var object = $W.world.objects[i];
+
+                if (this.shouldTestCollisionWith(object) && this.isColliding(object)) {
+                    var a = this;
+                    var b = object;
+
+                    if (a.physType == "wall") a = a.tempSphereForWallCollision(b);
+                    if (b.physType == "wall") b = b.tempSphereForWallCollision(a);
+
+                    var t = collisionDeltaOffset(this, object);
+                    dt += t;
+
+                    var actionNormal = a.position.subtract(b.position).toUnitVector();
+                    a.position = a.position.subtract(a.velocity.x(t/10));
+                    b.position = b.position.subtract(b.velocity.x(t/10));
+
+                    var vDiff = a.velocity.subtract(b.velocity);
+                    var relativeNormalVelocity = vDiff.dot(actionNormal);
+
+                    var impulse = actionNormal.x(relativeNormalVelocity);
+                    object.applyImpulse(impulse.x(1 / object.mass).x(this.restitution));
+                    this.applyImpulse(impulse.invert().x(1 / this.mass).x(object.restitution));
+                }
+
+                object.alreadyCollidedWith.push(this.index);
+            }
+        }
+
+        this.updateSim = function(dt) {
+            //--- calculate forces ---
+            this.performCollisions(dt);
+
+
+            //--- calculate velocities ---
+            // Apply accrued impulses
+            while (this.impulses.length > 0) {
+                this.velocity = this.velocity.add(this.impulses.pop());
+            }
+
+            //--- integrate position/rotation ---
+            this.position = this.position.add(this.velocity.x(dt/10));
+        }
+
+        var areColliding = function(a, b) {
+            return didCollide(a, b, 0);
+        }
+
+        var collisionDeltaOffset = function(a, b) {
+            // Back up to when the collision occurred
+            // Otherwise objects could get stuck inside one another
+            var t = 0;
+            while (didCollide(a, b, t++));
+            return t; // to catch back up
+        }
+
+        var didCollide = function(a, b, t) {
+            if (a.physType == "wall" && b.physType == "wall") return false;
+            var pa;
+            var pb;
+
+            if (a.physType == "sphere") {
+                pa = a.position;
+            }else if (a.physType == "wall") {
+                pa = a.line.pointClosestTo(b.position);
+            }
+
+            if (b.physType == "sphere") {
+                pb = b.position;
+            }else if (b.physType == "wall") {
+                pb = b.line.pointClosestTo(a.position);
+            }
+
+            return $W.util.sphereCollide(
+                        pa.subtract(a.velocity.x(t/10)),
+                        pb.subtract(b.velocity.x(t/10)), 
+                        a.radius, b.radius)
+        }
+
+        this.isColliding = function(obj) {
+            return areColliding(this, obj);
+        }
+    },
+
 
     /** 
      * Useful, but not necessay if provide your own draw calls
@@ -2468,22 +2642,21 @@ $W = {
     initLogging:function() {
         if (window.console === undefined) console = {}; // Dummy object
 
-        if (console.log === undefined) {
+        if (console.log === undefined) 
             console.log = function(){};
-            if (console.warn === undefined) console.warn = function(){};
-            if (console.error === undefined) console.error = function(){};
-            if (console.group === undefined) console.group = function(){};
-            if (console.groupEnd === undefined) console.groupEnd = function(){};
-        }else {
-            // If console.log exists, but one or more of the others do not,
-            // use console.log in those cases.
-            if (console.warn === undefined) console.warn         = console.log;
-            if (console.error === undefined) console.error       = console.log;
-            if (console.group === undefined) console.group       = console.log;
-            if (console.groupCollapsed === undefined) console.groupCollapsed = console.log;
-            if (console.groupEnd === undefined) console.groupEnd = console.log;
-        }
 
+        // If console.log exists, but one or more of the others do not,
+        // use console.log in those cases.
+        if (console.warn === undefined) 
+            console.warn           = console.log;
+        if (console.error === undefined) 
+            console.error          = console.log;
+        if (console.group === undefined) 
+            console.group          = console.log;
+        if (console.groupCollapsed === undefined) 
+            console.groupCollapsed = console.log;
+        if (console.groupEnd === undefined) 
+            console.groupEnd       = console.log;
     },
 
     /** Setup the WebGL subsytem.
@@ -2504,7 +2677,7 @@ $W = {
         $W.GL = null;
         $W.GL = $W.util.getGLContext($W.canvas);
 
-        if ($W.GL !== null) {
+        if (typeof($W.GL) !== "undefined" && $W.GL !== null) {
             $W.constants.VERTEX = $W.GL.VERTEX_SHADER;
             $W.constants.FRAGMENT = $W.GL.FRAGMENT_SHADER;
 
@@ -2834,4 +3007,11 @@ Vector.prototype.flatten = function ()
 {
     return this.elements;
 }; 
+
+Vector.prototype.vec3Zero = Vector.Zero(3);
+
+Vector.prototype.invert = function() {
+    return Vector.prototype.vec3Zero.subtract(this);
+}
+
 //--------------------------------------------------------------------------

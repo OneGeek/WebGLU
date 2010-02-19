@@ -57,7 +57,8 @@ function createObjects() {
         cube.setShaderProgram('textured');
 
         // Texture the cube
-        var cubeTexture = new $W.texture.Image('check', 'check.png');
+        new $W.texture.Image('check', 'check.png');
+        cube.setTexture('check', 'sampler');
 
 
         // Fill the arrays with data for a cube

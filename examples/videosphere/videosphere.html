@@ -66,7 +66,7 @@ function createObjects() {
 
     // Create and apply the video texture
     new $W.texture.Video('video', 'videoElement');
-    sphere.textures.push('video');
+    sphere.setTexture('video', 'sampler');
 
     // Generate a unit sphere with 40 horizontal rings and 40
     // vertical slices

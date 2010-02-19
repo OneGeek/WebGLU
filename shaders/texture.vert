@@ -1,5 +1,4 @@
 attribute vec3 vertex;
-attribute vec3 color;
 attribute vec2 texCoord;
 
 uniform mat4 ProjectionMatrix;
