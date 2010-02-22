@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>OneGeek/WebGLU @ GitHub</title>
+	
+	<style type="text/css">
+		body {
+  		margin-top: 1.0em;
+  		background-color: #10ea3b;
+		  font-family: "Helvetica,Arial,FreeSans"; 
+  		color: #ffffff;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+		h1 { font-size: 3.8em; color: #ef15c4; margin-bottom: 3px; }
+		h1 .small { font-size: 0.4em; }
+		h1 a { text-decoration: none }
+		h2 { font-size: 1.5em; color: #ef15c4; }
+    h3 { text-align: center; color: #ef15c4; }
+    a { color: #ef15c4; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+		pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+	</style>
+	
+</head>
+
+<body>
+  <a href="http://github.com/OneGeek/WebGLU"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  
+  <div id="container">
+
+    <div class="download">
+      <a href="http://github.com/OneGeek/WebGLU/zipball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+      <a href="http://github.com/OneGeek/WebGLU/tarball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    </div>
+      
+    <h1><a href="http://github.com/OneGeek/WebGLU">WebGLU</a> 
+      <span class="small">by <a href="http://github.com/OneGeek">OneGeek</a></span></h1>
+
+    <div class="description">
+      WebGLU is both a set of low-level utilities and a high-level engine for developing WebGL based applications. 
+    </div>
+
+    <p>=============================================================
+=           __      __   _     ___  __    __  __            =
+=           \ \    / /__| |__ / __)(  )  (  )(  )           =
+=            \ \/\/ / -_) '_ ( (_-. )(__  )(__)(            =
+=             \_/\_/\___|_.__/\___/(____)(______)           =
+=           =====================================           =
+=============================================================
+
+I AM TAKING FEATURE/DEMO/IMPLEMENTATION DETAIL SUGGESTIONS
+Email: bpd9116+WebGLU@gmail.com
+AIM: BenjaminDeLilo
+
+WebGLU is both a set of low-level utilities and a high-level
+engine for developing WebGL based applications. 
+
+WebGLU is designed such that a developer can focus on the 
+end result with a minimum of fuss and code, but doesn't hand
+hold developers who want more control. This is achieved by 
+exposing the raw GL object and also many lower-level 
+functions for working with it and the WebGL API.
+
+WebGLU's "point" is to seperate the act of rendering from
+the act of defining what to render and how to render it.
+This means all objects, shaders, attributes, uniforms, etc.
+and their interactions, can be dealt with up-front as 
+opposed to strewn throughout the rendering code. As far as
+rendering code goes, unless you want to mess around with
+low level, the only rendering related call you need to
+worry yourself about is $W.draw().
+
+A partial list of features includes:
+
+ * Designed with performance in mind. Any performance
+ criticisms are taken very seriously.
+
+For shaders and shader programs
+ * Can load directly from .frag/.vert/.vp/.fp files 
+ (and automatically assign the right shader type)
+
+ * Create on attach - loads and sets-up the shader from 
+ within shaderProgram.attachShader()
+
+ * All compiling and linking is handled automatically, as
+ needed
+
+ * Automatically sets up any projection/modelview uniforms
+
+For rendering
+ * Provides projection and modelview matrix-stacks which 
+ approximate the behavior of OpenGL matrix modes
+
+For renderable objects
+ * Automaticaly creates array/element buffers as necessary
+ and binds them as needed during rendering.
+
+ * Each object can be assigned a different shader program
+
+ * Store data for shader attributes simply with a single
+ call
+
+ * A partial .obj parser is implemented to load objects
+
+ * Now supports object hierarchies!
+
+ * Static image and video textures 
+ (canvas textures are planned)
+
+For animation
+ * Procedural animations are as easy as overriding
+ myobject.animation.update()
+
+ * Keyframe animations are almost as simple
+ myobject.animation = new $W.anim.KeyFrameAnimation();
+ myFrame = new $W.anim.KeyFrame(pos, rot, scale, time);
+ myobject.animation.addKeyframe(myFrame);
+
+ * You can mix animation types within an object hierarchy
+
+For interaction
+ * GameGLU companion library provides for easy keybinding</p><h2>Dependencies</h2>
+<p>Sylvester</p>
+<h2>Install</h2>
+<p> * Place webglu.js (and gameglu.js if desired), Sylvester.js and, at a minimum default.frag and default.vert whereever you like. 
+
+ * Change $W.paths.shaders to the path to where you placed the default shaders. 
+
+ * Include webglu.js (and gameglu.js if desired) and Sylvester.js in your webpage.
+</p>
+<h2>License</h2>
+<p>Copyright (c) 2009 Benjamin P. DeLillo
+ 
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+ 
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+ 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.</p>
+<h2>Authors</h2>
+<p>Benjamin DeLillo (bpd9116@gmail.com)<br/><br/>      </p>
+<h2>Contact</h2>
+<p>Benjamin DeLillo (bdp9116@gmail.com)<br/>      </p>
+
+
+    <h2>Download</h2>
+    <p>
+      You can download this project in either
+      <a href="http://github.com/OneGeek/WebGLU/zipball/master">zip</a> or
+      <a href="http://github.com/OneGeek/WebGLU/tarball/master">tar</a> formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/OneGeek/WebGLU</pre>
+    </p>
+      
+    <div class="footer">
+      get the source code on GitHub : <a href="http://github.com/OneGeek/WebGLU">OneGeek/WebGLU</a>
+    </div>
+    
+  </div>
+
+  <script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4580791-3");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+</body>
+</html>
