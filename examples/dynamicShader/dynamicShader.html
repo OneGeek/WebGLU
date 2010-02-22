@@ -84,11 +84,14 @@ function urlToString(url) {
 }
 
 function getURLwithParams() {
-    var url = window.location.href.slice(0, window.location.href.indexOf('?'));
+    var url = window.location.href;
+    var sliceTo = url.indexOf('?');
+    if (sliceTo === -1) sliceTo = url.length;
+    var url = window.location.href.slice(0, sliceTo);
 	var params = "?vs=";
-	params += stringToUrl(getFragSource());
-	params += "&fs=";
 	params += stringToUrl(getVertSource());
+	params += "&fs=";
+	params += stringToUrl(getFragSource());
 	document.getElementById('shareURL').value = (url+params);
 }
 
@@ -113,14 +116,18 @@ function setup() {
     $W.camera.setPosition(2,2,3);
     $W.camera.setTarget(0,1,0);
 
-    // Init shaders from URL params
+    // Init shaders sources from URL params
     var vs = getUrlVars()['vs'];
     var fs = getUrlVars()['fs'];
     if (typeof(vs) === 'undefined') {
         vs = $W.util.loadFileAsText($W.paths.shaders + 'default.vert');
+    }else {
+        vs = urlToString(vs);
     }
     if (typeof(fs) === 'undefined') {
         fs = $W.util.loadFileAsText($W.paths.shaders + 'default.frag');
+    }else {
+        fs = urlToString(fs);
     }
     document.getElementById('vs-source').value = vs;
     document.getElementById('fs-source').value = fs;
@@ -144,8 +151,8 @@ function setup() {
     // Create pyramid
     var addPyramid = function() {
         $W.newProgram('dynamic');
-        $W.programs['dynamic'].attachShader('vs', getVertSource(), $W.GL.VERTEX_SHADER);
-        $W.programs['dynamic'].attachShader('fs', getFragSource(), $W.GL.FRAGMENT_SHADER);
+        $W.programs.dynamic.attachShader('vs', getVertSource(), $W.GL.VERTEX_SHADER);
+        $W.programs.dynamic.attachShader('fs', getFragSource(), $W.GL.FRAGMENT_SHADER);
 
         pyramid = new $W.Object($W.GL.TRIANGLES);
         pyramid.vertexCount = 12;
@@ -177,10 +184,8 @@ function getVertSource() {
 }
 
 function updateShaders() {
-    $W.programs['dynamic'].detachShader('vs');
-    $W.programs['dynamic'].detachShader('fs');
-    $W.programs['dynamic'].attachShader('vs', getVertSource(), $W.GL.VERTEX_SHADER);
-    $W.programs['dynamic'].attachShader('fs', getFragSource(), $W.GL.FRAGMENT_SHADER);
+    $W.shaders.vs.setSource(getVertSource());
+    $W.shaders.fs.setSource(getFragSource());
 }
 
 function start() {
@@ -206,8 +211,8 @@ function start() {
 
 <canvas id='canvas' width='500' height='500'></canvas><br>
 <div id='buttons'>
-<a href="javascript:updateShaders();" id="updateshaders">Update Shaders</a><br>
-<a href="javascript:getURLwithParams();" id="copytoclip">Get shareable URL</a>
+<button onclick="javascript:updateShaders();" id="updateshaders">Update Shaders</button><br>
+<button onclick="javascript:getURLwithParams();" id="copytoclip">Get shareable URL</button>
 <input id='shareURL' type='text' onClick="javascript:this.form.text_area.focus();this.form.text_area.select();"></input>
 <br>
 </div>

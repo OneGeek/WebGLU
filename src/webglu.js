@@ -75,7 +75,7 @@ $W = {
     /** Keeps track of the FPS */
     fpsTracker:null,
     /** Quick access to FPS */
-	FPS : 0,
+    FPS : 0,
 
     /** Provides frame timing */
     timer:null,
@@ -105,6 +105,54 @@ $W = {
      * shader programs
      */
     GLSL: {
+        shaderVarTypes: {
+            int:1,
+            float:1,
+            bool:1,
+            vec2:2,
+            vec3:3,
+            vec4:4
+        },
+        util: {
+            getShaderSourceById: function(id) {
+                var source;
+                var shaderScript = document.getElementById(id);
+                if (!shaderScript) {
+                    console.error("No script with id '" + id + "'");
+                    return null;
+                }
+            
+                source = "";
+                var k = shaderScript.firstChild;
+                while (k) {
+                    if (k.nodeType == 3) {
+                        source += k.textContent;
+                    }
+                    k = k.nextSibling;
+                }
+            
+                return source;
+            },
+            
+            getShaderTypeById: function(id) {
+                var type;
+                var shaderScript = document.getElementById(id);
+                if (!shaderScript) {
+                    console.error("No script with id '" + id + "'");
+                    return null;
+                }
+            
+                if (shaderScript.type == "x-shader/x-fragment") {
+                    type = $W.GL.FRAGMENT_SHADER;
+                } else if (shaderScript.type == "x-shader/x-vertex") {
+                    type = $W.GL.VERTEX_SHADER;
+                } else {
+                    console.log('invalid shader type' + shaderScript.type);
+                }
+            
+                return type;
+            }
+        },
 
         /** Must be called */
         initialize:function() {
@@ -125,8 +173,8 @@ $W = {
         Attribute: function (name, length) {
             this.name = name;
             this.length = length;
-            this.location;
-            this.buffer;
+            this.location = null;
+            this.buffer = null;
             this.clone = function() {
                 return new $W.GLSL.Attribute(this.name, this.length);
             }
@@ -151,28 +199,41 @@ $W = {
         /** @class Handles compilation, attributes, and uniforms of a GLSL
          * shader.
          * @param {String} name All shaders need a unique name
-         * @param {String} source The source code or the DOM element Id 
-         * to a script element containing the source code for a shader.
-         * @param type The type of shader, valid types are<br>
+         * @param {String} [src] The source code, if not included then
+         * name is assumed to be a DOM element Id to a script element 
+         * containing the source code for a shader.
+         * @param [type] The type of shader, valid types are<br>
          * $W.GL.VERTEX_SHADER<br>
          * $W.GL.FRAGMENT_SHADER<br>
          */
-        Shader: function(name, source, type) {
+        Shader: function(name, src, type) {
             //console.groupCollapsed("creating shader '" + name + "'");
-            console.log("creating shader '" + name + "'");
+            console.group("creating shader '" + name + "'");
             $W.shaders[name] = this;
 
             /** Name of the shader. */
-            this.name 	  = name;
+            this.name = name;
+            var name = this.name;
 
             /** Source code of the shader. */
-            this.source   = "";
+            var source = src;
 
             /** Shader type $W.GL.VERTEX_SHADER or $W.GL.FRAGMENT_SHADER. */
-            this.type 	  = -1;
+            this.type = -1;
+
+            // If the source wasn't passed in we assume name is an element
+            // ID in the page
+            if (source === undefined) {
+                source = getShaderSourceById(name);
+                this.type = getShaderTypeById(name);
+
+            // Else we just use the provided source and type
+            }else {
+                this.type = type;
+            }
 
             /** The WebGL shader object. */
-            this.glShader = null;
+            var glShader = null;
 
             /** Attributes for this shader. */
             this.attributes = [];
@@ -180,34 +241,44 @@ $W = {
             this.uniforms   = [];
 
             /** Names of programs which use this shader. */
-            this.programs 	= [];
+            var programs   = [];
 
             /** Tracks if this shader need to be (re)compiled. */
-            this.isDirty = true;
+            var isDirty = true;
 
             // TODO Have _dirty and _clean update the dirty status of all
             // programs which use this shader.
-            this._dirty = function() {
-                this.glShader = null;
-                this.isDirty = true;
-            }
-            this._clean = function() {
-                this.isDirty = false;
+            var dirty = function() {
+                glShader = null;
+                console.log("Marking shader `" + name + "` as dirty");
+                for (var i = 0; i < programs.length; i++) {
+                    console.log('dirtying program `' + programs[i] + "`");
+                    $W.programs[programs[i]].dirty();                            
+                }
+                isDirty = true;
             }
 
-            this._addProgram = function(name) {
-                this.programs.push(name);
+            var clean = function() {
+                isDirty = false;
             }
-            this._removeProgram = function(name) {
-                this.programs = this.programs.remove(name);
+            this.isDirty = function() {
+                return isDirty;
+            }
+
+
+            this.addProgram = function(name) {
+                programs.push(name);
+            }
+            this.removeProgram = function(name) {
+                programs = programs.remove(name);
             }
             
             /** Change the source for this shader 
              * @param {String} src The source code.
              */
             this.setSource = function(src) {
-                this._dirty();
-                this.source = src;
+                dirty();
+                source = src;
             }
 
             /** Set up a Uniform for the modelview matrix.
@@ -218,12 +289,14 @@ $W = {
             this.setModelViewUniform = function(name) {
                 console.log("using '" + name + "' as ModelView uniform");
 
-                var uniform;
+                var uniform = this.uniforms.findInProperty('name', name);
+                /*
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
                         uniform = this.uniforms[i];
                     }
                 }
+                */
 
                 uniform.action = function() {
                     $W.GL.uniformMatrix4fv(this.location, false, 
@@ -276,17 +349,17 @@ $W = {
             /** @returns The raw WebGL shader object */
             this.getGLShader = function() {
                 // Ensure the shader is valid before we return it
-                if (this.isDirty) {
+                if (isDirty) {
                     console.log("'" + this.name + "' is dirty");
                     if (!this.compile()) {
                         return false;
                     }else {
-                        this._clean();
+                        clean();
                     }
                 }else {
                     console.log("'" + this.name + "' is clean, using");
                 }
-                return this.glShader;
+                return glShader;
             }
 
             /** Store the information about this named uniform. 
@@ -311,19 +384,18 @@ $W = {
             this.addAttribute = function(name, length) {
                 console.log("adding attribute '" + name + "'");
                 if (!length) { length = 3; }
-                //this.attributes.push([name, length]);
                 this.attributes.push(new $W.GLSL.Attribute(name, length));
             }
 
             // Find and initialize all uniforms and attributes found in the source
-            this._parseShaderVariables = function(str) {
+            this.parseShaderVariables = function(str) {
                 var tokens = str.split(/[\s\n;]+?/);
 
                 for (var i = 0; i < tokens.length; i++) {
                     if (tokens[i] == "attribute") {
                         var type = tokens[i+1];
                         var name = tokens[i+2];
-                        var length = this.types[type];
+                        var length = $W.GLSL.shaderVarTypes[type];
                         this.addAttribute(name, length);
                     }                               
                     if (tokens[i] == "uniform") {
@@ -349,90 +421,39 @@ $W = {
              * relink
              */
             this.compile = function() {
-                if (this.type == $W.GL.VERTEX_SHADER) {
+                if (this.type === $W.GL.VERTEX_SHADER) {
                     console.log("compiling '" + this.name + "' as vertex shader");
-                }else if (this.type = $W.GL.FRAGMENT_SHADER) {
+                }else if (this.type === $W.GL.FRAGMENT_SHADER) {
                     console.log("compiling '" + this.name + "' as vertex shader");
                 }else {
                     console.error("compiling '" + this.name + "' as unknown type " + this.type);
                 }   
-                if (this.glShader !== null) {
-                    $W.GL.deleteShader(this.glShader);
-                    this.glShader = null;
+                if (glShader !== null) {
+                    $W.GL.deleteShader(glShader);
+                    glShader = null;
                 }
 
                 var shader = $W.GL.createShader(this.type);
                 
-                $W.GL.shaderSource(shader, this.source);
+                $W.GL.shaderSource(shader, source);
                 $W.GL.compileShader(shader);
 
                 if (!$W.GL.getShaderParameter(shader, $W.GL.COMPILE_STATUS)) {
                     console.group('Compile error');
                     //console.error('error compiling ' + this.name + ': ' + $W.GL.getShaderInfoLog(shader));
-                    console.log(this.source);
+                    console.log(source);
                     console.groupEnd();
-                    this.glShader = null;
+                    glShader = null;
                 } else {
-                    this._clean();
-                    this.glShader = shader;
+                    clean();
+                    glShader = shader;
                 }
 
-                return (this.glShader !== null);
+                return (glShader !== null);
             }
 
-            // If the source wasn't passed in we assume name is an element
-            // ID in the page
-            if (!source) {
-                var getShaderSourceById = function(id) {
-                    var source;
-                    var shaderScript = document.getElementById(id);
-                    if (!shaderScript) {
-                        console.error("No script with id '" + id + "'");
-                        return null;
-                    }
-
-                    source = "";
-                    var k = shaderScript.firstChild;
-                    while (k) {
-                        if (k.nodeType == 3) {
-                            source += k.textContent;
-                        }
-                        k = k.nextSibling;
-                    }
-
-                    return source;
-                }
-
-                var getShaderTypeById = function(id) {
-                    var type;
-                    var shaderScript = document.getElementById(id);
-                    if (!shaderScript) {
-                        console.error("No script with id '" + id + "'");
-                        return null;
-                    }
-
-                    if (shaderScript.type == "x-shader/x-fragment") {
-                        type = $W.GL.FRAGMENT_SHADER;
-                    } else if (shaderScript.type == "x-shader/x-vertex") {
-                        type = $W.GL.VERTEX_SHADER;
-                    } else {
-                        console.log('invalid shader type' + shaderScript.type);
-                    }
-
-                    return type;
-                }
-
-                this.source = getShaderSourceById(name);
-                this.type  	= getShaderTypeById(name);
-
-            // Else we just use the provided source and type
-            }else {
-                this.source = source;
-                this.type   = type;
-            }
-
-            this._parseShaderVariables(this.source);
-            //this.compile();
+            this.parseShaderVariables(source);
+            this.compile();
 
             console.groupEnd();
         },
@@ -449,22 +470,33 @@ $W = {
             this.name = name;
 
             /** WebGL shader program object. */
-            this.glProgram 	= null;
+            this.glProgram  = null;
 
-            /** Link state */
-            this.isLinked 	= false;
-            
             /** Tracks link state and compile state of all attached shaders. */
-            this.isDirty 	= true; // So we know when to relink
+            var isDirty = true;
+
+            var dirty = function() {
+                this.glProgram = null;
+                isDirty = true;
+            }
+            this.dirty = dirty;
+
+            var clean = function() {
+                isDirty = false;
+            }
+
+            this.isDirty = function() {
+                return isDirty;
+            }
             
             /** Attached shaders */
-            this.shaders 	= [];
+            this.shaders   = [];
 
             /** Attributes from all attached shaders. */
             this.attributes = [];
 
             /** Uniforms from all attached shaders. */
-            this.uniforms 	= [];
+            this.uniforms   = [];
 
             this._setupAttributes = function() {
                 this.attributes = [];
@@ -598,17 +630,15 @@ $W = {
              * Will [re]compile all attached shaders if necessary.
              */
             this.link = function() {
-                console.group("linking '" + this.name + "'");
+                console.group("linking program `" + this.name + "`");
 
-                if (this.isLinked) {
+
+                // Only delete the program if one already exists
+                if (this.glProgram !== null) {
                     console.log("already exists, deleting and relinking");
-
-                    // Only delete the program if one already exists
-                    if (!!this.glProgram) {
-                        $W.GL.deleteProgram(this.glProgram);
-                        this.attributes = [];
-                        this.glProgram = null;
-                    }
+                    $W.GL.deleteProgram(this.glProgram);
+                    this.attributes = [];
+                    this.glProgram = null;
                 }
 
                 this.glProgram = $W.GL.createProgram();
@@ -620,11 +650,11 @@ $W = {
 
                     // if the shader is still dirty after calling get,
                     // which should have cleaned it, then the compile failed.
-                    if (shader.isDirty) {
+                    if (shader.isDirty()) {
                         console.log(this.shaders[i] + " failed to compile");
                     }else {
                         $W.GL.attachShader(this.glProgram, 
-                                $W.shaders[this.shaders[i]].glShader);
+                                $W.shaders[this.shaders[i]].getGLShader());
                     }	
                 }
 
@@ -634,23 +664,22 @@ $W = {
                 if (!$W.GL.getProgramParameter(this.glProgram, $W.GL.LINK_STATUS)) {
                     console.group('Link error');
                     console.error($W.GL.getProgramInfoLog(this.glProgram));
-                    this.isLinked = false;
+                    dirty();
                     console.groupEnd();
                 }
                     
-                this.isLinked = true;
-                this.isDirty = false;
+                clean();
                 this._setupAttributes();
                 this._setupUniforms();
 
                 console.groupEnd();
-                return this.isLinked;
+                return isDirty;
             }
 
             /** XXX @Deprecated */
             this.detachShaderByName = function(name) {
                 console.warn("detachShaderByName is deprecated, use detachShader instead");
-                detachShader(name);
+                this.detachShader(name);
             }
 
             /** Remove the named shader from this program.
@@ -666,7 +695,7 @@ $W = {
                     }
                 }
 
-                this.isDirty = true;
+                isDirty = true;
                 this.shaders = tempShaders;
             }
 
@@ -689,9 +718,13 @@ $W = {
                     }else if (arguments.length == 2){
 
                         // Try to infer type
-                        var ext = path.slice(path.length - 4)
-                        if (ext == 'vert' || ext.slice(2) == 'vp') type = $W.GL.VERTEX_SHADER;
-                        if (ext == 'frag' || ext.slice(2) == 'fp') type = $W.GL.FRAGMENT_SHADER;
+                        var ext = path.slice(path.length - 4);
+                        if (ext == 'vert' || ext.slice(2) == 'vp') {
+                            type = $W.GL.VERTEX_SHADER;
+                        }
+                        if (ext == 'frag' || ext.slice(2) == 'fp') {
+                            type = $W.GL.FRAGMENT_SHADER;
+                        }
 
                         try {
                             shader = new $W.GLSL.Shader(shader, $W.util.loadFileAsText(path), type); 
@@ -712,11 +745,11 @@ $W = {
             this._attachShader = function(shader) {
                 console.log("attaching '" + shader.name + "' to '" + this.name + "'");
                 try{
-                    shader._addProgram(this.name);
+                    shader.addProgram(this.name);
                 }catch(e) {
-                    console.error(" ");
+                    console.error(e);
                 }
-                this.isDirty = true;
+                isDirty = true;
                 this.shaders.push(shader.name);
             }
 
@@ -731,8 +764,8 @@ $W = {
              */
             this.use = function() {
                 // Try to link if needed
-                if (!this.isLinked || this.isDirty) {
-                    if (!this.link()) return false;
+                if (isDirty) {
+                    if (!this.link()) { return false; }
                 }
                 $W.GL.useProgram(this.glProgram);
                 return true;
@@ -922,7 +955,7 @@ $W = {
          * Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htm
          */
         getAxisAngle : function(rotation) {
-            if (rotation.elements == [0,0,0]) return {angle:0,axis:[1,0,0]};
+            if (rotation.elements == [0,0,0]) {return {angle:0,axis:[1,0,0]};}
             var c1 = Math.cos(rotation.e(2) / 2); // c1 = cos(heading / 2)
             var c2 = Math.cos(rotation.e(1) / 2); // c2 = cos(attitude / 2)
             var c3 = Math.cos(rotation.e(3) / 2); // c3 = cos(bank / 2)
@@ -965,9 +998,9 @@ $W = {
          */
         genSphere: function(rings, slices, r) {
             // Default to unit sphere
-            if (r === undefined) r = 1;
+            if (r === undefined) { r = 1; }
 
-            sphere = {};
+            var sphere = {};
             sphere.vertices = [];
             sphere.normals  = [];
             sphere.texCoords= [];
@@ -1096,7 +1129,7 @@ $W = {
 
             // Parse vertices
             model.vertices = obj.match(/^v\s.+/gm);
-            if (model.vertices != null) {
+            if (model.vertices !== null) {
                 console.log("Parsing vertices");
                 for (var i = 0; i < model.vertices.length; i++) {
                     model.vertices[i] = model.vertices[i].match(/[-0-9\.]+/g);
@@ -1114,7 +1147,7 @@ $W = {
 
             // Parse normals
             model.normals = obj.match(/^vn.+/gm);
-            if (model.normals != null) {
+            if (model.normals !== null) {
                 console.log("Parsing normals");
                 for (var i = 0; i < model.normals.length; i++) {
                     model.normals[i] = model.normals[i].match(/[0-9\.]+/g);
@@ -1125,7 +1158,7 @@ $W = {
 
             // Parse texture coordinates
             model.texCoords = obj.match(/^vt.+/gm);
-            if (model.texCoords != null) {
+            if (model.texCoords !== null) {
                 console.log("Parsing texture coordinates");
                 for (var i = 0; i < model.texCoords.length; i++) {
                     model.texCoords[i] = model.texCoords[i].match(/[0-9\.]+/g);
@@ -1156,7 +1189,7 @@ $W = {
 
             // Parse faces
             model.faces = obj.match(/^f.+/gm);
-            if (model.faces != null) {
+            if (model.faces !== null) {
                 console.log("Parsing faces");
                 // face format : v/vt/vn
                 for (var i = 0; i < model.faces.length; i++) {
@@ -1214,7 +1247,7 @@ $W = {
             xhr = new XMLHttpRequest();
             xhr.overrideMimeType("text/xml");
 
-            if (!xhr) return null;
+            if (!xhr) { return null; }
 
             try {
                 var nsPM = null;
@@ -1283,30 +1316,10 @@ $W = {
                       gl = canvas.getContext(type);
             }} catch (e){}
 
-            if (!!gl) console.log('using ' + type);
+            if (!!gl) { console.log('using ' + type); }
 
             return gl;
         },
-
-        /** A place to put any code to ensure cross-browser compatability */
-        ensureCrossBrowserCompat:function() {
-            // This temporary code provides support for Google Chrome, which
-            // as of 30 Nov 2009 does not support the new names for the
-            // functions to get shader/program parameters (among other things).
-            // It should be unnecessary soon, and is only a partial fix
-            // in the meantime (as, for example, there's no way to get shader
-            // or program parameters that are vectors of integers).
-            // See http://learningwebgl.com/blog/?p=1082 for details.
-            if (!this.GL.getProgramParameter)
-            {
-                this.GL.getProgramParameter = this.GL.getProgrami
-            }
-            if (!this.GL.getShaderParameter)
-            {
-                this.GL.getShaderParameter = this.GL.getShaderi
-            }
-            // End of Chrome compatibility code
-        }
 
     },
 
@@ -1380,7 +1393,7 @@ $W = {
             /** Update the rotation. Does nothing by default. */
             this.updateRotation = function(dt){}
             /** Update the scale. Does nothing by default. */
-            this.updateScale 	= function(dt){}
+            this.updateScale    = function(dt){}
 
             /** Called after all other update calls.
              * Does nothing by default.
@@ -1504,14 +1517,13 @@ $W = {
             $W.textures[name]  = this;
 
             this.update = function() {
-                with ($W.GL) {
-                    bindTexture(TEXTURE_2D, this.texture.glTexture);
-                    texImage2D(TEXTURE_2D, 0, this.texture.video);
-                    texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
-                    texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
-                    //generateMipmap(TEXTURE_2D);
-                    //bindTexture(TEXTURE_2D, null); // clean up after ourselves
-                }
+                var gl = $W.GL;
+                gl.bindTexture(gl.TEXTURE_2D, this.texture.glTexture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.video);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                //gl.generateMipmap(gl.TEXTURE_2D);
+                //gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
             }
 
             this.video.play();
@@ -1532,18 +1544,15 @@ $W = {
             $W.textures[name]  = this;
 
             this.image.onload = function() {
-                with ($W) {
-                    console.group('Loading texture `' + name + "`");
-                    with (GL) {
-                        bindTexture(TEXTURE_2D, this.texture.glTexture);
-                        texImage2D(TEXTURE_2D, 0, this.texture.image);
-                        texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
-                        texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
-                        bindTexture(TEXTURE_2D, null); // clean up after ourselves
-                    }
-                    console.log('Done');
-                    console.groupEnd();
-                }                 
+                var gl = $W.GL;
+                console.group('Loading texture `' + name + "`");
+                gl.bindTexture(gl.TEXTURE_2D, this.texture.glTexture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.image);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
+                console.log('Done');
+                console.groupEnd();
             }
 
             this.setSource = function(src) {
@@ -1572,7 +1581,7 @@ $W = {
             this.z = arguments[2] * result;
 
         // Called as Quaternion([w, x, y, z])
-        }else if (arguments[0] != undefined && arguments[0].length == 4) {
+        }else if (arguments[0] !== undefined && arguments[0].length == 4) {
             this.w = arguments[0][0];
             this.x = arguments[0][1];
             this.y = arguments[0][2];
@@ -1674,12 +1683,12 @@ $W = {
      */
     ObjectState:function(position, rotation, scale) {
         if (arguments.length == 3) {
-            this.position	= $V(position);
-            this.rotation	= $V(rotation);
+            this.position  = $V(position);
+            this.rotation  = $V(rotation);
             this.scale      = $V(scale);
         }else {
-            this.position	= Vector.Zero(3);
-            this.rotation	= Vector.Zero(3);
+            this.position  = Vector.Zero(3);
+            this.rotation  = Vector.Zero(3);
             this.scale      = $V([1,1,1]);
         }
 
@@ -1725,13 +1734,13 @@ $W = {
 
 
         this.equals = function(other) {
-            if ((other.scale != undefined &&
-                        other.position != undefined &&
-                        other.rotation != undefined) && (
+            if ((other.scale !== undefined &&
+                 other.position !== undefined &&
+                 other.rotation !== undefined) && (
 
-                            this.scale == other.scale &&
-                            this.position == other.position &&
-                            this.rotation == other.rotation )) {
+                this.scale == other.scale &&
+                this.position == other.position &&
+                this.rotation == other.rotation )) {
 
                 return true;
             }else {
@@ -1759,9 +1768,9 @@ $W = {
      * the child of another object.
      */
     Object:function (type, shouldAdd) {
-        console.group("Creating object");
+        //console.group("Creating object");
 
-        if (!(shouldAdd === false)) {
+        if (shouldAdd !== false) {
             $W.addObject(this);
         }
 
@@ -1785,18 +1794,18 @@ $W = {
         this.type = type; // render type (wglu.GL.LINES, wglu.GL.POINTS, wglu.GL.TRIANGLES, etc.)
 
         this._elements = false;
-        this._elementBuffer = null;;
+        this._elementBuffer = null;
         this._elementCount = 0;
 
         /** WebGL array buffers for attribute data. */
-        this.buffers    = [];
+        this.buffers = [];
 
         /** WebGL*array's of attribute data. */
-        this.arrays 	= [];
+        this.arrays = [];
         this._debugArrays = [];
 
         /** Names of textures this object uses. */
-        this.textures 	= [];
+        this.textures = [];
 
         this._children = [];
 
@@ -1811,7 +1820,7 @@ $W = {
          * @param {String} program Program name.
          */
         this.setShaderProgram = function (program) {
-            this.shaderProgram = program
+            this.shaderProgram = program;
         }
 
         /** Add an object as a child to this object.
@@ -1852,7 +1861,7 @@ $W = {
          * @param {Array} contents The data to pass to the attribute.
          */
         this.fillArray = function(name, contents) {
-            console.log("Filling `" + name + "` array");
+            //console.log("Filling `" + name + "` array");
             this._debugArrays = contents;
             this.arrays[name] = new WebGLFloatArray(contents.flatten());
 
@@ -1868,7 +1877,7 @@ $W = {
 
             for (var i = 0; i < prg.attributes.length; i++) {
                 try{
-                    if (this.arrays[prg.attributes[i].name] != undefined) {
+                    if (this.arrays[prg.attributes[i].name] !== undefined) {
                         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[prg.attributes[i].name]);
                         gl.bufferData(gl.ARRAY_BUFFER, this.arrays[prg.attributes[i].name], 
                                 gl.STATIC_DRAW);
@@ -1883,7 +1892,7 @@ $W = {
                 }
             }
 
-            if (!(this._elements === false)) {
+            if (this._elements !== false) {
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new WebGLUnsignedShortArray(this._elements), 
                         gl.STATIC_DRAW);
@@ -1927,10 +1936,10 @@ $W = {
             var program = $W.programs[this.shaderProgram];
 
             for (var i = 0; i < program.attributes.length; i++) {
-                var name  	  = program.attributes[i].name; 
+                var name      = program.attributes[i].name; 
                 var attribute = program.attributes[i].location;
-                var length 	  = program.attributes[i].length;
-                var buffer 	  = program.attributes[i].buffer;
+                var length    = program.attributes[i].length;
+                var buffer    = program.attributes[i].buffer;
 
                 try{
                     $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.buffers[name]);
@@ -1940,7 +1949,7 @@ $W = {
                     $W.GL.vertexAttribPointer(attribute, length, $W.GL.FLOAT, false, 0, 0);
                     $W.GL.enableVertexAttribArray(attribute);
                 }catch (err) {
-                    console.error(err);
+                    //console.error(err);
                     
                     if (this.arrays[name] === undefined) {
                         // Fail silently
@@ -1952,7 +1961,7 @@ $W = {
             
             // if elements aren't disabled
             // XXX convert to callback to avoid `if`
-            if (!(this._elements === false)) {
+            if (this._elements !== false) {
                 $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
                 $W.GL.bufferData($W.GL.ELEMENT_ARRAY_BUFFER,new WebGLUnsignedShortArray(this._elements), 
                         $W.GL.STATIC_DRAW);
@@ -2029,7 +2038,7 @@ $W = {
         this._drawArrays = function() {
             return (function() {
                 try {
-                    $W.GL.drawArrays(this.type, 0, this.vertexCount)
+                    $W.GL.drawArrays(this.type, 0, this.vertexCount);
                 }catch (e) {
                     console.error(e);
                 }
@@ -2103,7 +2112,7 @@ $W = {
             }
         }
 
-        console.groupEnd();
+        //console.groupEnd();
     },
 
     Boid:function() {
@@ -2113,9 +2122,9 @@ $W = {
         this.speed = 0;
         this.radius = 1;
         this.maxForce = 1;
-        this.forward;
-        this.side;
-        this.up;
+        this.forward = null;
+        this.side = null;
+        this.up = null;
 
         this.predictFuturePosition = function(atTime) {
         }
@@ -2175,10 +2184,14 @@ $W = {
 
         this.shouldTestCollisionWith = function(object) {
             // Walls don't collide
-            if (this.physType == "wall" && object.physType == "wall") return false;
+            if (this.physType == "wall" && object.physType == "wall"){
+                return false;
+            }
 
             // Don't test collision against self
-            if (this.index == object.index) return false;
+            if (this.index == object.index) {
+                return false;
+            }
 
             // Don't recalc collisions if we've already tested
             for (var j = 0; j < object.alreadyCollidedWith.length; j++) {
@@ -2209,8 +2222,12 @@ $W = {
                     var a = this;
                     var b = object;
 
-                    if (a.physType == "wall") a = a.tempSphereForWallCollision(b);
-                    if (b.physType == "wall") b = b.tempSphereForWallCollision(a);
+                    if (a.physType == "wall") {
+                        a = a.tempSphereForWallCollision(b);
+                    }
+                    if (b.physType == "wall") {
+                        b = b.tempSphereForWallCollision(a);
+                    }
 
                     var t = collisionDeltaOffset(this, object);
                     dt += t;
@@ -2254,12 +2271,12 @@ $W = {
             // Back up to when the collision occurred
             // Otherwise objects could get stuck inside one another
             var t = 0;
-            while (didCollide(a, b, t++));
+            while (didCollide(a, b, t++)) {}
             return t; // to catch back up
         }
 
         var didCollide = function(a, b, t) {
-            if (a.physType == "wall" && b.physType == "wall") return false;
+            if (a.physType == "wall" && b.physType == "wall") { return false; }
             var pa;
             var pb;
 
@@ -2278,7 +2295,7 @@ $W = {
             return $W.util.sphereCollide(
                         pa.subtract(a.velocity.x(t/10)),
                         pb.subtract(b.velocity.x(t/10)), 
-                        a.radius, b.radius)
+                        a.radius, b.radius);
         }
 
         this.isColliding = function(obj) {
@@ -2393,9 +2410,9 @@ $W = {
     GLU:{
        /** Given a point in screen-space, transform to an object-space point */
        unproject:function(winX, winY, winZ, model, proj, view) {
-           if (model === undefined) model = $W.modelview.matrix;
-           if (proj === undefined) proj = $W.projection.matrix;
-           if (view === undefined) view = [0,0, $W.canvas.width, $W.canvas.height];
+           if (model === undefined){model = $W.modelview.matrix;}
+           if (proj === undefined) {proj = $W.projection.matrix;}
+           if (view === undefined) {view = [0,0, $W.canvas.width, $W.canvas.height];}
 
            var pickMatrix = (model.multiply(proj)).inverse();
 
@@ -2590,7 +2607,7 @@ $W = {
      */
     initialize:function(canvasNode) {
         $W.initLogging();
-        console.groupCollapsed("Initializing WebGLU");
+        console.group("Initializing WebGLU");
 
         // Prep the shader subsystem
         $W.GLSL.initialize();
@@ -2620,7 +2637,7 @@ $W = {
      * XXX Not working
      */
     loadSylvester:function() {
-        syl = document.createElement("script");
+        var syl = document.createElement("script");
         syl.type = "text/javascript";
         syl.src = $W.paths.external + $W.paths.sylvester;
         document.body.appendChild(syl);
@@ -2640,23 +2657,44 @@ $W = {
 
     /** Ensure that we can log, or at least not error if we try to */
     initLogging:function() {
-        if (window.console === undefined) console = {}; // Dummy object
+        if (window.console === undefined) {
+            console = {};
+        } // Dummy object
 
-        if (console.log === undefined) 
+        if (console.log === undefined) {
             console.log = function(){};
+        }
 
         // If console.log exists, but one or more of the others do not,
         // use console.log in those cases.
-        if (console.warn === undefined) 
+        if (console.warn === undefined) {
             console.warn           = console.log;
-        if (console.error === undefined) 
+        }
+        if (console.error === undefined) {
             console.error          = console.log;
-        if (console.group === undefined) 
+        }
+        if (console.group === undefined) {
             console.group          = console.log;
-        if (console.groupCollapsed === undefined) 
-            console.groupCollapsed = console.log;
-        if (console.groupEnd === undefined) 
+        }
+        if (console.groupCollapsed === undefined) {
+            console.groupCollapsed = console.group;
+        }
+        if (console.groupEnd === undefined) {
             console.groupEnd       = console.log;
+        }
+    },
+
+    disableGrouping:function() {
+        console.oldGroup = console.group;
+        console.group = console.log;
+
+        console.oldGroupCollapsed = console.group;
+        console.groupCollapsed = console.log;
+    },
+
+    enableGrouping:function() {
+        console.group = console.oldGroup;
+        console.groupCollapsed = console.oldGroupCollapsed;
     },
 
     /** Setup the WebGL subsytem.
@@ -2713,6 +2751,10 @@ $W = {
      */
     addObject: function(obj) {
         this.objects.push(obj);
+    },
+
+    clearObjects: function() {
+        this.objects = [];
     },
 
 
@@ -2776,6 +2818,15 @@ $W = {
 //--------------------------------------------------------------------------
 // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
 //--------------------------------------------------------------------------
+Array.prototype.findInProperty = function(prop, value) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i][prop] === value) {
+            return this[i];
+        }
+    }
+    return null;
+}
+
 Array.prototype.flatten = function() {
     var res = [];
     for (var i = 0; i < this.length; i++) {
@@ -3014,4 +3065,3 @@ Vector.prototype.invert = function() {
     return Vector.prototype.vec3Zero.subtract(this);
 }
 
-//--------------------------------------------------------------------------
