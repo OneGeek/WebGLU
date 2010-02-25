@@ -24,6 +24,195 @@
      *  OTHER DEALINGS IN THE SOFTWARE.
 */
 
+
+/** @class A physical simulation.  */
+$W.SimulatedObject = function(physType) {
+    $W.Object.call(this, $W.GL.TRIANGLES);
+
+    if (typeof($W.world) == 'undefined') {
+        $W.world = { 
+            objects:[],
+            age:0,
+
+            update:function(dt) {
+                // Cleared per frame
+                for (var i = 0; i < this.objects.length; i++) {
+                    this.objects[i].alreadyCollidedWith = [];
+                }
+                for (var i = 0; i < this.objects.length; i++) {
+                    this.objects[i].updateSim(dt);
+                }
+            }
+        }
+    }
+    this.index = $W.world.objects.length;
+    $W.world.objects.push(this); // Add this to global physical object list
+
+    /** Forces to be applied this frame.
+     * Cleared with each call to update()
+     */
+    this.impulses = [];
+
+    this.alreadyCollidedWith = [];
+
+    /** Type of object to simulate
+     * "sphere" or "wall" are valid
+     */
+    this.physType = physType;
+
+    /** Bounding sphere radius */
+    this.radius = 1;
+    /** Object mass */
+    this.mass = 1;
+    /** Object velocity */
+    this.velocity = Vector.Zero(3);
+    /** Angular velocity */
+    this.omega = Vector.Zero(3);
+    /** Coefficient of restitution */
+    this.restitution = 1;
+
+    this.applyImpulse = function(impulse) {
+        this.impulses.push(impulse);
+    }
+
+    this.shouldTestCollisionWith = function(object) {
+        // Walls don't collide
+        if (this.physType == "wall" && object.physType == "wall"){
+            return false;
+        }
+
+        // Don't test collision against self
+        if (this.index == object.index) {
+            return false;
+        }
+
+        // Don't recalc collisions if we've already tested
+        for (var j = 0; j < object.alreadyCollidedWith.length; j++) {
+            if (this.index == object.alreadyCollidedWith[j]) {
+                //return false;
+            }
+        }
+
+        return true;
+    }
+
+    this.tempSphereForWallCollision = function(other) {
+        var sphere = {};
+        sphere.velocity = this.velocity;
+        sphere.impulses = [];
+        sphere.applyImpulse = function(){};
+        sphere.radius = this.radius;
+        sphere.position = this.line.pointClosestTo(other.position);
+        sphere.physType = "wall";
+        return sphere;
+    }
+
+    this.performCollisions = function(dt) {
+        for (var i = 0; i < $W.world.objects.length; i++) {
+            var object = $W.world.objects[i];
+
+            if (this.shouldTestCollisionWith(object) && this.isColliding(object)) {
+                var a = this;
+                var b = object;
+
+                if (a.physType == "wall") {
+                    a = a.tempSphereForWallCollision(b);
+                }
+                if (b.physType == "wall") {
+                    b = b.tempSphereForWallCollision(a);
+                }
+
+                var t = collisionDeltaOffset(this, object);
+                dt += t;
+
+                var actionNormal = a.position.subtract(b.position).toUnitVector();
+                a.position = a.position.subtract(a.velocity.x(t/10));
+                b.position = b.position.subtract(b.velocity.x(t/10));
+
+                var vDiff = a.velocity.subtract(b.velocity);
+                var relativeNormalVelocity = vDiff.dot(actionNormal);
+
+                var impulse = actionNormal.x(relativeNormalVelocity);
+                object.applyImpulse(impulse.x(1 / object.mass).x(this.restitution));
+                this.applyImpulse(impulse.invert().x(1 / this.mass).x(object.restitution));
+            }
+
+            object.alreadyCollidedWith.push(this.index);
+        }
+    }
+
+    this.updateSim = function(dt) {
+        //--- calculate forces ---
+        this.performCollisions(dt);
+
+
+        //--- calculate velocities ---
+        // Apply accrued impulses
+        while (this.impulses.length > 0) {
+            this.velocity = this.velocity.add(this.impulses.pop());
+        }
+
+        //--- integrate position/rotation ---
+        this.position = this.position.add(this.velocity.x(dt/10));
+    }
+
+    var areColliding = function(a, b) {
+        return didCollide(a, b, 0);
+    }
+
+    var collisionDeltaOffset = function(a, b) {
+        // Back up to when the collision occurred
+        // Otherwise objects could get stuck inside one another
+        var t = 0;
+        while (didCollide(a, b, t++)) {}
+        return t; // to catch back up
+    }
+
+    var didCollide = function(a, b, t) {
+        if (a.physType == "wall" && b.physType == "wall") { return false; }
+        var pa;
+        var pb;
+
+        if (a.physType == "sphere") {
+            pa = a.position;
+        }else if (a.physType == "wall") {
+            pa = a.line.pointClosestTo(b.position);
+        }
+
+        if (b.physType == "sphere") {
+            pb = b.position;
+        }else if (b.physType == "wall") {
+            pb = b.line.pointClosestTo(a.position);
+        }
+
+        return $W.util.sphereCollide(
+                pa.subtract(a.velocity.x(t/10)),
+                pb.subtract(b.velocity.x(t/10)), 
+                a.radius, b.radius);
+    }
+
+    this.isColliding = function(obj) {
+        return areColliding(this, obj);
+    }
+}
+
+$W.Boid = function() {
+    $W.Object.call(this, $W.GL.TRIANGLES);
+
+    this.velocity = Vector.Zero(3);
+    this.speed = 0;
+    this.radius = 1;
+    this.maxForce = 1;
+    this.forward = null;
+    this.side = null;
+    this.up = null;
+
+    this.predictFuturePosition = function(atTime) {
+    }
+
+
+}
+
 /** Parse a .obj model file
  * XXX Should I build the vertex/normal/texture coordinate arrays
  * explicitly from the face data? Can it work otherwise?
