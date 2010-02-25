@@ -1,0 +1,352 @@
+<html><head>
+
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../external/Sylvester.src.js"></script>
+<script type="text/javascript" src="../../external/webgl-debug.js"></script>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+<script type="text/javascript" src="../../src/gameglu.js"></script>
+
+<script type="application/x-javascript">
+function init() {
+
+    //--Initialize WebGLU, shaders
+    with ($W) {
+        if (!initialize()) return false;
+        //$W.GL = WebGLDebugUtils.makeDebugContext($W.GL);
+
+        newProgram('textured');
+        programs['textured'].attachShader('texVS', $W.paths.shaders + 'texture.vert');
+        programs['textured'].attachShader('texFS', $W.paths.shaders + 'texture.frag');
+
+        newProgram('pick');
+        programs['pick'].attachShader('pickVS', $W.paths.shaders + 'pick.vert');
+        programs['pick'].attachShader('pickFS', $W.paths.shaders + 'pick.frag');
+        programs.pick.link();
+
+        GL.clearColor(0.9, 0.9, 0.9, 1.0);
+        camera.setPosition(2,2,2);
+        camera.yfov = 80;
+    }
+
+    return true;
+}
+
+function createObjects() {
+    var VERTEX = "vertex";
+    var COLOR  = "color";
+    var NORMAL = "normal";
+    var TEX_COORD = "texCoord";
+
+    // AXIS
+    // Create lines representing the XYZ axes
+    var addAxisLines = function() {
+        var originLines = new $W.Object($W.GL.LINES);
+        //originLines.setShaderProgram('pick');
+        originLines.vertexCount = 6;
+
+        originLines.fillArray(VERTEX,
+            [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
+        with ($W.constants.colors){
+          originLines.fillArray(COLOR, 
+            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
+        }
+    }
+
+
+    // Create a solid object
+    addAxisLines();
+    var cube = new $W.Object($W.GL.TRIANGLES);
+    var cube2 = new $W.Object($W.GL.TRIANGLES);
+
+    cube2.setScaleUniformly(0.5)
+    cube2.setPosition(0,1,0);
+
+    // Use the 'textured' shader program defined above
+    //cube.setShaderProgram('pick');
+    cube.setShaderProgram('textured');
+    cube2.setShaderProgram('textured');
+
+    ptex = $W.GL.createTexture();
+    /*
+    rtt = {name:'rtt', glTexture:ptex};
+    $W.textures['rtt'] = rtt;
+    */
+    cube.setTexture('rtt', 'sampler');
+    new $W.texture.Image('tiger', 'tiger.png');
+    cube.setTexture('tiger', 'sampler');
+    cube2.setTexture('tiger', 'sampler');
+
+    cube.animation._update = function(dt) {
+        this.setRotation(this.age/20,0,0);
+    }
+
+
+    // Fill the arrays with data for a cube
+    var cubeData = $W.constants.unitCube;
+    cubeData.colors = [];
+    for (var i = 0; i < cubeData.indices.length; i++) {
+        cubeData.colors.push[0,1,0];
+    }
+
+    cube.fillArray(VERTEX, cubeData.vertices);
+    cube.fillArray(COLOR, cubeData.vertices);
+    cube.fillArray(TEX_COORD, cubeData.texCoords);
+
+    // Use drawElements
+    cube2.setElements(cubeData.indices);
+
+    // Fill the arrays with data for a cube
+    cube2.fillArray(VERTEX, cubeData.vertices);
+    cube2.fillArray(COLOR, cubeData.vertices);
+    cube2.fillArray(TEX_COORD, cubeData.texCoords);
+
+    // Use drawElements
+    cube.setElements(cubeData.indices);
+
+    $W.Framebuffer = function() {
+        var GL = $W.GL;
+        var RBUF = GL.RENDERBUFFER;
+        var FBUF = GL.FRAMEBUFFER;
+
+        this.glFramebuffer = GL.createFramebuffer();
+        this.glRenderbuffer = GL.createRenderbuffer();
+        this.glTexture = GL.createTexture();
+
+    }
+    
+
+    try {
+    RB = $W.GL.RENDERBUFFER;
+    FB = $W.GL.FRAMEBUFFER;
+    TEX2D = $W.GL.TEXTURE_2D;
+    CW = $W.canvas.width;
+    CH = $W.canvas.height;
+
+    fbo = $W.GL.createFramebuffer();
+    rbo = $W.GL.createRenderbuffer();
+    ptex = $W.GL.createTexture();
+
+    $W.GL.bindTexture(TEX2D, ptex);
+    $W.GL.texImage2D(TEX2D, 0, $W.GL.RGBA, CW, CH, 0, $W.GL.RGBA, $W.GL.UNSIGNED_BYTE, null);
+
+    $W.GL.bindFramebuffer(FB, fbo);
+    $W.GL.bindRenderbuffer(RB, rbo);
+
+    $W.GL.renderbufferStorage(RB, $W.GL.DEPTH_COMPONENT16, CW, CH);
+    $W.GL.bindRenderbuffer(RB, null);
+
+    $W.GL.framebufferTexture2D(FB, $W.GL.COLOR_ATTACHMENT0, TEX2D, ptex, 0);
+    $W.GL.framebufferRenderbuffer(FB, $W.GL.DEPTH_ATTACHMENT, RB, rbo);
+
+    $W.GL.bindFramebuffer(FB, null);
+    }catch (e) {
+        console.error(e);
+    }
+}
+
+var drawFun = function() {
+    $W._setupMatrices();
+
+    $W.GL.clearColor(1.0, 1.0, 1.0, 1.0);
+    $W.GL.clear($W.GL.COLOR_BUFFER_BIT | $W.GL.DEPTH_BUFFER_BIT);
+    $W.GL.disable($W.GL.BLEND);
+    $W.GL.enable($W.GL.DEPTH_TEST);
+    $W.GL.lineWidth(7);
+
+    for (var i = 0; i < $W.objects.length; i++) {
+        color = (10 - i) / 10;
+        $W.programs['pick'].setUniform('pickColor', color );
+        $W.objects[i].draw();
+    }
+
+    $W.GL.lineWidth(1);
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+};     
+
+wasSwappedOnce = false;
+function swapShaders(index) {
+    if (index === undefined) {
+        for (var i = 0; i < $W.objects.length; i++) {
+            if (wasSwappedOnce) { $W.objects[i].revertShaderProgram();
+            }else { $W.objects[i].setShaderProgram('pick'); }
+        }
+        wasSwappedOnce = true
+    }else if (wasSwappedOnce){
+        $W.objects[index].revertShaderProgram();
+    }
+}
+
+function swapDrawFuns() {
+    tmp = $W._drawObjects;
+    $W._drawObjects = drawFun;
+    drawFun = tmp;
+}
+
+function showPointInfo(x, y) {
+    var x = $W.util.clamp(0, CW - 1, x);
+    var y = $W.util.clamp(0, CH - 1, y);
+
+    var feedback = document.getElementById('feedback');
+    var BR = '<br/>';
+
+    $W.GL.bindFramebuffer(FB, fbo);
+    var pixel = $W.GL.readPixels(x,CH-y,1,1, $W.GL.RGBA, $W.GL.UNSIGNED_BYTE);
+    $W.GL.bindFramebuffer(FB, null);
+
+    if (pixel[0] === 255) {
+        feedback.innerHTML = "Nothing" + BR ;
+    }else {
+        feedback.innerHTML = "Object " + pixel[0] + BR;
+    }
+    feedback.innerHTML += 
+        "[" + pixel[0] + ',' + pixel[1] + ',' + pixel[2] + "]" + BR +
+        "[" + x + ", " + y + "]";
+}
+
+function updatePickBuffer() {
+    $W._setupMatrices();
+    $W.GL.bindFramebuffer(FB, fbo);
+    $W.GL.framebufferTexture2D(FB, $W.GL.COLOR_ATTACHMENT0, TEX2D, ptex, 0);
+
+    $W.GL.clearColor(1.0, 1.0, 1.0, 1.0);
+    $W.GL.clear($W.GL.COLOR_BUFFER_BIT | $W.GL.DEPTH_BUFFER_BIT);
+    $W.GL.disable($W.GL.BLEND);
+    $W.GL.lineWidth(7);
+
+    for (var i = 0; i < $W.objects.length; i++) {
+        $W.objects[i].setShaderProgram('pick');
+
+        $W.programs['pick'].setUniform('pickColor', i / 255 );
+        $W.objects[i].draw();
+
+        $W.objects[i].revertShaderProgram();
+    }
+
+    $W.GL.enable($W.GL.BLEND);
+    $W.GL.lineWidth(1);
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+}
+
+function start() {
+    if (init()) {
+        createObjects();
+
+        var FPS = document.getElementById('overlay');
+
+        function redraw() {
+            FPS.innerHTML = $W.FPS;
+            $W.update();
+            $W.draw();	
+        }
+
+        $G.initialize();
+        $G.state.x = 0;
+        $G.state.y = 0;
+
+        $G.event.bind('mousemove', function(x,y) {
+            $G.state.x = $W.util.clamp(0, CW, x);
+            $G.state.y = $W.util.clamp(0, CH, y);
+            showPointInfo(x,y);
+        });
+
+        $G.event.bind('space', function(x,y) {
+            swapShaders();
+            swapDrawFuns();
+        });
+
+        $G.event.bind('m1', function(x,y) {
+            var x = $W.util.clamp(0, CW - 1, x);
+            var y = $W.util.clamp(0, CH - 1, y);
+            
+            /*
+            var mv = $W.modelview;
+            var pj = $W.projection;
+            var cam = $W.camera.position;
+            var z = 1;
+
+            // Unproject mouse coordinates
+            x = -(((2*x) / $W.canvas.width) - 1) / pj.matrix.e(1,1);
+            y =  (((2*y) / $W.canvas.width) - 1) / pj.matrix.e(2,2);
+            var point = $V([x,y,z,0]);
+            point = mv.matrix.inverse().multiply(point); 
+            point.elements = [point.e(1),point.e(2),point.e(3)];
+
+            // Calc vectors
+            z = point.toUnitVector();
+            x = $V([0,0,1]).cross(z).toUnitVector();
+            y = z.cross(x).toUnitVector();
+
+            mv.pushMatrix($M([x.e(1), y.e(1), cam.e(1)],
+                             [x.e(2), y.e(2), cam.e(2)],
+                             [z.e(3), z.e(3), cam.e(3)],
+                             [0, 0, 0, 1]               ).inverse());
+            pj.pushMatrix($W.GLU.ortho(-0.0001, 0.0001, -0.0001, 0.0001, 0.01, 10000)); 
+            $W.GL.viewport(0,0,1,1);
+            */
+        
+            updatePickBuffer();
+            var index = $W.GL.readPixels(x,CH-y,1,1, $W.GL.RGBA,
+                                         $W.GL.UNSIGNED_BYTE)[0];
+            if (index !== 255) {
+                var obj = $W.objects[index];
+
+                if (obj.shaderProgram === 'default') {
+                    obj.setShaderProgram('textured');
+                }else {
+                    obj.setShaderProgram('default');
+                }
+            }
+            showPointInfo(x,y);
+            
+            /*
+            $W.modelview.popMatrix();
+            $W.projection.popMatrix();
+            $W.GL.viewport(0,0, $W.canvas.width, $W.canvas.height);
+            */
+        });
+
+        setInterval(redraw, 10);        	
+    }
+}
+
+</script>
+
+</head>
+
+<body onload='start()'>
+
+
+<div id="glCanvas">
+
+<div id="overlay"></div>
+
+<canvas id='canvas' width='500' height='500'></canvas><br>
+</div>
+<span id='feedback'></span>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
