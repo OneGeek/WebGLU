@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.GLSL.Attribute</title>
+		<title>JsDoc Reference - $W.SimulatedObject</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -246,7 +246,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class $W.GLSL.Attribute
+				Class $W.SimulatedObject
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -254,7 +254,7 @@ ul.inheritsList
 				
 				
 			
-				Holds data for shader attribute variables.
+				A physical simulation.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -263,7 +263,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.GLSL.Attribute.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.SimulatedObject.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -276,7 +276,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Attribute.html#constructor">$W.GLSL.Attribute</a></b>(name, length)
+								<b><a href="../symbols/%24W.SimulatedObject.html#constructor">$W.SimulatedObject</a></b>(physType)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -286,6 +286,94 @@ ul.inheritsList
 			
 
 <!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.SimulatedObject.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#impulses">impulses</a></b>
+								</div>
+								<div class="description">Forces to be applied this frame.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#mass">mass</a></b>
+								</div>
+								<div class="description">Object mass</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#omega">omega</a></b>
+								</div>
+								<div class="description">Angular velocity</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#physType">physType</a></b>
+								</div>
+								<div class="description">Type of object to simulate"sphere" or "wall" are valid</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#radius">radius</a></b>
+								</div>
+								<div class="description">Bounding sphere radius</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#restitution">restitution</a></b>
+								</div>
+								<div class="description">Coefficient of restitution</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.SimulatedObject.html#velocity">velocity</a></b>
+								</div>
+								<div class="description">Object velocity</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 
 <!-- ============================== methods summary ======================== -->
@@ -301,7 +389,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL.Attribute</b>(name, length)
+						<b>$W.SimulatedObject</b>(physType)
 				</div>
 				
 				<div class="description">
@@ -317,13 +405,7 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{String}</span>  <b>name</b>
-								
-							</dt>
-								<dd>Attributes have the name they are given inthe shader code.</dd>
-						
-							<dt>
-								 <b>length</b>
+								 <b>physType</b>
 								
 							</dt>
 								<dd></dd>
@@ -341,6 +423,165 @@ ul.inheritsList
 			
 
 <!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name="impulses"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>impulses</b>
+					
+					</div>
+					<div class="description">
+						Forces to be applied this frame.Cleared with each call to update()
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="mass"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>mass</b>
+					
+					</div>
+					<div class="description">
+						Object mass
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="omega"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>omega</b>
+					
+					</div>
+					<div class="description">
+						Angular velocity
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="physType"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>physType</b>
+					
+					</div>
+					<div class="description">
+						Type of object to simulate"sphere" or "wall" are valid
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="radius"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>radius</b>
+					
+					</div>
+					<div class="description">
+						Bounding sphere radius
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="restitution"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>restitution</b>
+					
+					</div>
+					<div class="description">
+						Coefficient of restitution
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="velocity"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>velocity</b>
+					
+					</div>
+					<div class="description">
+						Object velocity
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
 			
 
 <!-- ============================== method details ========================= -->		

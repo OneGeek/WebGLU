@@ -68,7 +68,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: auto;
+	overflow: hidden;
 }
 
 .classList li
@@ -170,6 +170,7 @@ ul.inheritsList
 	text-align: right;
 	font-size: 10px;
 }
+
 		</style>
 	</head>
 
@@ -199,8 +200,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
 	
-	<li><a href="../symbols/%24W.anim.Simulation.html">$W.anim.Simulation</a></li>
-	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
@@ -227,16 +226,19 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
+	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
+	
 	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
-	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	<li></li>
 	
 </ul>
 <hr />
+
 			<!-- end publish.classesIndex -->
 		</div>
 		
@@ -303,9 +305,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.ensureCrossBrowserCompat">ensureCrossBrowserCompat</a></b>()
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.clamp">clamp</a></b>(min, max, val)
 								</div>
-								<div class="description">A place to put any code to ensure cross-browser compatability</div>
+								<div class="description">Clamps a value to a given range.</div>
 							</td>
 						</tr>
 					
@@ -348,18 +350,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.getPickRay">getPickRay</a></b>(x, y)
-								</div>
-								<div class="description">XXX Not yet implemented.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.lerp">lerp</a></b>(a, b, t)
 								</div>
-								<div class="description">Linear interpolation between numbers</div>
+								<div class="description">Linear interpolation between numbers.</div>
 							</td>
 						</tr>
 					
@@ -393,9 +386,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.slerp">slerp</a></b>(q1, q2, t)
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.slerp">slerp</a></b>(t, q1, q2)
 								</div>
-								<div class="description">XXX Not yet implemented.</div>
+								<div class="description">Spherical linear interpolation.</div>
 							</td>
 						</tr>
 					
@@ -447,21 +440,44 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".ensureCrossBrowserCompat"> </a>
+					<a name=".clamp"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.util.</span><b>ensureCrossBrowserCompat</b>()
+					<span class="light">$W.util.</span><b>clamp</b>(min, max, val)
 					
 					</div>
 					<div class="description">
-						A place to put any code to ensure cross-browser compatability
+						Clamps a value to a given range.
 						
 						
 					</div>
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number|null}</span> <b>min</b>
+									
+								</dt>
+								<dd>The minimum value this function canreturn. If null is passed, there is no minimum.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number|null}</span> <b>max</b>
+									
+								</dt>
+								<dd>The maximum value this function canreturn. If null is passed, there is no minimum.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>val</b>
+									
+								</dt>
+								<dd>The value to clamp.</dd>
+							
+							</dl>
 						
 						
 						
@@ -543,7 +559,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Get axis/angle representation of the rotation.Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htm
+						Get axis/angle representation of the rotation.Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htmXXX unused
 						
 						
 					</div>
@@ -646,48 +662,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".getPickRay"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.util.</span><b>getPickRay</b>(x, y)
-					
-					</div>
-					<div class="description">
-						XXX Not yet implemented.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name=".lerp"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -696,7 +670,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Linear interpolation between numbers
+						Linear interpolation between numbers.
 						
 						
 					</div>
@@ -837,6 +811,9 @@ ul.inheritsList
 					<div class="description">
 						Parse a .obj model fileXXX Should I build the vertex/normal/texture coordinate arraysexplicitly from the face data? Can it work otherwise?XXX Not quite working.
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_crazyglu.js.html">crazyglu.js</a>.
+						
 						
 					</div>
 					
@@ -882,11 +859,11 @@ ul.inheritsList
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.util.</span><b>slerp</b>(q1, q2, t)
+					<span class="light">$W.util.</span><b>slerp</b>(t, q1, q2)
 					
 					</div>
 					<div class="description">
-						XXX Not yet implemented.Spherical linear interpolation. For interpolating quaternions.Based on reference implementation at http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+						Spherical linear interpolation. For interpolating quaternions.Based on reference implementation at http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 						
 						
 					</div>
@@ -896,6 +873,12 @@ ul.inheritsList
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>t</b>
+									
+								</dt>
+								<dd>How far along to interpolate.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Quaternion}</span> <b>q1</b>
@@ -908,12 +891,6 @@ ul.inheritsList
 									
 								</dt>
 								<dd>Quaternion to interpolate to.</dd>
-							
-								<dt>
-									<b>t</b>
-									
-								</dt>
-								<dd>How far along to interpolate.</dd>
 							
 							</dl>
 						
@@ -938,7 +915,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Fri Feb 12 2010 16:45:09 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Thu Feb 25 2010 13:43:46 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

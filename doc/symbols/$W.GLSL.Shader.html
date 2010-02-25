@@ -68,7 +68,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: auto;
+	overflow: hidden;
 }
 
 .classList li
@@ -170,6 +170,7 @@ ul.inheritsList
 	text-align: right;
 	font-size: 10px;
 }
+
 		</style>
 	</head>
 
@@ -199,8 +200,6 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
 	
-	<li><a href="../symbols/%24W.anim.Simulation.html">$W.anim.Simulation</a></li>
-	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
@@ -227,16 +226,19 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
+	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
+	
 	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
-	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	<li></li>
 	
 </ul>
 <hr />
+
 			<!-- end publish.classesIndex -->
 		</div>
 		
@@ -274,7 +276,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#constructor">$W.GLSL.Shader</a></b>(name, source, type)
+								<b><a href="../symbols/%24W.GLSL.Shader.html#constructor">$W.GLSL.Shader</a></b>(name, src, type)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -308,20 +310,20 @@ ul.inheritsList
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#glShader">glShader</a></b>
+								<b><a href="../symbols/%24W.GLSL.Shader.html#-glShader">glShader</a></b>
 								</div>
 								<div class="description">The WebGL shader object.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#isDirty">isDirty</a></b>
+								<b><a href="../symbols/%24W.GLSL.Shader.html#-isDirty">isDirty</a></b>
 								</div>
 								<div class="description">Tracks if this shader need to be (re)compiled.</div>
 							</td>
@@ -338,20 +340,20 @@ ul.inheritsList
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#programs">programs</a></b>
+								<b><a href="../symbols/%24W.GLSL.Shader.html#-programs">programs</a></b>
 								</div>
 								<div class="description">Names of programs which use this shader.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/%24W.GLSL.Shader.html#source">source</a></b>
+								<b><a href="../symbols/%24W.GLSL.Shader.html#-source">source</a></b>
 								</div>
 								<div class="description">Source code of the shader.</div>
 							</td>
@@ -410,7 +412,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#addUniform">addUniform</a></b>(name, action)
+								<div class="fixedFont"><b><a href="../symbols/%24W.GLSL.Shader.html#addUniform">addUniform</a></b>(name, action, type)
 								</div>
 								<div class="description">Store the information about this named uniform.</div>
 							</td>
@@ -487,7 +489,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.GLSL.Shader</b>(name, source, type)
+						<b>$W.GLSL.Shader</b>(name, src, type)
 				</div>
 				
 				<div class="description">
@@ -509,14 +511,14 @@ ul.inheritsList
 								<dd>All shaders need a unique name</dd>
 						
 							<dt>
-								<span class="light fixedFont">{String}</span>  <b>source</b>
-								
+								<span class="light fixedFont">{String}</span>  <b>src</b>
+								<i>Optional</i>
 							</dt>
-								<dd>The source code or the DOM element Id to a script element containing the source code for a shader.</dd>
+								<dd>The source code, if not included thenname is assumed to be a DOM element Id to a script element containing the source code for a shader.</dd>
 						
 							<dt>
 								 <b>type</b>
-								
+								<i>Optional</i>
 							</dt>
 								<dd>The type of shader, valid types are<br>$W.GL.VERTEX_SHADER<br>$W.GL.FRAGMENT_SHADER<br></dd>
 						
@@ -560,8 +562,8 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="glShader"> </a>
-					<div class="fixedFont">
+					<a name="-glShader"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
 					
 					<b>glShader</b>
@@ -582,8 +584,8 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="isDirty"> </a>
-					<div class="fixedFont">
+					<a name="-isDirty"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
 					
 					<b>isDirty</b>
@@ -626,8 +628,8 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="programs"> </a>
-					<div class="fixedFont">
+					<a name="-programs"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
 					
 					<b>programs</b>
@@ -648,8 +650,8 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="source"> </a>
-					<div class="fixedFont">
+					<a name="-source"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
 					
 					
 					<b>source</b>
@@ -768,7 +770,7 @@ ul.inheritsList
 					<div class="fixedFont">
 					
 					
-					<b>addUniform</b>(name, action)
+					<b>addUniform</b>(name, action, type)
 					
 					</div>
 					<div class="description">
@@ -794,6 +796,12 @@ ul.inheritsList
 									<i>Optional, Default: function(){}</i>
 								</dt>
 								<dd>The function to call each frame to prep/send this uniform to the shader.</dd>
+							
+								<dt>
+									<b>type</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -1019,7 +1027,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Fri Feb 12 2010 16:45:08 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Thu Feb 25 2010 13:43:46 GMT-0500 (EST)
 		</div>
 	</body>
 </html>
