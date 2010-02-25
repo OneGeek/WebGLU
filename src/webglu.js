@@ -1785,7 +1785,7 @@ $W = {
          * @param {Array} contents The data to pass to the attribute.
          */
         this.fillArray = function(name, contents) {
-            //console.log("Filling `" + name + "` array");
+            console.log("Filling `" + name + "` array");
             this._debugArrays = contents;
             this.arrays[name] = new WebGLFloatArray(contents.flatten());
 
@@ -2532,8 +2532,8 @@ $W = {
     initialize:function(canvasNode) {
         $W.initLogging();
 
-        $W.loadSylvester();
         $W.extendArray();
+        $W.loadSylvester();
 
         console.group("Initializing WebGLU");
 
@@ -2791,8 +2791,7 @@ $W.extendArray = function() {
  * at triangles formed by every face and averaging.
  * (c) 2009 Vladimir Vukicevic
  */
-function calculateNormals(vertices, faces)
-{
+$W.util.calculateNormals = function(vertices, faces) {
     var nvecs;
 
     if (vertices[0].length == 3) {
