@@ -589,15 +589,15 @@ $W = {
 
                 //XXX deal with other types too
                 if (arguments.length == 2) {
-                    var actFun = null;
                     var val = arguments[1];
                     if (uniform.type === "int") {
-                        actFun = $W.GL.uniform1i;
+                        uniform.action = function() {
+                            $W.GL.uniform1i(this.location, val);
+                        }
                     }else {
-                        actFun = $W.GL.uniform1f;
-                    }
-                    uniform.action = function() {
-                        actFun(this.location, val);
+                        uniform.action = function() {
+                            $W.GL.uniform1f(this.location, val);
+                        }
                     }
 
                 } else if (arguments.length == 3) {
