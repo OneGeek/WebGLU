@@ -65,7 +65,7 @@ function createObjects() {
         var cubeData = $W.constants.unitCube;
         cube.fillArray(VERTEX, cubeData.vertices);
         cube.fillArray(NORMAL, cubeData.normals);
-        cube.fillArray(TEX_COORD, cubeData.textureCoordinates);
+        cube.fillArray(TEX_COORD, cubeData.texCoords);
 
         // Use drawElements
         cube.setElements(cubeData.indices);
@@ -78,7 +78,7 @@ function createObjects() {
         var cubeData = $W.constants.unitCube;
         obj.fillArray(VERTEX, cubeData.vertices);
         obj.fillArray(NORMAL, cubeData.normals);
-        obj.fillArray(TEX_COORD, cubeData.textureCoordinates);
+        obj.fillArray(TEX_COORD, cubeData.texCoords);
 
         // Use drawElements
         obj.setElements(cubeData.indices);

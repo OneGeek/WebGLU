@@ -65,7 +65,8 @@ function createObjects() {
     sphere.setShaderProgram('textured');
 
     // Create and apply the video texture
-    new $W.texture.Video('video', 'videoElement');
+    new $W.texture.Video('video', 'new_york.ogv');
+    //new $W.texture.Video('video', 'videoElement');
     sphere.setTexture('video', 'sampler');
 
     // Generate a unit sphere with 40 horizontal rings and 40
@@ -127,6 +128,7 @@ function initControl() {
     $W.camera.update = function() {
         var x = -1 * st.totalM.e(1) / 100;
         var y = st.totalM.e(2) / 10;
+
 
         this.target.elements = [Math.cos(x), y / 10, Math.sin(x)];
         st.deltaM.elements = [0,0];
