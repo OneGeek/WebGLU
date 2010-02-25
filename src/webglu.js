@@ -105,7 +105,7 @@ $W = {
      * shader programs
      */
     GLSL: {
-        shaderVarTypes: {
+        shaderVarLengths: {
             int:1,
             float:1,
             bool:1,
@@ -154,16 +154,9 @@ $W = {
             }
         },
 
-        /** Must be called */
+        /** Nothing, for now */
         initialize:function() {
-            // XXX get these at shader compile time instead
-            $W.GLSL.Shader.prototype.types = [];
-            $W.GLSL.Shader.prototype.types['int']  = 1;
-            $W.GLSL.Shader.prototype.types['float']= 1;
-            $W.GLSL.Shader.prototype.types['bool'] = 1;
-            $W.GLSL.Shader.prototype.types['vec2'] = 2;
-            $W.GLSL.Shader.prototype.types['vec3'] = 3;
-            $W.GLSL.Shader.prototype.types['vec4'] = 4;
+            
         },
 
         /** @class Holds data for shader attribute variables.
@@ -186,13 +179,14 @@ $W = {
          * @param {Function} action The function to update the data in the 
          * uniform each frame.
          */
-        Uniform: function (name, action) {
+        Uniform: function (name, action, type) {
             this.name = name;
             this.location = 0;  // only used by the shader program
             this.action = action;
+            this.type = type;
 
             this.clone = function() {
-                return new $W.GLSL.Uniform(this.name, this.action);
+                return new $W.GLSL.Uniform(this.name, this.action, this.type);
             }
         },
 
@@ -368,12 +362,12 @@ $W = {
              * @param {Function} [action=function(){}] The function to call 
              * each frame to prep/send this uniform to the shader.
              */
-            this.addUniform = function(name, action) {
+            this.addUniform = function(name, action, type) {
                 console.log("adding uniform '" + name + "'");
                 if (!action) {
                     action = function(){}
                 }
-                this.uniforms.push(new $W.GLSL.Uniform(name, action));
+                this.uniforms.push(new $W.GLSL.Uniform(name, action, type));
             }
 
             /** Store the information about this named attribute. 
@@ -395,13 +389,14 @@ $W = {
                     if (tokens[i] == "attribute") {
                         var type = tokens[i+1];
                         var name = tokens[i+2];
-                        var length = $W.GLSL.shaderVarTypes[type];
+                        var length = $W.GLSL.shaderVarLengths[type];
                         this.addAttribute(name, length);
                     }                               
                     if (tokens[i] == "uniform") {
                         var type = tokens[i+1];
                         var name = tokens[i+2];
-                        this.addUniform(name);
+                        this.addUniform(name, function(){}, type);
+
 
                         if (name == $W.constants.ModelViewUniform) {
                             this.setModelViewUniform($W.constants.ModelViewUniform);
@@ -538,7 +533,9 @@ $W = {
              * Here instead of the shader because different programs can both
              * use the same shader, but treat it differently.
              * XXX What if two shaders have the same named variable
-             * but need different data?
+             * XXX Move to Object? If different objects could need to 
+             * different actions then we ought to store the uniform actions
+             * on a per-object basis.
              * @param {String} name The name of the uniform.
              * @param {Function} action The function to call per frame.
              */
@@ -556,7 +553,7 @@ $W = {
                     console.error("Cannot set uniform `" + name + "` in shader program `" + this.name + "`, no uniform with that name exists");
                     return;
                 }else {
-                    console.log("Setting action for uniform `" + name + "` in shader program `" + this.name + "`");
+                    //console.log("Setting action for uniform `" + name + "` in shader program `" + this.name + "`");
                 }
 
                 uniform.action = action;
@@ -587,13 +584,20 @@ $W = {
                     console.error("Cannot set uniform `" + name + "` in shader program `" + this.name + "`, no uniform with that name exists");
                     return;
                 }else {
-                    console.log("Setting uniform `" + name + "` in shader program `" + this.name + "`");
+                    //console.log("Setting uniform `" + name + "` in shader program `" + this.name + "`");
                 }
 
+                //XXX deal with other types too
                 if (arguments.length == 2) {
+                    var actFun = null;
+                    var val = arguments[1];
+                    if (uniform.type === "int") {
+                        actFun = $W.GL.uniform1i;
+                    }else {
+                        actFun = $W.GL.uniform1f;
+                    }
                     uniform.action = function() {
-                        $W.GL.uniform1f(this.location, 
-                            arguments[1]);
+                        actFun(this.location, val);
                     }
 
                 } else if (arguments.length == 3) {
@@ -875,7 +879,7 @@ $W = {
             ],
               
             /** Texture coordinates on the unit cube. */
-            textureCoordinates : [
+            texCoords : [
                 // Front
                 0.0,  0.0,
                 1.0,  0.0,
@@ -938,21 +942,35 @@ $W = {
 
     /** @namespace Utility functions. */
     util:{
+        import: function(path) {
+            var script = $W.util.loadFileAsText(path);
+            window.eval(script);
+        },
+
+        /** Clamps a value to a given range.
+         * @param {Number|null} min The minimum value this function can
+         * return. If null is passed, there is no minimum.
+         * @param {Number|null} max The maximum value this function can
+         * return. If null is passed, there is no minimum.
+         * @param {Number} val The value to clamp.
+         */
+        clamp: function(min, max, val) {
+            if (min !== null && val < min) {
+                return min;
+            }else if (max !== null && val > max) {
+                return max;
+            }else {
+                return val;
+            }
+        },
+
         sphereCollide:function(p1, p2, r1, r2) {
             return p1.distanceFrom(p2) < r1 + r2;
         },
 
-        integrateEuler:function(fun, t, dt) {
-            return fun(t + dt);
-        },
-
-        /** XXX Not yet implemented. */
-        getPickRay : function(x, y) {
-
-        },
-
         /** Get axis/angle representation of the rotation.
          * Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htm
+         * XXX unused
          */
         getAxisAngle : function(rotation) {
             if (rotation.elements == [0,0,0]) {return {angle:0,axis:[1,0,0]};}
@@ -1041,12 +1059,11 @@ $W = {
             return sphere;
         }, 
 
-        /** XXX Not yet implemented.
-         * Spherical linear interpolation. For interpolating quaternions.
+        /** Spherical linear interpolation. For interpolating quaternions.
          * Based on reference implementation at http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
-         * @param {Quaternion} q1 Quaternion to interpolate from.
-         * @param {Quaternion} q2 Quaternion to interpolate to.
-         * @param t How far along to interpolate.
+         * @param {Number} t How far along to interpolate.
+         * @param {Quaternion} q1 {@link Quaternion} to interpolate from.
+         * @param {Quaternion} q2 {@link Quaternion} to interpolate to.
          */
         slerp:function(t, q1, q2) {
             var result = new $W.Quaternion();
@@ -1087,7 +1104,7 @@ $W = {
             return result;
         },
 
-        /** Linear interpolation between numbers
+        /** Linear interpolation between numbers.
          * @param {Number} a Value to interpolate from.
          * @param {Number} b Value to interpolate to.
          * @param {Number} t Value from 0 to 1 representing the fraction
@@ -1110,132 +1127,6 @@ $W = {
             ];
         },
 
-        /** Parse a .obj model file
-         * XXX Should I build the vertex/normal/texture coordinate arrays
-         * explicitly from the face data? Can it work otherwise?
-         * XXX Not quite working.
-         * @return model An object containing model data as flat
-         * arrays.
-         * @return model.vertices Vertices of the object.
-         * @return model.normals Normals of the object.
-         * @return model.texCoords Texture coordinates of the object.
-         * @return model.faces Element indices of the object.
-         */
-        parseOBJ:function(obj) {
-            console.group("Processing .obj file...");
-            var data = {};
-            var model = {};
-            var counts = [0,0,0,0];
-
-            // Parse vertices
-            model.vertices = obj.match(/^v\s.+/gm);
-            if (model.vertices !== null) {
-                console.log("Parsing vertices");
-                for (var i = 0; i < model.vertices.length; i++) {
-                    model.vertices[i] = model.vertices[i].match(/[-0-9\.]+/g);
-                    counts[0]++;
-                }
-                model.vertices = model.vertices.flatten();
-                model.vertices = model.vertices.flatten();
-
-                // convert to numbers
-                for (var i = 0; i < model.vertices.length; i++) {
-                    model.vertices[i] = model.vertices[i] * 1; 
-                    counts[0]++;
-                }
-            }
-
-            // Parse normals
-            model.normals = obj.match(/^vn.+/gm);
-            if (model.normals !== null) {
-                console.log("Parsing normals");
-                for (var i = 0; i < model.normals.length; i++) {
-                    model.normals[i] = model.normals[i].match(/[0-9\.]+/g);
-                    counts[1]++;
-                }
-                model.normals = model.normals.flatten();
-            }
-
-            // Parse texture coordinates
-            model.texCoords = obj.match(/^vt.+/gm);
-            if (model.texCoords !== null) {
-                console.log("Parsing texture coordinates");
-                for (var i = 0; i < model.texCoords.length; i++) {
-                    model.texCoords[i] = model.texCoords[i].match(/[0-9\.]+/g);
-                    counts[2]++;
-                }
-                model.texCoords = model.texCoords.flatten();
-                model.texCoords = model.texCoords.flatten();
-            }
-            /*
-            // parse faces
-            // faces start with `f `
-            // `f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 [v4/vt4/vn4]
-            model.faces = obj.match(/^f[\s.]+/gm); 
-            if (model.faces != null) {}
-                model.indices = {};
-                console.log("parsing faces");
-                // face format : v/vt/vn
-                
-                // pull the vertices from each face
-                model.indices.vertex = [];
-                for (var i = 0; i < model.faces.length; i++) {
-                    // vertex indices match ` 123/`
-                    model.indeces.vertex.push(/\s\d*\//g);
-                    model.faces[i] = model.faces[i].match(/\s\d*\//g);
-
-                }
-            */
-
-            // Parse faces
-            model.faces = obj.match(/^f.+/gm);
-            if (model.faces !== null) {
-                console.log("Parsing faces");
-                // face format : v/vt/vn
-                for (var i = 0; i < model.faces.length; i++) {
-                    // Parse face vertices
-                    model.faces[i] = model.faces[i].match(/\s\d*\//g);
-                    for (var j = 0; j < model.faces[i].length; j++) {
-                        model.faces[i][j] = model.faces[i][j].slice(1, model.faces[i][j].length-1) - 1; // -1 to force into numeral form and change to zero indexing
-                    }
-
-
-
-                    //model.faces[i] = model.faces[i].match(/[0-9\/]+/g);
-
-                    // Convert quads to triangles
-                    /*
-                    if (model.faces[i].length == 4) {
-                        model.faces[i] = [
-                            model.faces[i][0],model.faces[i][1],model.faces[i][2],
-                            model.faces[i][1],model.faces[i][2],model.faces[i][3]
-                            ];
-                    }
-
-                    for (var j = 0; j < model.faces[i].length; j++) {
-                        model.faces[i][j] = (model.faces[i][j]).split("/");
-                    }
-                    */
-                    counts[3]++;
-                }
-                model.faces = model.faces.flatten();
-                model.faces = model.faces.flatten();
-
-                // convert to numbers
-                for (var i = 0; i < model.faces.length; i++) {
-                    model.faces[i] = model.faces[i] * 1; 
-                    counts[0]++;
-                }
-            }
-
-            console.log("Processed\n  " + counts[0] + " vertices" +
-                                 "\n  " + counts[1] + " normals" +
-                                 "\n  " + counts[2] + " texture coordinates" +
-                                 "\n  " + counts[3] + " faces"
-            );
-            console.groupEnd();
-            return model;
-        },
 
         /** Load the file at the given path as text.
          * @param {String} path The path to the file.
@@ -1503,17 +1394,26 @@ $W = {
 
     /** @namespace Texture classes */
     texture:{
+        Canvas: function(name, id) {
+        },
+
         /** A dynamic texture from a `video` element.    
          * XXX Can I use createElement('video') and eliminate need for id?
          * @param {String} name The global name this texture will be referenced
          * by elsewhere.
          * @param {String} id Video element id. 
          */
-        Video: function(name, id) {
+        Video: function(name, src) {
             this.glTexture = $W.GL.createTexture();
-            this.video = document.getElementById(id);
+            //this.video = document.getElementById(id);
+            this.video = document.createElement('video');
+            document.getElementsByTagName('body')[0].appendChild(this.video);
 
             this.video.texture = this;
+            this.video.autobuffer = true;
+            this.video.source = src;
+            this.video.play();
+
             $W.textures[name]  = this;
 
             this.update = function() {
@@ -1526,9 +1426,22 @@ $W = {
                 //gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
             }
 
-            this.video.play();
             this.video.addEventListener("timeupdate", this.update, true);
 
+            /*
+            this.video.onload = function() {
+                this.video.play();
+                this.video.addEventListener("timeupdate", this.update, true);
+            }
+            */
+
+            this.setSource = function(src) {
+                this.video.src = src;
+            }
+
+            if (src !== undefined) {
+                this.setSource(src);
+            }
         },
 
         /** A static texture from an image file.
@@ -1538,7 +1451,10 @@ $W = {
          */
         Image: function(name, src) {
             this.glTexture = $W.GL.createTexture();
-            this.image = new Image();
+            //this.image = new Image();
+            this.image = document.createElement('img');
+
+
 
             this.image.texture = this;
             $W.textures[name]  = this;
@@ -1776,6 +1692,7 @@ $W = {
 
         /** Name of shader program used to render this object */
         this.shaderProgram = 'default';
+        var lastShaderProgram = 'default';
 
         /** Number of vertices in this object.
          * Used when rendering with drawArrays.
@@ -1820,7 +1737,14 @@ $W = {
          * @param {String} program Program name.
          */
         this.setShaderProgram = function (program) {
+            lastShaderProgram = this.shaderProgram;
             this.shaderProgram = program;
+        }
+
+        this.revertShaderProgram = function(){
+            var tmp = this.shaderProgram;
+            this.shaderProgram = lastShaderProgram;
+            lastShaderProgram = tmp;
         }
 
         /** Add an object as a child to this object.
@@ -1949,7 +1873,7 @@ $W = {
                     $W.GL.vertexAttribPointer(attribute, length, $W.GL.FLOAT, false, 0, 0);
                     $W.GL.enableVertexAttribArray(attribute);
                 }catch (err) {
-                    //console.error(err);
+                    console.error(err);
                     
                     if (this.arrays[name] === undefined) {
                         // Fail silently
@@ -2607,6 +2531,10 @@ $W = {
      */
     initialize:function(canvasNode) {
         $W.initLogging();
+
+        $W.loadSylvester();
+        $W.extendArray();
+
         console.group("Initializing WebGLU");
 
         // Prep the shader subsystem
@@ -2629,30 +2557,6 @@ $W = {
 
         console.groupEnd();
         return success;
-    },
-
-    /** 
-     * We'll always need some sort of math lib, so I don't
-     * feel bad semi-hardcoding it.
-     * XXX Not working
-     */
-    loadSylvester:function() {
-        var syl = document.createElement("script");
-        syl.type = "text/javascript";
-        syl.src = $W.paths.external + $W.paths.sylvester;
-        document.body.appendChild(syl);
-
-
-        // XXX HACK!
-        var start = new Date();
-        while ((new Date()) - start < 2000){}
-
-        if (typeof(Matrix) !== "undefined") {
-            $W.augmentSylvester();
-            console.log("Sylvester loaded");
-        }else {
-            console.error("Sylvester failed to load");
-        }
     },
 
     /** Ensure that we can log, or at least not error if we try to */
@@ -2728,7 +2632,8 @@ $W = {
             $W.programs['default'].attachShader('defaultVS', $W.paths.shaders + 'default.vert');
             $W.programs['default'].attachShader('defaultFS', $W.paths.shaders + 'default.frag');
             $W.programs['default'].link();
-
+            
+            $W.GL.viewport(0, 0, $W.canvas.width, $W.canvas.height);
 
             console.log('WebGL initialized');
             return true;
@@ -2757,11 +2662,7 @@ $W = {
         this.objects = [];
     },
 
-
-    /** Draw all objects from the camera's perspective. */
-    draw: function() {
-        $W.clear();
-
+    _setupMatrices: function() {
         $W.modelview.loadIdentity();
         $W.projection.loadIdentity();
 
@@ -2780,6 +2681,14 @@ $W = {
         $W.modelview.rotate($W.camera.rotation.e(1), [1, 0, 0]);
         $W.modelview.rotate($W.camera.rotation.e(2), [0, 1, 0]);
         $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
+    },
+
+
+    /** Draw all objects from the camera's perspective. */
+    draw: function() {
+        $W.clear();
+
+        $W._setupMatrices();
 
         $W._drawObjects();                            
     },
@@ -2815,44 +2724,66 @@ $W = {
 }
 
 // Utility functions
-//--------------------------------------------------------------------------
-// Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
-//--------------------------------------------------------------------------
-Array.prototype.findInProperty = function(prop, value) {
-    for (var i = 0; i < this.length; i++) {
-        if (this[i][prop] === value) {
-            return this[i];
-        }
-    }
-    return null;
-}
 
-Array.prototype.flatten = function() {
-    var res = [];
-    for (var i = 0; i < this.length; i++) {
-        res = res.concat(this[i]);
-    }
-    return res;
-}
-
-Array.prototype.remove = function(item) {
-	var res = [];
-
-    if (item.equals !== undefined) {
+$W.extendArray = function() {
+    //--------------------------------------------------------------------------
+    // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
+    //--------------------------------------------------------------------------
+    Array.prototype.findInProperty = function(prop, value) {
         for (var i = 0; i < this.length; i++) {
-            if (!(item.equals(this[i]))) {
-                res.push(this[i]);
+            if (this[i][prop] === value) {
+                return this[i];
             }
         }
-    }else{
-        for (var i = 0; i < this.length; i++) {
-            if (this[i] != item) {
-                res.push(this[i]);
-            }
-        }
+        return null;
     }
 
-	return res;
+    Array.prototype.flatten = function() {
+        var res = [];
+        for (var i = 0; i < this.length; i++) {
+            res = res.concat(this[i]);
+        }
+        return res;
+    }
+
+    Array.prototype.remove = function(item) {
+        var res = [];
+
+        if (item.equals !== undefined) {
+            for (var i = 0; i < this.length; i++) {
+                if (!(item.equals(this[i]))) {
+                    res.push(this[i]);
+                }
+            }
+        }else{
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] != item) {
+                    res.push(this[i]);
+                }
+            }
+        }
+
+        return res;
+    }
+    // returns the index into this array of
+    // if it's an array of arrays it assumes the
+    // item in the first index of each subarry
+    // is the key.
+    Array.prototype.indexOf = function(item) {
+        for (var i = 0; i < this.length; i++) {
+            if (!this[i].length) {
+                if (this[i] == item) {
+                    return i;
+                }
+            }else {
+                if (this[i][0] == item) {
+                    return i;
+                }
+            }
+        }
+
+        return undefined;
+    }
 }
 
 
@@ -2940,128 +2871,113 @@ function calculateNormals(vertices, faces)
     return normals;
 }
 
-// returns the index into this array of
-// if it's an array of arrays it assumes the
-// item in the first index of each subarry
-// is the key.
-Array.prototype.indexOf = function(item) {
-	for (var i = 0; i < this.length; i++) {
-        if (!this[i].length) {
-            if (this[i] == item) {
-                return i;
-            }
-        }else {
-            if (this[i][0] == item) {
-                return i;
-            }
-        }
-	}
-
-    return undefined;
-}
 
 //--------------------------------------------------------------------------
 //
 // augment Sylvester some
 // (c) 2009 Vladimir Vukicevic
-Matrix.Translation = function (v)
-{
-    if (v.elements.length == 2) {
-        var r = Matrix.I(3);
-        r.elements[2][0] = v.elements[0];
-        r.elements[2][1] = v.elements[1];
-        return r;
-    }
+$W.loadSylvester = function() {
+    $W.util.import($W.paths.external + $W.paths.sylvester);
 
-    if (v.elements.length == 3) {
-        var r = Matrix.I(4);
-        r.elements[0][3] = v.elements[0];
-        r.elements[1][3] = v.elements[1];
-        r.elements[2][3] = v.elements[2];
-        return r;
-    }
-
-    throw "Invalid length for Translation";
-}
-
-
-Matrix.prototype.trace = function() {
-    return this[0][0] + this[1][1] + this[2][2];
-}
-
-Matrix.prototype.flatten = function ()
-{
-    var result = [];
-    if (this.elements.length === 0) {
-        return [];
-    }
-
-
-    for (var j = 0; j < this.elements[0].length; j++) {
-        for (var i = 0; i < this.elements.length; i++) {
-            result.push(this.elements[i][j]);
+    Matrix.Translation = function (v)
+    {
+        if (v.elements.length == 2) {
+            var r = Matrix.I(3);
+            r.elements[2][0] = v.elements[0];
+            r.elements[2][1] = v.elements[1];
+            return r;
         }
-    }
-    return result;
-}
 
-Matrix.prototype.ensure4x4 = function()
-{
-    if (this.elements.length == 4 && 
-            this.elements[0].length == 4) {
-        return this;
-    }
+        if (v.elements.length == 3) {
+            var r = Matrix.I(4);
+            r.elements[0][3] = v.elements[0];
+            r.elements[1][3] = v.elements[1];
+            r.elements[2][3] = v.elements[2];
+            return r;
+        }
 
-    if (this.elements.length > 4 ||
-            this.elements[0].length > 4) {
-        return null;
+        throw "Invalid length for Translation";
     }
 
-    for (var i = 0; i < this.elements.length; i++) {
-        for (var j = this.elements[i].length; j < 4; j++) {
-            if (i == j) {
-                this.elements[i].push(1);
-            }else {
-                this.elements[i].push(0);
+
+    Matrix.prototype.trace = function() {
+        return this[0][0] + this[1][1] + this[2][2];
+    }
+
+    Matrix.prototype.flatten = function ()
+    {
+        var result = [];
+        if (this.elements.length === 0) {
+            return [];
+        }
+
+
+        for (var j = 0; j < this.elements[0].length; j++) {
+            for (var i = 0; i < this.elements.length; i++) {
+                result.push(this.elements[i][j]);
             }
         }
+        return result;
     }
 
-    for (var i = this.elements.length; i < 4; i++) {
-        if (i === 0) {
-            this.elements.push([1, 0, 0, 0]);
-        }else if (i == 1) {
-            this.elements.push([0, 1, 0, 0]);
-        }else if (i == 2) {
-            this.elements.push([0, 0, 1, 0]);
-        }else if (i == 3) {
-            this.elements.push([0, 0, 0, 1]);
+    Matrix.prototype.ensure4x4 = function()
+    {
+        if (this.elements.length == 4 && 
+                this.elements[0].length == 4) {
+            return this;
         }
+
+        if (this.elements.length > 4 ||
+                this.elements[0].length > 4) {
+            return null;
+        }
+
+        for (var i = 0; i < this.elements.length; i++) {
+            for (var j = this.elements[i].length; j < 4; j++) {
+                if (i == j) {
+                    this.elements[i].push(1);
+                }else {
+                    this.elements[i].push(0);
+                }
+            }
+        }
+
+        for (var i = this.elements.length; i < 4; i++) {
+            if (i === 0) {
+                this.elements.push([1, 0, 0, 0]);
+            }else if (i == 1) {
+                this.elements.push([0, 1, 0, 0]);
+            }else if (i == 2) {
+                this.elements.push([0, 0, 1, 0]);
+            }else if (i == 3) {
+                this.elements.push([0, 0, 0, 1]);
+            }
+        }
+
+        return this;
+    };
+
+    Matrix.prototype.make3x3 = function()
+    {
+        if (this.elements.length != 4 ||
+                this.elements[0].length != 4) {
+            return null;
+        }
+
+        return Matrix.create([[this.elements[0][0], this.elements[0][1], this.elements[0][2]],
+                [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
+                [this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
+    };
+
+    Vector.prototype.flatten = function ()
+    {
+        return this.elements;
+    }; 
+
+    Vector.prototype.vec3Zero = Vector.Zero(3);
+
+    Vector.prototype.invert = function() {
+        return Vector.prototype.vec3Zero.subtract(this);
     }
-
-    return this;
-};
-
-Matrix.prototype.make3x3 = function()
-{
-    if (this.elements.length != 4 ||
-            this.elements[0].length != 4) {
-        return null;
-    }
-
-    return Matrix.create([[this.elements[0][0], this.elements[0][1], this.elements[0][2]],
-            [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
-            [this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
-};
-
-Vector.prototype.flatten = function ()
-{
-    return this.elements;
-}; 
-
-Vector.prototype.vec3Zero = Vector.Zero(3);
-
-Vector.prototype.invert = function() {
-    return Vector.prototype.vec3Zero.subtract(this);
 }
 
