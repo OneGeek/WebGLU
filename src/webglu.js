@@ -36,7 +36,7 @@ $W = {
      */
     paths:{
         /** Path to *GLU libraries themselved */
-        libsrc : "../../src/"
+        libsrc : "../../src/",
 
         /** Where shaders are stored */
         shaders : "../../shaders/",
@@ -2372,11 +2372,11 @@ $W = {
     },
 
     useCrazyGLU: function() {
-        $W.util.import($W.paths.external + 'crazyglu.js');
+        $W.util.import($W.paths.libsrc + 'crazyglu.js');
     },
 
     useGameGLU: function() {
-        $W.util.import($W.paths.external + 'gameglu.js');
+        $W.util.import($W.paths.libsrc + 'gameglu.js');
     },
 
     disableGrouping:function() {
