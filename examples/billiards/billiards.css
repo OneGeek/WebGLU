@@ -1,0 +1,28 @@
+body{
+    width:750px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    padding: 0
+}
+
+#glCanvas {
+    width:500;
+    min-height:500px;
+    margin-left: 0px;
+    height:auto;
+    float:left;
+}
+
+#overlay {
+    position: absolute;
+    color:white;
+    background:gray;
+    font: sans-serif;
+    left: 0px;
+    top: 0px;
+    width: 30px;
+    text-align: right;
+    z-index:2;
+}

@@ -1,0 +1,223 @@
+<html><head>
+
+<link   type="text/css" rel="stylesheet" href="billiards.css">
+<script type="text/javascript" src="../../src/webglu.js"></script>
+
+<script type="application/x-javascript">
+function init() {
+    $W.useGameGLU();
+    $W.useCrazyGLU();
+
+    //--Initialize WebGLU, shaders
+    with ($W) {
+        if (!initialize()) return false;
+
+        newProgram('textured');
+        programs.textured.attachShader('texVS', $W.paths.shaders + 'texture.vert');
+        programs.textured.attachShader('texFS', $W.paths.shaders + 'texture.frag');
+
+        GL.clearColor(0.9, 0.9, 0.9, 1.0);
+        camera.setPosition(7,7,7);
+        camera.setTarget(1.5,2,0);
+        camera.yfov = 90;
+    }
+
+    return true;
+}
+
+function createObjects() {
+    var VERTEX = "vertex";
+    var COLOR  = "color";
+    var NORMAL = "normal";
+    var TEX_COORD = "texCoord";
+
+    // AXIS
+    // Create lines representing the XYZ axes
+    var addAxisLines = function() {
+        var originLines = new $W.Object($W.GL.LINES);
+        originLines.vertexCount = 6;
+
+        originLines.fillArray(VERTEX,
+            [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
+        with ($W.constants.colors){
+          originLines.fillArray(COLOR, 
+            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
+        }
+    }
+
+    var sphereData = $W.util.genSphere(20, 20, 8);
+    var fillBallData = function(obj) {
+        // Fill the arrays with data for a sphere
+        obj.fillArray(VERTEX, sphereData.vertices);
+        obj.fillArray(NORMAL, sphereData.normals);
+        obj.fillArray(TEX_COORD, sphereData.texCoords);
+        obj.setElements(sphereData.indices);
+    }
+
+    var cubeData = $W.constants.unitCube;
+    var fillWallData = function(obj) {
+        obj.fillArray(VERTEX, cubeData.vertices);
+        obj.fillArray(NORMAL, cubeData.normals);
+        obj.fillArray(TEX_COORD, cubeData.textureCoordinates);
+        obj.setElements(cubeData.indices);
+    }
+
+    var setupTextures = function() {
+        new $W.texture.Image('b1', '1.jpg');
+        new $W.texture.Image('b8', '8.jpg');
+        new $W.texture.Image('b15', '15.jpg');
+        new $W.texture.Image('cue', 'cue.png');
+        new $W.texture.Image('check', 'check.png');
+        new $W.texture.Image('tiger', 'tiger.png');
+    }
+
+    var scale = 0.1;
+
+    //addAxisLines();
+
+    setupTextures();
+
+    balls = [];
+    walls = [];
+
+    var tableHalfWidth = 129.0 * scale / 2;
+    var tableHalfHeight = 243.8 * scale / 2;
+    var longSide = [0,0,-tableHalfHeight/scale,  0,0,tableHalfHeight/scale];
+    var shortSide = [-tableHalfWidth/scale,0,0,  tableHalfWidth/scale,0,0];
+
+    var poolGreen = [49/255, 185/255, 77/255];
+    table = new $W.Object($W.GL.TRIANGLE_STRIP);
+    table.setPosition(-tableHalfWidth, 0, -tableHalfHeight);
+    //table.setScaleUniformly(2);
+    table.vertexCount = 4;
+    table.fillArray(VERTEX, [0,0,0, tableHalfWidth * 2,0,0, 0,0,tableHalfHeight *
+    1.5,
+    tableHalfWidth * 2, 0, tableHalfHeight * 1.5 ]);
+    table.fillArray(COLOR, [poolGreen, poolGreen, poolGreen, poolGreen]);
+
+
+    balls[0] = new $W.SimulatedObject("sphere");
+    balls[0].setPosition(0,1,4);
+    balls[0].setShaderProgram('textured');
+    balls[0].setTexture('cue', 'sampler');
+
+    balls[1] = new $W.SimulatedObject("sphere",false);
+    balls[1].setPosition(1,1,-5);
+    balls[1].setShaderProgram('textured');
+    balls[1].setTexture('b15', 'sampler');
+    //balls[1].textures[0] = 'b15';
+
+    balls[2] = new $W.SimulatedObject("sphere");
+    balls[2].setPosition(-1,1,-5);
+    balls[2].setShaderProgram('textured');
+    balls[2].setTexture('b1', 'sampler');
+    //balls[2].textures[0] = 'b1';
+
+    walls[0] = new $W.SimulatedObject("wall",false);
+    walls[0].setPosition(tableHalfWidth,1,0);
+    walls[0].direction = $V([0,0,1]);
+    walls[0].fillArray(VERTEX, longSide)
+
+    walls[1] = new $W.SimulatedObject("wall",false);
+    walls[1].setPosition(-tableHalfWidth,1,0);
+    walls[1].direction = $V([0,0,1]);
+    walls[1].fillArray(VERTEX, longSide)
+
+    walls[2] = new $W.SimulatedObject("wall",false);
+    walls[2].setPosition(0,1,tableHalfWidth);
+    walls[2].direction = $V([1,0,0]);
+    walls[2].fillArray(VERTEX, shortSide)
+
+    walls[3] = new $W.SimulatedObject("wall",false);
+    walls[3].setPosition(0,1,-tableHalfHeight);
+    walls[3].direction = $V([1,0,0]);
+    walls[2].fillArray(VERTEX, shortSide)
+
+    for (var i = 0; i < walls.length; i++) {
+        walls[i].type = $W.GL.LINES;
+        walls[i].vertexCount = 2;
+        walls[i].line = Line.create(walls[i].position, walls[i].direction);
+        //walls[i].fillArray(COLOR, [1,0,1, 1,0,1]);
+        walls[i].fillArray(COLOR, poolGreen);
+        walls[i].mass = 100000;
+        walls[i].setScaleUniformly(scale);
+        walls[i].restitution = 0.9;
+    };
+
+
+
+    for (var i = 0; i < balls.length; i++) {
+        fillBallData(balls[i]);
+        balls[i].setShaderProgram('textured');
+        balls[i].setScaleUniformly(scale);
+        balls[i].radius = 0.08 / scale;
+        balls[i].mass = 0.5
+        walls[i].restitution = 0.6;
+    }
+
+    balls[0].velocity = $V([0, 0, -0.05]);
+
+    //balls[1].mass = 2;
+
+    
+}
+
+function start() {
+        if (init()) {
+            createObjects();
+
+            overlay = document.getElementById('overlay');
+
+            function redraw() {
+                overlay.innerHTML = $W.FPS;
+                $W.update();
+                if (typeof($W.world) != 'undefined') {
+                    $W.world.update($W.timer.dt);
+                }
+                $W.draw();	
+            }
+
+            setInterval(redraw, 10);        	
+        }
+}
+
+</script>
+
+</head>
+
+<body scroll='no' onload='start()'>
+
+
+<div id="glCanvasFS">
+
+<div id="overlay"></div>
+
+<canvas id='canvas' width='700' height='600'></canvas><br>
+</div>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
