@@ -1,0 +1,108 @@
+<html><head>
+
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../src/webglu.js"></script>
+
+<script type="application/x-javascript">
+function init() {
+
+    //--Initialize WebGLU, shaders
+    if (!$W.initialize()) return false;
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+    $W.camera.setPosition(1,0,16);
+    $W.camera.setTarget(1,1,0);
+    $W.camera.yfov = 90;
+
+    return true;
+}
+
+function createObjects() {
+	boid = new $W.Object($W.GL.TRIANGLES, false);
+
+    var tip = [0,0,1];
+    var lft = [1/2,0,0];
+    var rgt = [-1/2,0,0];
+    var rdg = [0,1/4,1/10];
+
+    var yel = [220/255, 220/255,  40/255];
+    var blu = [ 40/255, 220/255, 220/255];
+    var grn = [ 40/255, 220/255,  40/255];
+    var gry = [120/255, 120/255, 120/255]; 
+
+
+    boid.vertexCount = 12;
+    boid.fillArray('vertex',
+            [tip, rdg, lft,
+             tip, rdg, rgt,
+             lft, rgt, rdg,
+             lft, rgt, tip]);
+
+    boid.fillArray('color',
+            [yel, yel, yel,
+             grn, grn, grn,
+             blu, blu, blu,
+             gry, gry, gry]);
+
+    boid.setScaleUniformly(.7);
+
+    $W.useCrazyGLU();
+
+    flock = new $W.OS.Flock(50, boid);
+}
+
+function start() {
+        if (init()) {
+            createObjects();
+
+            var FPS = document.getElementById('overlay');
+
+            setInterval(function() {
+                FPS.innerHTML = $W.FPS;
+                $W.update();
+                $W.draw();	
+                flock.update($W.util.clip($W.timer.dt, null, 1));
+                flock.draw();
+            }, 10);        	
+        }
+}
+
+</script>
+
+</head>
+
+<body onload='start()'>
+
+
+<div id="glCanvas">
+
+<div id="overlay"></div>
+
+<canvas id='canvas' width='500' height='500'></canvas><br>
+</div>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
