@@ -183,8 +183,8 @@ function swapDrawFuns() {
 }
 
 function showPointInfo(x, y) {
-    var x = $W.util.clamp(0, CW - 1, x);
-    var y = $W.util.clamp(0, CH - 1, y);
+    var x = $W.util.clip(x, 0, CW - 1);
+    var y = $W.util.clip(y, 0, CH - 1);
 
     var feedback = document.getElementById('feedback');
     var BR = '<br/>';
@@ -244,8 +244,8 @@ function start() {
         $G.state.y = 0;
 
         $G.event.bind('mousemove', function(x,y) {
-            $G.state.x = $W.util.clamp(0, CW, x);
-            $G.state.y = $W.util.clamp(0, CH, y);
+             $G.state.x = $W.util.clip(x, 0, CW - 1);
+             $G.state.y = $W.util.clip(y, 0, CH - 1);
             showPointInfo(x,y);
         });
 
@@ -255,8 +255,8 @@ function start() {
         });
 
         $G.event.bind('m1', function(x,y) {
-            var x = $W.util.clamp(0, CW - 1, x);
-            var y = $W.util.clamp(0, CH - 1, y);
+            var x = $W.util.clip(x, 0, CW - 1);
+            var y = $W.util.clip(y, 0, CH - 1);
             
             /*
             var mv = $W.modelview;
