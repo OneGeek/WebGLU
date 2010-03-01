@@ -952,14 +952,14 @@ $W = {
             window.eval(script);
         },
 
-        /** Clamps a value to a given range.
+        /** Clips a value to a given range.
          * @param {Number|null} min The minimum value this function can
          * return. If null is passed, there is no minimum.
          * @param {Number|null} max The maximum value this function can
          * return. If null is passed, there is no minimum.
-         * @param {Number} val The value to clamp.
+         * @param {Number} val The value to clip.
          */
-        clamp: function(min, max, val) {
+        clip: function(val, min, max) {
             if (min !== null && val < min) {
                 return min;
             }else if (max !== null && val > max) {
@@ -1598,7 +1598,14 @@ $W = {
 
         /** Set a new position. */
         this.setPosition = function(x, y, z) { 
-            this.position.elements = [x, y, z]; 
+            // Called as setPosition(x, y, z)
+            if (arguments.length == 3) {
+                this.position.elements = [x, y, z]; 
+
+            // Called as setPosition([x, y, z])
+            }else {
+                this.position.elements = arguments[0];
+            }
         }
 
         /** Set a new rotation. */
@@ -1956,16 +1963,16 @@ $W = {
         this._drawFunction = this._drawArrays();
         
         /** draw this object at the given postion, rotation, and scale
-         * @param {Vector} pos The position to draw at.
-         * @param {Vector} rot The rotation to rotate by.
-         * @param {Vector} scale The scale to scale by.
+         * @param {3 Element Array} pos Position array.
+         * @param {Matrix} rot Rotation matrix.
+         * @param {3 Element Array} scale Scaling array.
          */
         this.drawAt = function(pos, rot, scale) {
                 $W.modelview.pushMatrix();
 
-                $W.modelview.translate(pos.elements);
-                $W.modelview.multMatrix(rot.matrix());
-                $W.modelview.scale(scale.elements);
+                $W.modelview.translate(pos);
+                $W.modelview.multMatrix(rot);
+                $W.modelview.scale(scale);
 
                 for (var i = 0; i < this._children.length; i++) {
                     this._children[i].draw();
@@ -1990,9 +1997,9 @@ $W = {
          */
         this.draw = function() {
             this.drawAt(
-                this.animatedPosition(), 
-                this.animatedRotation(), 
-                this.animatedScale()
+                this.animatedPosition().elements, 
+                this.animatedRotation().matrix(),
+                this.animatedScale().elements
             );
         }
 
@@ -2370,6 +2377,7 @@ $W = {
             console.groupEnd       = console.log;
         }
     },
+
 
     useCrazyGLU: function() {
         $W.util.import($W.paths.libsrc + 'crazyglu.js');
