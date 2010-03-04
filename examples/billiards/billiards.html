@@ -17,7 +17,7 @@ function init() {
         programs.textured.attachShader('texFS', $W.paths.shaders + 'texture.frag');
 
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
-        camera.setPosition(7,7,7);
+        camera.setPosition(10,10,15);
         camera.setTarget(1.5,2,0);
         camera.yfov = 90;
     }
@@ -58,7 +58,7 @@ function createObjects() {
     var fillWallData = function(obj) {
         obj.fillArray(VERTEX, cubeData.vertices);
         obj.fillArray(NORMAL, cubeData.normals);
-        obj.fillArray(TEX_COORD, cubeData.textureCoordinates);
+        obj.fillArray(TEX_COORD, cubeData.texCoords);
         obj.setElements(cubeData.indices);
     }
 
@@ -81,7 +81,7 @@ function createObjects() {
     walls = [];
 
     var tableHalfWidth = 129.0 * scale / 2;
-    var tableHalfHeight = 243.8 * scale / 2;
+    var tableHalfHeight = 243.8 * scale  / 2;
     var longSide = [0,0,-tableHalfHeight/scale,  0,0,tableHalfHeight/scale];
     var shortSide = [-tableHalfWidth/scale,0,0,  tableHalfWidth/scale,0,0];
 
@@ -90,9 +90,8 @@ function createObjects() {
     table.setPosition(-tableHalfWidth, 0, -tableHalfHeight);
     //table.setScaleUniformly(2);
     table.vertexCount = 4;
-    table.fillArray(VERTEX, [0,0,0, tableHalfWidth * 2,0,0, 0,0,tableHalfHeight *
-    1.5,
-    tableHalfWidth * 2, 0, tableHalfHeight * 1.5 ]);
+    table.fillArray(VERTEX, [0,0,0, tableHalfWidth * 2, 0, 0, 0,0, tableHalfHeight * 2, 
+    tableHalfWidth * 2, 0, tableHalfHeight * 2 ]);
     table.fillArray(COLOR, [poolGreen, poolGreen, poolGreen, poolGreen]);
 
 
@@ -105,65 +104,74 @@ function createObjects() {
     balls[1].setPosition(1,1,-5);
     balls[1].setShaderProgram('textured');
     balls[1].setTexture('b15', 'sampler');
-    //balls[1].textures[0] = 'b15';
 
     balls[2] = new $W.SimulatedObject("sphere");
     balls[2].setPosition(-1,1,-5);
     balls[2].setShaderProgram('textured');
     balls[2].setTexture('b1', 'sampler');
-    //balls[2].textures[0] = 'b1';
 
-    walls[0] = new $W.SimulatedObject("wall",false);
+    walls[0] = new $W.SimulatedObject   ("wall");
     walls[0].setPosition(tableHalfWidth,1,0);
     walls[0].direction = $V([0,0,1]);
-    walls[0].fillArray(VERTEX, longSide)
+    walls[0].fillArray(VERTEX, shortSide)
 
-    walls[1] = new $W.SimulatedObject("wall",false);
+    walls[1] = new $W.SimulatedObject   ("wall");
     walls[1].setPosition(-tableHalfWidth,1,0);
     walls[1].direction = $V([0,0,1]);
-    walls[1].fillArray(VERTEX, longSide)
+    walls[1].fillArray(VERTEX, shortSide)
 
-    walls[2] = new $W.SimulatedObject("wall",false);
-    walls[2].setPosition(0,1,tableHalfWidth);
+    walls[2] = new $W.SimulatedObject   ("wall");
+    walls[2].setPosition(0,1,tableHalfHeight);
     walls[2].direction = $V([1,0,0]);
-    walls[2].fillArray(VERTEX, shortSide)
+    walls[2].fillArray(VERTEX, longSide)
 
-    walls[3] = new $W.SimulatedObject("wall",false);
+    walls[3] = new $W.SimulatedObject   ("wall");
     walls[3].setPosition(0,1,-tableHalfHeight);
     walls[3].direction = $V([1,0,0]);
-    walls[2].fillArray(VERTEX, shortSide)
+    walls[3].fillArray(VERTEX, longSide)
 
     for (var i = 0; i < walls.length; i++) {
+        walls[i].name = 'wall';
         walls[i].type = $W.GL.LINES;
         walls[i].vertexCount = 2;
         walls[i].line = Line.create(walls[i].position, walls[i].direction);
-        //walls[i].fillArray(COLOR, [1,0,1, 1,0,1]);
+        walls[i].fillArray(COLOR, [1,0,1, 1,0,1]);
         walls[i].fillArray(COLOR, poolGreen);
         walls[i].mass = 100000;
         walls[i].setScaleUniformly(scale);
         walls[i].restitution = 0.9;
+        walls[i].radius = 0.01;
     };
 
 
 
     for (var i = 0; i < balls.length; i++) {
+        balls[i].name = 'ball';
         fillBallData(balls[i]);
         balls[i].setShaderProgram('textured');
         balls[i].setScaleUniformly(scale);
         balls[i].radius = 0.08 / scale;
-        balls[i].mass = 0.5
-        walls[i].restitution = 0.6;
+        balls[i].mass = 1;
+        balls[i].restitution = 1.0;
     }
 
-    balls[0].velocity = $V([0, 0, -0.05]);
+    balls[0].velocity = $V([0, 0, -0.007]);
 
-    //balls[1].mass = 2;
-
-    
 }
 
 function start() {
         if (init()) {
+            $W.useGameGLU();
+            $G.initialize();
+
+            $G.event.bind('space', function() {
+                var a = (Math.random() - 0.5) / 50;
+                var b = (Math.random() - 0.5) / 50;
+
+                balls[0].velocity = $V([a,0,b]);
+            });
+
+                
             createObjects();
 
             overlay = document.getElementById('overlay');

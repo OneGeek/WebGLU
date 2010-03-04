@@ -8,10 +8,11 @@ function init() {
 
     //--Initialize WebGLU, shaders
     if (!$W.initialize()) return false;
-    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
-    $W.camera.setPosition(1,0,16);
+    $W.GL.clearColor(0.3, 0.3, 0.3, 1.0);
+    $W.camera.setPosition(-2,0,17);
     $W.camera.setTarget(1,1,0);
     $W.camera.yfov = 90;
+
 
     return true;
 }
@@ -47,7 +48,7 @@ function createObjects() {
 
     $W.useCrazyGLU();
 
-    flock = new $W.OS.Flock(50, boid);
+    flock = new $W.OS.Flock(40, boid);
 }
 
 function start() {
@@ -60,7 +61,7 @@ function start() {
                 FPS.innerHTML = $W.FPS;
                 $W.update();
                 $W.draw();	
-                flock.update($W.util.clip($W.timer.dt, null, 1));
+                flock.update($W.util.clip($W.timer.dt, null, 20) / 9);
                 flock.draw();
             }, 10);        	
         }
