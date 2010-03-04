@@ -218,12 +218,7 @@ $W.OS= {
         }
 
         this.setUnitSideFromForwardAndUp = function() {
-            if (this.rightHanded()) {
-                side = V3.cross(forward, up);
-            }else {
-                side = V3.cross(up, forward);
-            }
-
+            side = V3.cross(forward, up);
             side = V3.normalize(side);
         }
 
@@ -232,15 +227,7 @@ $W.OS= {
 
             this.setUnitSideFromForwardAndUp();
 
-            if (this.rightHanded()) {
-                up = V3.cross(side, forward);
-            }else {
-                up = V3.cross(forward, side);
-            }
-        }
-
-        this.rightHanded = function() {
-            return true;
+            up = V3.cross(side, forward);
         }
 
         this.localRotateForwardToSide = function(v) {
@@ -261,7 +248,7 @@ $W.OS= {
         $W.OS.LocalSpace.call(this);
         $W.OS.steering.call(this);
         
-        var mass     = 1;
+        var mass     = 0.5;
         var radius   = 0.5;
         var speed    = 0;
         var maxForce = 0.1;
@@ -323,11 +310,11 @@ $W.OS= {
 
             // the length of this global-upward-pointing vector controls the vehicle's
             // tendency to right itself as it is rolled over from turning acceleration
-            var globalUp = V3.$(0, 0.2, 0);
+            var globalUp = V3.$(0, 0.5, 0);
 
             // acceleration points toward the center of local path curvature, the
             // length determines how much the vehicle will roll while turning
-            var accelUp = V3.scale(smoothedAcceleration, 0.05);
+            var accelUp = V3.scale(smoothedAcceleration, 0.00);
 
             // combined banking, sum of UP due to turning and global UP
             var bankUp = V3.add(accelUp, globalUp);
@@ -356,7 +343,6 @@ $W.OS= {
             // compute acceleration and velocity
             var newAcceleration = V3.scale(clippedForce, 1 / this.mass());
             var newVelocity = this.velocity();
-            //console.log(V3.elements(this.velocity()));
 
             // damp out abrupt changes and oscillations in steering acceleration
             // (rate is proportional to time step, then clipped into useful range)
@@ -422,14 +408,16 @@ $W.OS= {
         this.resetB = function() {
             this.resetSV();
             
-            this.setMaxForce(.27);
+            this.setMaxForce(.17);
 
             this.setMaxSpeed(.9);
 
             this.setSpeed(this.maxSpeed() * 0.3);
 
+            var fwd = $W.OS.RandomUnitVector();
+            fwd[1] = 0.3 * fwd[1];
 
-            this.regenerateOrthonormalBasisUF($W.OS.RandomUnitVector());
+            this.regenerateOrthonormalBasisUF(V3.normalize(fwd));
 
 
             this.setPosition(V3.scale($W.OS.RandomVectorInUnitRadiusSphere(),200));
@@ -442,7 +430,8 @@ $W.OS= {
     Flock:function(boidCount, boidModel) {
         this.boidModel = boidModel;
         this.flock = [];
-        this.worldRadius = 50;
+        this.worldRadius = 60;
+        this.scale = 5;
 
         for (var i = 0; i < boidCount; i++) {
             this.flock.push(new $W.OS.Boid());
@@ -458,7 +447,7 @@ $W.OS= {
         this.draw = function() {
             for(var i = 0; i < this.flock.length; i++) {
                 var dir = this.flock[i].side();
-                this.boidModel.drawAt( V3.elements( V3.scale(this.flock[i].smoothedPosition(), 1/5) ),
+                this.boidModel.drawAt( V3.elements( V3.scale(this.flock[i].smoothedPosition(), 1/this.scale) ),
                                        this.flock[i].rotationMatrix(),
                                        this.boidModel.scale.elements );
             }
@@ -470,15 +459,15 @@ $W.OS= {
             var radiusScale = 2;
             var separationRadius =  5.0 * radiusScale;
             var separationAngle  = -0.707;
-            var separationWeight =  12.0;
+            var separationWeight =  10.0;
             
             var alignmentRadius = 7.5 * radiusScale;
             var alignmentAngle  = 0.7;
-            var alignmentWeight = 8.0;
+            var alignmentWeight = 9.0;
              
             var cohesionRadius = 9.0 * radiusScale;
             var cohesionAngle  = -0.15;
-            var cohesionWeight = 8.0;
+            var cohesionWeight = 10.0;
 
             var neighbors = [];
 
@@ -526,7 +515,9 @@ $W.OS= {
                 }
             }
 
-            return V3.normalize(steering);
+            steering[1] = 0.1 * steering[1];
+            steering = V3.normalize(steering);
+            return steering;
         }
 
         this.steerForAlignment = function(maxDistance, cosMaxAngle, flock) {    
@@ -676,6 +667,8 @@ $W.SimulatedObject = function(physType) {
     /** Coefficient of restitution */
     this.restitution = 1;
 
+    this.maxSpeed = 0.02;
+
     this.applyImpulse = function(impulse) {
         this.impulses.push(impulse);
     }
@@ -687,14 +680,14 @@ $W.SimulatedObject = function(physType) {
         }
 
         // Don't test collision against self
-        if (this.index == object.index) {
+        if (this.index === object.index) {
             return false;
         }
 
         // Don't recalc collisions if we've already tested
-        for (var j = 0; j < object.alreadyCollidedWith.length; j++) {
-            if (this.index == object.alreadyCollidedWith[j]) {
-                //return false;
+        for (var i = 0; i < object.alreadyCollidedWith.length; i++) {
+            if (this.index === object.alreadyCollidedWith[i]) {
+                return false;
             }
         }
 
@@ -731,8 +724,8 @@ $W.SimulatedObject = function(physType) {
                 dt += t;
 
                 var actionNormal = a.position.subtract(b.position).toUnitVector();
-                a.position = a.position.subtract(a.velocity.x(t/10));
-                b.position = b.position.subtract(b.velocity.x(t/10));
+                a.position = a.position.add(b.velocity.x(t));
+                b.position = b.position.add(a.velocity.x(t));
 
                 var vDiff = a.velocity.subtract(b.velocity);
                 var relativeNormalVelocity = vDiff.dot(actionNormal);
@@ -757,8 +750,11 @@ $W.SimulatedObject = function(physType) {
             this.velocity = this.velocity.add(this.impulses.pop());
         }
 
+        var temp = V3.$(this.velocity.e(1), this.velocity.e(2), this.velocity.e(3));
+        //this.velocity.elements = V3.elements(V3.truncateLength(temp, this.maxSpeed));
+
         //--- integrate position/rotation ---
-        this.position = this.position.add(this.velocity.x(dt/10));
+        this.position = this.position.add(this.velocity.x(dt));
     }
 
     var areColliding = function(a, b) {
@@ -769,7 +765,7 @@ $W.SimulatedObject = function(physType) {
         // Back up to when the collision occurred
         // Otherwise objects could get stuck inside one another
         var t = 0;
-        while (didCollide(a, b, t++)) {}
+        while (t < $W.timer.dt && didCollide(a, b, t++)) {}
         return t; // to catch back up
     }
 
@@ -791,8 +787,8 @@ $W.SimulatedObject = function(physType) {
         }
 
         return $W.util.sphereCollide(
-                pa.subtract(a.velocity.x(t/10)),
-                pb.subtract(b.velocity.x(t/10)), 
+                pa.subtract(a.velocity.x(t)),
+                pb.subtract(b.velocity.x(t)), 
                 a.radius, b.radius);
     }
 
