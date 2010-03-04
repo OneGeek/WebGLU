@@ -1,0 +1,8 @@
+-Spline interpolation
+-Inverse kinematics
+-Handle multi-pass shaders
+-Automatic handling of framebuffers as needed
+-Integrate object picking
+-Further optimization for speed
+-Robust library of shaders
+-Lots of examples
