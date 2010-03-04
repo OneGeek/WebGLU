@@ -1844,19 +1844,29 @@ $W = {
                 var length    = program.attributes[i].length;
                 var buffer    = program.attributes[i].buffer;
 
+                var step = 0;
                 try{
                     $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.buffers[name]);
+                    step++;
                     $W.GL.bufferData($W.GL.ARRAY_BUFFER, 
                             this.arrays[name], $W.GL.STATIC_DRAW);
+                    step++;
 
                     $W.GL.vertexAttribPointer(attribute, length, $W.GL.FLOAT, false, 0, 0);
+                    step++;
                     $W.GL.enableVertexAttribArray(attribute);
-                }catch (err) {
-                    console.error(err);
-                    
-                    if (this.arrays[name] === undefined) {
-                        // Fail silently
-                        //console.error("data for `" + name + "` attribute does not exist");
+                    step++;
+                }catch (e) {
+                    if (typeof(this.arrays[name]) === 'undefined') {
+                        console.error("`" + name + "` data is undefined");
+                    }else if (step === 0) {
+                        console.error("err: binding `" + name + "` buffer");
+                    }else if (step === 1) {
+                        console.error("err: buffering data for `" + name + "`");
+                    }else if (step === 2) {
+                        console.error("err: in vertexAttribPointer `" + name + "`");
+                    }else if (step === 3) {
+                        console.error("err: enabling attrib array`" + name + "`");
                     }
                 }
             }
@@ -2035,6 +2045,8 @@ $W = {
          * @type {Vector}
          */
         this.target = $V([0,0,0]);
+
+        this.up = $V([0,1,0]);
 
         /** Set a new target for the camera .
          * Changes the camera target without recreating the
@@ -2475,7 +2487,9 @@ $W = {
             $W.camera.target.e(1),
             $W.camera.target.e(2),
             $W.camera.target.e(3),
-            0,1,0));
+            $W.camera.up.e(1),
+            $W.camera.up.e(2),
+            $W.camera.up.e(3)));
 
         $W.modelview.rotate($W.camera.rotation.e(1), [1, 0, 0]);
         $W.modelview.rotate($W.camera.rotation.e(2), [0, 1, 0]);
