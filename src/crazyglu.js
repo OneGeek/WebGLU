@@ -25,7 +25,7 @@
 */
 
 if (typeof(V3) === 'undefined') {
-    $W.util.import($W.paths.external + 'mjs.js');
+    $W.util.include($W.paths.external + 'mjs.js');
 }
 
 V3.equals = function V3_equals(a, b) {
