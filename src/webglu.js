@@ -947,7 +947,7 @@ $W = {
 
     /** @namespace Utility functions. */
     util:{
-        import: function(path) {
+        include: function(path) {
             var script = $W.util.loadFileAsText(path);
             window.eval(script);
         },
@@ -2392,11 +2392,11 @@ $W = {
 
 
     useCrazyGLU: function() {
-        $W.util.import($W.paths.libsrc + 'crazyglu.js');
+        $W.util.include($W.paths.libsrc + 'crazyglu.js');
     },
 
     useGameGLU: function() {
-        $W.util.import($W.paths.libsrc + 'gameglu.js');
+        $W.util.include($W.paths.libsrc + 'gameglu.js');
     },
 
     disableGrouping:function() {
@@ -2693,7 +2693,7 @@ $W.util.calculateNormals = function(vertices, faces) {
 // augment Sylvester some
 // (c) 2009 Vladimir Vukicevic
 $W.loadSylvester = function() {
-    $W.util.import($W.paths.external + $W.paths.sylvester);
+    $W.util.include($W.paths.external + $W.paths.sylvester);
 
     Matrix.Translation = function (v)
     {
