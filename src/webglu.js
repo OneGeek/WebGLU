@@ -2553,8 +2553,12 @@ $W.extendArray = function() {
 
     Array.prototype.flatten = function() {
         var res = [];
-        for (var i = 0; i < this.length; i++) {
-            res = res.concat(this[i]);
+        if (this[0].length !== undefined) {
+            for (var i = 0; i < this.length; i++) {
+                res = res.concat(this[i]);
+            }
+        }else {
+            res = this;
         }
         return res;
     }
