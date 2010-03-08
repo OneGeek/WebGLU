@@ -785,6 +785,62 @@ $W = {
 
     },
 
+    Framebuffer:function() {
+        var GL = $W.GL;
+        var RBUF = GL.RENDERBUFFER;
+        var FBUF = GL.FRAMEBUFFER;
+
+        this.glFramebuffer = GL.createFramebuffer();
+        this.glRenderbuffers = [];
+        this.glTextures = [];
+
+        this.bind = function() {
+            GL.bindFramebuffer(FBUF, this.glFramebuffer);
+        }
+
+        this.unbind = function() {
+            GL.bindFramebuffer(FBUF, null);
+        }
+
+        this.attachRenderbuffer = function(storageFormat, width, height, attachment) {
+            var rBuffer = GL.createRenderbuffer();
+            this.glRenderbuffers.push(rBuffer);
+            this.bind();
+            
+            GL.bindRenderbuffer(RBUF, rBuffer);
+            GL.renderbufferStorage(RBUF, storageFormat, width, height);
+            GL.bindRenderbuffer(RBUF, null);
+
+            GL.framebufferRenderbuffer(FBUF, attachment, RBUF, rBuffer);
+            this.unbind();
+        }
+
+        this.attachExistingTexture = function(texture, attachment) {
+            this.glTextures.push(texture.glTexture);
+            this.bind();
+            GL.framebufferTexture2D(FBUF, attachment, GL.TEXTURE_2D, texture.glTexture, 0);
+            this.unbind();
+        }
+
+        this.attachNewTexture = function(format, width, height, attachment) {
+            var texture = new $W.texture.Texture('Texture' + $W.textures.length);
+            texture.bind();
+            GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
+                          0, format, $W.GL.UNSIGNED_BYTE, null);
+            texture.unbind();
+
+            this.attachExistingTexture(texture, attachment);
+        }
+
+        this.attachTexture = function() {
+            if (arguments.length === 4) {   
+                this.attachNewTexture.apply(this, arguments);
+            }else {
+                this.attachExistingTexture.apply(this, arguments);
+            }
+        }
+    },
+
     /** @namespace Contains (semi)constant values that generally shouldn't be 
      * changed.
      */
@@ -1399,6 +1455,20 @@ $W = {
 
     /** @namespace Texture classes */
     texture:{
+        Texture: function(name) {
+            this.glTexture = $W.GL.createTexture();
+            this.name = name;
+            $W.textures[name] = this;
+
+            this.bind = function() {
+                $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
+            }
+                
+            this.unbind = function() {
+                $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
+            }
+        },
+
         Canvas: function(name, id) {
         },
 
@@ -1409,8 +1479,7 @@ $W = {
          * @param {String} id Video element id. 
          */
         Video: function(name, src) {
-            this.glTexture = $W.GL.createTexture();
-            //this.video = document.getElementById(id);
+            $W.texture.Texture.call(this, name);
             this.video = document.createElement('video');
             document.getElementsByTagName('body')[0].appendChild(this.video);
 
@@ -1419,11 +1488,9 @@ $W = {
             this.video.source = src;
             this.video.play();
 
-            $W.textures[name]  = this;
-
             this.update = function() {
                 var gl = $W.GL;
-                gl.bindTexture(gl.TEXTURE_2D, this.texture.glTexture);
+                this.texture.bind();
                 gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.video);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
@@ -1432,13 +1499,6 @@ $W = {
             }
 
             this.video.addEventListener("timeupdate", this.update, true);
-
-            /*
-            this.video.onload = function() {
-                this.video.play();
-                this.video.addEventListener("timeupdate", this.update, true);
-            }
-            */
 
             this.setSource = function(src) {
                 this.video.src = src;
@@ -1455,19 +1515,14 @@ $W = {
          * @param {String} src Path to image file.
          */
         Image: function(name, src) {
-            this.glTexture = $W.GL.createTexture();
-            //this.image = new Image();
+            $W.texture.Texture.call(this, name);
             this.image = document.createElement('img');
-
-
-
             this.image.texture = this;
-            $W.textures[name]  = this;
 
             this.image.onload = function() {
                 var gl = $W.GL;
                 console.group('Loading texture `' + name + "`");
-                gl.bindTexture(gl.TEXTURE_2D, this.texture.glTexture);
+                this.texture.bind();
                 gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.image);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
