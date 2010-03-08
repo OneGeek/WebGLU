@@ -1,10 +1,7 @@
 <html><head>
 
 <link   type="text/css" rel="stylesheet" href="../example.css">
-<script type="text/javascript" src="../../external/Sylvester.src.js"></script>
-<script type="text/javascript" src="../../external/webgl-debug.js"></script>
 <script type="text/javascript" src="../../src/webglu.js"></script>
-<script type="text/javascript" src="../../src/gameglu.js"></script>
 
 <script type="application/x-javascript">
 function init() {
@@ -12,7 +9,6 @@ function init() {
     //--Initialize WebGLU, shaders
     with ($W) {
         if (!initialize()) return false;
-        //$W.GL = WebGLDebugUtils.makeDebugContext($W.GL);
 
         newProgram('textured');
         programs['textured'].attachShader('texVS', $W.paths.shaders + 'texture.vert');
@@ -21,7 +17,6 @@ function init() {
         newProgram('pick');
         programs['pick'].attachShader('pickVS', $W.paths.shaders + 'pick.vert');
         programs['pick'].attachShader('pickFS', $W.paths.shaders + 'pick.frag');
-        programs.pick.link();
 
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         camera.setPosition(2,2,2);
@@ -40,7 +35,7 @@ function createObjects() {
     // AXIS
     // Create lines representing the XYZ axes
     var addAxisLines = function() {
-        var originLines = new $W.Object($W.GL.LINES);
+        originLines = new $W.Object($W.GL.LINES);
         //originLines.setShaderProgram('pick');
         originLines.vertexCount = 6;
 
@@ -52,26 +47,18 @@ function createObjects() {
         }
     }
 
-
     // Create a solid object
     addAxisLines();
-    var cube = new $W.Object($W.GL.TRIANGLES);
-    var cube2 = new $W.Object($W.GL.TRIANGLES);
+    cube = new $W.Object($W.GL.TRIANGLES);
+    cube2 = new $W.Object($W.GL.TRIANGLES);
 
     cube2.setScaleUniformly(0.5)
     cube2.setPosition(0,1,0);
 
     // Use the 'textured' shader program defined above
-    //cube.setShaderProgram('pick');
     cube.setShaderProgram('textured');
     cube2.setShaderProgram('textured');
 
-    ptex = $W.GL.createTexture();
-    /*
-    rtt = {name:'rtt', glTexture:ptex};
-    $W.textures['rtt'] = rtt;
-    */
-    cube.setTexture('rtt', 'sampler');
     new $W.texture.Image('tiger', 'tiger.png');
     cube.setTexture('tiger', 'sampler');
     cube2.setTexture('tiger', 'sampler');
@@ -79,7 +66,6 @@ function createObjects() {
     cube.animation._update = function(dt) {
         this.setRotation(this.age/20,0,0);
     }
-
 
     // Fill the arrays with data for a cube
     var cubeData = $W.constants.unitCube;
@@ -93,7 +79,7 @@ function createObjects() {
     cube.fillArray(TEX_COORD, cubeData.texCoords);
 
     // Use drawElements
-    cube2.setElements(cubeData.indices);
+    cube.setElements(cubeData.indices);
 
     // Fill the arrays with data for a cube
     cube2.fillArray(VERTEX, cubeData.vertices);
@@ -101,44 +87,15 @@ function createObjects() {
     cube2.fillArray(TEX_COORD, cubeData.texCoords);
 
     // Use drawElements
-    cube.setElements(cubeData.indices);
+    cube2.setElements(cubeData.indices);
 
-    $W.Framebuffer = function() {
-        var GL = $W.GL;
-        var RBUF = GL.RENDERBUFFER;
-        var FBUF = GL.FRAMEBUFFER;
-
-        this.glFramebuffer = GL.createFramebuffer();
-        this.glRenderbuffer = GL.createRenderbuffer();
-        this.glTexture = GL.createTexture();
-
-    }
-    
-
-    try {
-    RB = $W.GL.RENDERBUFFER;
-    FB = $W.GL.FRAMEBUFFER;
-    TEX2D = $W.GL.TEXTURE_2D;
     CW = $W.canvas.width;
     CH = $W.canvas.height;
 
-    fbo = $W.GL.createFramebuffer();
-    rbo = $W.GL.createRenderbuffer();
-    ptex = $W.GL.createTexture();
-
-    $W.GL.bindTexture(TEX2D, ptex);
-    $W.GL.texImage2D(TEX2D, 0, $W.GL.RGBA, CW, CH, 0, $W.GL.RGBA, $W.GL.UNSIGNED_BYTE, null);
-
-    $W.GL.bindFramebuffer(FB, fbo);
-    $W.GL.bindRenderbuffer(RB, rbo);
-
-    $W.GL.renderbufferStorage(RB, $W.GL.DEPTH_COMPONENT16, CW, CH);
-    $W.GL.bindRenderbuffer(RB, null);
-
-    $W.GL.framebufferTexture2D(FB, $W.GL.COLOR_ATTACHMENT0, TEX2D, ptex, 0);
-    $W.GL.framebufferRenderbuffer(FB, $W.GL.DEPTH_ATTACHMENT, RB, rbo);
-
-    $W.GL.bindFramebuffer(FB, null);
+    try{
+        fb = new $W.Framebuffer();
+        fb.attachTexture($W.GL.RGBA, CW, CH, $W.GL.COLOR_ATTACHMENT0);
+        fb.attachRenderbuffer($W.GL.DEPTH_COMPONENT16, CW, CH, $W.GL.DEPTH_ATTACHMENT);
     }catch (e) {
         console.error(e);
     }
@@ -163,17 +120,18 @@ var drawFun = function() {
     $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
 };     
 
-wasSwappedOnce = false;
+showingPick = false;
 function swapShaders(index) {
-    if (index === undefined) {
-        for (var i = 0; i < $W.objects.length; i++) {
-            if (wasSwappedOnce) { $W.objects[i].revertShaderProgram();
-            }else { $W.objects[i].setShaderProgram('pick'); }
-        }
-        wasSwappedOnce = true
-    }else if (wasSwappedOnce){
-        $W.objects[index].revertShaderProgram();
+    if (showingPick) {
+        originLines.setShaderProgram('default');
+        cube.setShaderProgram('textured');
+        cube2.setShaderProgram('textured');
+    }else {
+        originLines.setShaderProgram('pick');
+        cube.setShaderProgram('pick');
+        cube2.setShaderProgram('pick');
     }
+    showingPick = !showingPick;
 }
 
 function swapDrawFuns() {
@@ -189,9 +147,9 @@ function showPointInfo(x, y) {
     var feedback = document.getElementById('feedback');
     var BR = '<br/>';
 
-    $W.GL.bindFramebuffer(FB, fbo);
+    fb.bind();
     var pixel = $W.GL.readPixels(x,CH-y,1,1, $W.GL.RGBA, $W.GL.UNSIGNED_BYTE);
-    $W.GL.bindFramebuffer(FB, null);
+    fb.unbind();
 
     if (pixel[0] === 255) {
         feedback.innerHTML = "Nothing" + BR ;
@@ -205,8 +163,7 @@ function showPointInfo(x, y) {
 
 function updatePickBuffer() {
     $W._setupMatrices();
-    $W.GL.bindFramebuffer(FB, fbo);
-    $W.GL.framebufferTexture2D(FB, $W.GL.COLOR_ATTACHMENT0, TEX2D, ptex, 0);
+    fb.bind();
 
     $W.GL.clearColor(1.0, 1.0, 1.0, 1.0);
     $W.GL.clear($W.GL.COLOR_BUFFER_BIT | $W.GL.DEPTH_BUFFER_BIT);
@@ -239,6 +196,8 @@ function start() {
             $W.draw();	
         }
 
+        $W.useGameGLU();
+
         $G.initialize();
         $G.state.x = 0;
         $G.state.y = 0;
@@ -258,36 +217,12 @@ function start() {
             var x = $W.util.clip(x, 0, CW - 1);
             var y = $W.util.clip(y, 0, CH - 1);
             
-            /*
-            var mv = $W.modelview;
-            var pj = $W.projection;
-            var cam = $W.camera.position;
-            var z = 1;
-
-            // Unproject mouse coordinates
-            x = -(((2*x) / $W.canvas.width) - 1) / pj.matrix.e(1,1);
-            y =  (((2*y) / $W.canvas.width) - 1) / pj.matrix.e(2,2);
-            var point = $V([x,y,z,0]);
-            point = mv.matrix.inverse().multiply(point); 
-            point.elements = [point.e(1),point.e(2),point.e(3)];
-
-            // Calc vectors
-            z = point.toUnitVector();
-            x = $V([0,0,1]).cross(z).toUnitVector();
-            y = z.cross(x).toUnitVector();
-
-            mv.pushMatrix($M([x.e(1), y.e(1), cam.e(1)],
-                             [x.e(2), y.e(2), cam.e(2)],
-                             [z.e(3), z.e(3), cam.e(3)],
-                             [0, 0, 0, 1]               ).inverse());
-            pj.pushMatrix($W.GLU.ortho(-0.0001, 0.0001, -0.0001, 0.0001, 0.01, 10000)); 
-            $W.GL.viewport(0,0,1,1);
-            */
-        
             updatePickBuffer();
             var index = $W.GL.readPixels(x,CH-y,1,1, $W.GL.RGBA,
                                          $W.GL.UNSIGNED_BYTE)[0];
-            if (index !== 255) {
+
+            // Not BG or axis lines
+            if (index !== 255 && index !== 0) {
                 var obj = $W.objects[index];
 
                 if (obj.shaderProgram === 'default') {
@@ -297,12 +232,6 @@ function start() {
                 }
             }
             showPointInfo(x,y);
-            
-            /*
-            $W.modelview.popMatrix();
-            $W.projection.popMatrix();
-            $W.GL.viewport(0,0, $W.canvas.width, $W.canvas.height);
-            */
         });
 
         setInterval(redraw, 10);        	
@@ -316,6 +245,8 @@ function start() {
 <body onload='start()'>
 
 
+Click on either cube to swap shaders.<br/>
+Press space to see what the picking shader does.<br/>
 <div id="glCanvas">
 
 <div id="overlay"></div>
