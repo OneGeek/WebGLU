@@ -101,7 +101,6 @@ $G = {
             actions['mousemove'] = function(x,y){};
 
             BIND("mousedown", function(ev) {
-                console.dir(ev);
                 actions['+mouse'][ev.which](
                     ev.clientX - $G.offsetX, ev.clientY - $G.offsetY);
             }, false);
