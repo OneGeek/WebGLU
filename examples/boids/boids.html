@@ -1,25 +1,29 @@
 <html><head>
-
 <link   type="text/css" rel="stylesheet" href="../example.css">
 <script type="text/javascript" src="../../src/webglu.js"></script>
 
 <script type="application/x-javascript">
 function init() {
-
-    //--Initialize WebGLU, shaders
     if (!$W.initialize()) return false;
-    $W.GL.clearColor(0.3, 0.3, 0.3, 1.0);
+    $W.GL.clearColor(77/255, 77/255, 77/255, 1.0);
+
     $W.camera.setPosition(-2,0,17);
     $W.camera.setTarget(1,1,0);
     $W.camera.yfov = 90;
-
-
     return true;
 }
 
-function createObjects() {
-	boid = new $W.Object($W.GL.TRIANGLES, false);
+function makeFlock() {
+    /* Passing false as the second (optional) parameter stops the object 
+     * from being added to the primary object list which means it
+     * won't get rendered when we call $W.draw(), instead we'll
+     * have to call boid.draw() or boid.drawAt(pos,rot,scl) ourselves.
+     * We'll do this because we can just draw the same model a whole
+     * bunch of times (a la instancing) at different positions.
+     */
+	var boid = new $W.Object($W.GL.TRIANGLES, false);
 
+    // Same model & colors as demo at http://www.red3d.com/cwr/boids/
     var tip = [0,0,1];
     var lft = [1/2,0,0];
     var rgt = [-1/2,0,0];
@@ -30,59 +34,44 @@ function createObjects() {
     var grn = [ 40/255, 220/255,  40/255];
     var gry = [120/255, 120/255, 120/255]; 
 
-
     boid.vertexCount = 12;
     boid.fillArray('vertex',
-            [tip, rdg, lft,
-             tip, rdg, rgt,
-             lft, rgt, rdg,
-             lft, rgt, tip]);
+        [tip,rdg,lft, tip,rdg,rgt, lft,rgt,rdg, lft,rgt,tip]);
 
     boid.fillArray('color',
-            [yel, yel, yel,
-             grn, grn, grn,
-             blu, blu, blu,
-             gry, gry, gry]);
+        [yel,yel,yel, grn,grn,grn, blu,blu,blu, gry,gry,gry]);
 
     boid.setScaleUniformly(.7);
 
-    $W.useCrazyGLU();
+    $W.useCrazyGLU(); // OpenSteer is part of CrazyGLU (for now)
 
-    flock = new $W.OS.Flock(40, boid);
+    /* The Flock object (not part of the original Opensteer
+     * handles creation, management, and drawing for a bunch
+     * boids, where the first argument is the number of boids and
+     * the second is the model to use for each.
+     */
+    return new $W.OS.Flock(40, boid);
 }
 
 function start() {
-        if (init()) {
-            createObjects();
-
-            var FPS = document.getElementById('overlay');
-
-            setInterval(function() {
-                FPS.innerHTML = $W.FPS;
-                $W.update();
-                $W.draw();	
-                flock.update($W.util.clip($W.timer.dt, null, 20) / 9);
-                flock.draw();
-            }, 10);        	
-        }
+    var FPS = document.getElementById('overlay');
+    if (init()) {
+        var flock = makeFlock();
+        setInterval(function() {
+            FPS.innerHTML = $W.FPS;
+            $W.update();
+            $W.draw();	
+            flock.update($W.util.clip($W.timer.dt, null, 20) / 9);
+            flock.draw();
+        }, 10);        	
+    }
 }
-
-</script>
-
-</head>
-
+</script> </head>
 <body onload='start()'>
-
-
-<div id="glCanvas">
-
-<div id="overlay"></div>
-
+<div id="glCanvas"> <div id="overlay"></div>
 <canvas id='canvas' width='500' height='500'></canvas><br>
 </div>
-
-</body>
-</html>
+</body> </html>
 <!--
 Copyright (c) 2009 Benjamin P. DeLillo
 
