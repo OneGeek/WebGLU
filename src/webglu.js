@@ -1469,24 +1469,49 @@ $W = {
             }
         },
 
-        Canvas: function(name, id) {
+        Canvas: function(name, src) {
+            $W.texture.Texture.call(this, name);
+
+            this.canvas = src;
+            this.canvas.texture = this;
+
+            this.update = function() {
+                var gl = $W.GL;
+                this.texture.bind();
+                gl.texImage2D(gl.TEXTURE_2D, 0, this);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                this.texture.unbind();
+            }
+
         },
 
         /** A dynamic texture from a `video` element.    
-         * XXX Can I use createElement('video') and eliminate need for id?
          * @param {String} name The global name this texture will be referenced
          * by elsewhere.
-         * @param {String} id Video element id. 
+         * @param {String|Video} src Video path or DOM video element.
          */
         Video: function(name, src) {
             $W.texture.Texture.call(this, name);
-            this.video = document.createElement('video');
-            document.getElementsByTagName('body')[0].appendChild(this.video);
 
-            this.video.texture = this;
-            this.video.autobuffer = true;
-            this.video.source = src;
-            this.video.play();
+            this.setSource = function(video) {
+                // Path to video
+                if (typeof(video) === 'string') {
+                    this.video = document.createElement('video');
+                    document.getElementsByTagName('body')[0].appendChild(this.video);
+
+                    this.video.src = video;
+
+                // DOM Video element
+                }else {
+                    this.video = video;
+                }
+
+                this.video.texture = this;
+                this.video.autobuffer = true;
+                this.video.play();
+                this.video.addEventListener("timeupdate", this.update, true);
+            }
 
             this.update = function() {
                 var gl = $W.GL;
@@ -1498,15 +1523,7 @@ $W = {
                 //gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
             }
 
-            this.video.addEventListener("timeupdate", this.update, true);
-
-            this.setSource = function(src) {
-                this.video.src = src;
-            }
-
-            if (src !== undefined) {
-                this.setSource(src);
-            }
+            this.setSource(src);
         },
 
         /** A static texture from an image file.
@@ -2057,11 +2074,33 @@ $W = {
                 $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
         }
 
+        this.drawChildrenAt = function(pos, rot, scale) {
+                $W.modelview.pushMatrix();
+
+                $W.modelview.translate(pos);
+                $W.modelview.multMatrix(rot);
+                $W.modelview.scale(scale);
+
+                for (var i = 0; i < this._children.length; i++) {
+                    this._children[i].draw();
+                }
+
+                $W.modelview.popMatrix();
+        }
+
         /** draw this object at its internally stored position, rotation, and
          * scale, INCLUDING its current animation state.
          */
         this.draw = function() {
             this.drawAt(
+                this.animatedPosition().elements, 
+                this.animatedRotation().matrix(),
+                this.animatedScale().elements
+            );
+        }
+
+        this.drawChildren = function() {
+            this.drawChildrenAt(
                 this.animatedPosition().elements, 
                 this.animatedRotation().matrix(),
                 this.animatedScale().elements
