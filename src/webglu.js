@@ -31,6 +31,9 @@
  * @namespace The primary WebGLU namespace.
  */
 $W = {
+
+    createdObjectCount:0,
+    
     /** Various paths used by WebGLU. 
      * Call $W.initPaths before using.
      */
@@ -55,6 +58,8 @@ $W = {
 
 
     /** Renderable objects */
+    renderableObjects:[],
+    pickableObjects:[],
     objects  : [],
 
     /** GLSL shaders */
@@ -99,6 +104,8 @@ $W = {
         $W.timer = null;
         $W.canvas = null;
         $W.objects = [];
+        $W.renderableObjects = [];
+        $W.pickableObjects = [];
         $W.shaders = [];
         $W.programs = [];
         $W.textures = [];
@@ -1749,6 +1756,8 @@ $W = {
          * Used when rendering with drawArrays.
          */
         this.vertexCount = 0;
+
+        this.id = $W.createdObjectCount++;
 
         /* The type of rendering to use for this object, possible values are:<br>
          * $W.GL.POINTS         <br>
