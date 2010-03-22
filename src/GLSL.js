@@ -1,3 +1,7 @@
+/** 
+ * @namespace Contains objects for working with GLSL shaders and
+ * shader programs
+ */
 $W.GLSL = {
     shaderVarLengths: {
         int:1,

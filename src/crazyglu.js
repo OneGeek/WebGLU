@@ -24,6 +24,64 @@
      *  OTHER DEALINGS IN THE SOFTWARE.
 */
 
+$W.usePicking = function() {
+    $W.newProgram('pick');
+    $W.programs['pick'].attachShader('pickVS', $W.paths.shaders + 'pick.vert');
+    $W.programs['pick'].attachShader('pickFS', $W.paths.shaders + 'pick.frag');
+
+    try{
+        $W.pickBuffer = new $W.Framebuffer();
+        $W.pickBuffer.attachTexture($W.GL.RGBA, $W.canvas.width, $W.canvas.height, $W.GL.COLOR_ATTACHMENT0);
+        $W.pickBuffer.attachRenderbuffer($W.GL.DEPTH_COMPONENT16, $W.canvas.width, $W.canvas.height, $W.GL.DEPTH_ATTACHMENT);
+    }catch (e) {
+        console.error(e);
+    }
+}
+
+$W.updatePickBuffer = function(shouldUnbind) {
+    $W._setupMatrices();
+    $W.pickBuffer.bind();
+
+    $W.GL.clearColor(1.0, 1.0, 1.0, 1.0);
+    $W.GL.clear($W.GL.COLOR_BUFFER_BIT | $W.GL.DEPTH_BUFFER_BIT);
+    $W.GL.disable($W.GL.BLEND);
+    $W.GL.lineWidth(7);
+
+    for (var i = 0; i < $W.objects.length; i++) {
+        var obj = $W.objects[i]
+        for (var j = 0; j < obj._children.length; j++) {
+            obj._children[j].setShaderProgram('pick');
+
+            $W.programs['pick'].setUniform('pickColor', (64 + j) / 255 );
+            obj._children[j].draw();
+
+            obj._children[j].revertShaderProgram();
+        }
+        obj.setShaderProgram('pick');
+
+        $W.programs['pick'].setUniform('pickColor', i / 255 );
+        obj.draw();
+
+        obj.revertShaderProgram();
+    }
+
+    if (shouldUnbind !== false) {
+        $W.pickBuffer.unbind();
+    }
+    $W.GL.enable($W.GL.BLEND);
+    $W.GL.lineWidth(1);
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+}
+
+$W.getObjectIndexAt = function(x, y) {
+    $W.updatePickBuffer(false);
+    var index = $W.GL.readPixels(x,$W.canvas.height-y,1,1, 
+                         $W.GL.RGBA, $W.GL.UNSIGNED_BYTE)[0];
+    $W.pickBuffer.unbind();
+
+    return index;
+}
+
 if (typeof(V3) === 'undefined') {
     $W.util.include($W.paths.external + 'mjs.js');
 }
