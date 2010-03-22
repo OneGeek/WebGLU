@@ -288,7 +288,7 @@ $W = {
             this.setModelViewUniform = function(name) {
                 console.log("using '" + name + "' as ModelView uniform");
 
-                var uniform = this.uniforms.findInProperty('name', name);
+                var uniform = this.uniforms.findByAttributeValue('name', name);
                 /*
                 for (var i = 0; i < this.uniforms.length; i++) {
                     if (this.uniforms[i].name == name) {
@@ -2632,14 +2632,29 @@ $W = {
 // Utility functions
 
 $W.extendArray = function() {
-    Array.prototype.findInProperty = function(prop, value) {
+    Array.prototype.findByAttributeValue = function(attribute, value) {
         for (var i = 0; i < this.length; i++) {
-            if (this[i][prop] === value) {
+            if (this[i][attribute] === value) {
                 return this[i];
             }
         }
         return null;
-    }
+    };
+
+    /** Returns this array less any objects for which the given attribute
+     * is equal to the given value.
+     * @param {String} attribute The name of the attribute.
+     * @param {Any} value The value to exclude on.
+     */
+    Array.prototype.removeByAttributeValue = function(attribute, value) {
+        var result = [];
+
+        for (var i = 0; i < this.length; i++) {
+            if (this[i][attribute] !== value) {
+                result.push(this[i]);
+            }
+        }
+    };
 
     //--------------------------------------------------------------------------
     // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
