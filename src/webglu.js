@@ -2632,9 +2632,6 @@ $W = {
 // Utility functions
 
 $W.extendArray = function() {
-    //--------------------------------------------------------------------------
-    // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
-    //--------------------------------------------------------------------------
     Array.prototype.findInProperty = function(prop, value) {
         for (var i = 0; i < this.length; i++) {
             if (this[i][prop] === value) {
@@ -2644,6 +2641,9 @@ $W.extendArray = function() {
         return null;
     }
 
+    //--------------------------------------------------------------------------
+    // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
+    //--------------------------------------------------------------------------
     Array.prototype.flatten = function() {
         var res = [];
         if (this[0].length !== undefined) {
