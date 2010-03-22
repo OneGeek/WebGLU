@@ -872,6 +872,57 @@ $W = {
     },
 
 
+    /** @namespace Utility functions. */
+    util: {
+        /** Load the file at the given path as text.
+         * @param {String} path The path to the file.
+         * @return {String} Data in the file as text.
+         */
+        loadFileAsText:function(path) {
+            console.log("Loading file `" + path + "`");
+            var xhr = null;
+            xhr = new XMLHttpRequest();
+            xhr.overrideMimeType("text/xml");
+
+            if (!xhr) { return null; }
+
+            try {
+                var nsPM = null;
+                if (typeof(netscape) !== 'undefined' && 
+                    typeof(netscape.security) !== 'undefined' && 
+                    typeof(netscape.security.PrivilegeManager) !== 'undefined') {
+                    nsPM = netscape.security.PrivilegeManager;
+                }
+                if (document.location.href.match(/^file:\/\//)) {
+                    if (nsPM !== null) {
+                        nsPM.enablePrivilege("UniversalBrowserRead");
+                    }
+                }
+            }catch (e) {
+                console.groupEnd();
+                console.error(e);
+                throw "Browser security may be restrcting access to local files";
+            }
+
+            try {
+                xhr.open("GET", path, false);
+                xhr.send(null);
+
+            }catch (e) { 
+                throw e; 
+            }
+
+            console.log("\tCompleted with status: " + xhr.status);
+
+            return xhr.responseText;
+        },
+
+        include: function(path) {
+            var script = $W.util.loadFileAsText(path);
+            window.eval(script);
+        },
+    },
+
 
     /** 
      * Initialize the WebGLU system, optionally initizlizing the WebGL
@@ -883,6 +934,7 @@ $W = {
     initialize:function(canvasNode) {
         $W.initLogging();
 
+        $W.util.include($W.paths.libsrc + 'Util.js');
         $W.util.include($W.paths.libsrc + 'GLSL.js');
         $W.util.include($W.paths.libsrc + 'GLU.js');
         $W.util.include($W.paths.libsrc + 'Object.js');
