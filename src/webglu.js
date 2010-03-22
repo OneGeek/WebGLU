@@ -1735,6 +1735,7 @@ $W = {
      */
     Object:function (type, shouldAdd) {
         //console.group("Creating object");
+        $W.ObjectState.call(this);
 
         if (shouldAdd !== false) {
             $W.addObject(this);
@@ -1776,7 +1777,6 @@ $W = {
 
         this._children = [];
 
-        $W.ObjectState.call(this);
 
         /** The animation for this object. */
         this.animation = new $W.anim.ProceduralAnimation();
@@ -1976,7 +1976,7 @@ $W = {
             var gl = $W.GL;
             for (var i = 0; i < this.textures.length; i++) {
                 gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, $W.textures[this.textures[i]].glTexture);
+                this.textures[i].bind();
                 gl.uniform1i(gl.getUniformLocation($W.programs[this.shaderProgram].glProgram, 'sampler'), 0);
             }
         }
