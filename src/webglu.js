@@ -805,25 +805,22 @@ $W = {
         this.attachRenderbuffer = function(storageFormat, width, height, attachment) {
             var rBuffer = GL.createRenderbuffer();
             this.glRenderbuffers.push(rBuffer);
-            this.bind();
             
             GL.bindRenderbuffer(RBUF, rBuffer);
             GL.renderbufferStorage(RBUF, storageFormat, width, height);
             GL.bindRenderbuffer(RBUF, null);
 
             GL.framebufferRenderbuffer(FBUF, attachment, RBUF, rBuffer);
-            this.unbind();
         }
 
         this.attachExistingTexture = function(texture, attachment) {
             this.glTextures.push(texture.glTexture);
-            this.bind();
-            GL.framebufferTexture2D(FBUF, attachment, GL.TEXTURE_2D, texture.glTexture, 0);
-            this.unbind();
+            GL.framebufferTexture2D(FBUF, attachment, GL.TEXTURE_2D, texture.glTexture, new WebGLUnsignedByteArray(4*500*500));
         }
 
         this.attachNewTexture = function(format, width, height, attachment) {
             var texture = new $W.texture.Texture('Texture' + $W.textures.length);
+
             texture.bind();
             GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
                           0, format, $W.GL.UNSIGNED_BYTE, null);
@@ -833,11 +830,13 @@ $W = {
         }
 
         this.attachTexture = function() {
+            this.bind();
             if (arguments.length === 4) {   
                 this.attachNewTexture.apply(this, arguments);
             }else {
                 this.attachExistingTexture.apply(this, arguments);
             }
+            this.unbind();
         }
     },
 
