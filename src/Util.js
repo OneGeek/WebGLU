@@ -1,3 +1,56 @@
+if ($W.util === undefined) {
+    $W.util = {
+        /** Load the file at the given path as text.
+         * @param {String} path The path to the file.
+         * @return {String} Data in the file as text.
+         */
+        loadFileAsText:function(path) {
+            console.log("Loading file `" + path + "`");
+            var xhr = null;
+            xhr = new XMLHttpRequest();
+            xhr.overrideMimeType("text/xml");
+
+            if (!xhr) { return null; }
+
+            try {
+                var nsPM = null;
+                if (typeof(netscape) !== 'undefined' && 
+                    typeof(netscape.security) !== 'undefined' && 
+                    typeof(netscape.security.PrivilegeManager) !== 'undefined') {
+                    nsPM = netscape.security.PrivilegeManager;
+                }
+                if (document.location.href.match(/^file:\/\//)) {
+                    if (nsPM !== null) {
+                        nsPM.enablePrivilege("UniversalBrowserRead");
+                    }
+                }
+            }catch (e) {
+                console.groupEnd();
+                console.error(e);
+                throw "Browser security may be restrcting access to local files";
+            }
+
+            try {
+                xhr.open("GET", path, false);
+                xhr.send(null);
+
+            }catch (e) { 
+                throw e; 
+            }
+
+            console.log("\tCompleted with status: " + xhr.status);
+
+            return xhr.responseText;
+        },
+
+        include: function(path) {
+            var script = $W.util.loadFileAsText(path);
+            window.eval(script);
+        },
+
+    };
+}
+
 /** Clips a value to a given range.
  * @param {Number|null} min The minimum value this function can
  * return. If null is passed, there is no minimum.
