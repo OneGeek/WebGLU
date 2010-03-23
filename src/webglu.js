@@ -834,6 +834,13 @@ $W = {
         }
     },
 
+    /** Use debugging context.
+     * Must be called <i>after</i> initialize().
+     */
+    useWebGLDebug: function() {
+        $W.util.include($W.paths.external + 'webgl-debug.js');
+        $W.GL = WebGLDebugUtils.makeDebugContext($W.GL);
+    },
 
     useCrazyGLU: function() {
         $W.util.include($W.paths.libsrc + 'crazyglu.js');
