@@ -111,6 +111,86 @@ $W = {
         $W.textures = [];
     },
 
+    /** Create a new ShaderProgram and add it to the program list.
+     * @param {String} name The global name for this program.
+     */
+    newProgram: function(name) {
+        this.programs[name] = new $W.GLSL.ShaderProgram(name);
+    },
+            
+    /** Add the given object to the object list.
+     * @param {Object} obj The object to add.
+     */
+    addObject: function(obj) {
+        this.objects.push(obj);
+    },
+
+    clearObjects: function() {
+        this.objects = [];
+    },
+
+    _setupMatrices: function() {
+        $W.modelview.loadIdentity();
+        $W.projection.loadIdentity();
+
+        $W.projection.multMatrix(
+            $W.GLU.perspective( $W.camera.yfov, $W.camera.aspectRatio, 
+                                0.01, 10000)); 
+        $W.projection.multMatrix($W.GLU.lookAt(
+            $W.camera.position.e(1),
+            $W.camera.position.e(2),
+            $W.camera.position.e(3),
+            $W.camera.target.e(1),
+            $W.camera.target.e(2),
+            $W.camera.target.e(3),
+            $W.camera.up.e(1),
+            $W.camera.up.e(2),
+            $W.camera.up.e(3)));
+
+        $W.modelview.rotate($W.camera.rotation.e(1), [1, 0, 0]);
+        $W.modelview.rotate($W.camera.rotation.e(2), [0, 1, 0]);
+        $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
+    },
+
+
+    /** Draw all objects from the camera's perspective. */
+    draw: function() {
+        $W.clear();
+
+        $W._setupMatrices();
+
+        $W._drawObjects();                            
+    },
+
+	_updateState : function() {
+		$W.timer.tick();
+		$W.fpsTracker.update($W.timer.dt);
+		$W.FPS = Math.round($W.fpsTracker.fps);
+	},
+
+    /** Update all objects. */
+	update : function() {
+		$W._updateState();
+
+        for (var i = 0; i < this.objects.length; i++) {
+            $W.objects[i].update($W.timer.dt);
+        }
+
+        $W.camera.update();
+	},
+
+    _drawObjects : function() {
+        for (var i = 0; i < $W.objects.length; i++) {
+            $W.objects[i].draw();
+        }
+    },
+
+    /** Clear the canvas */
+	clear : function() {
+		// clearing the color buffer is really slow
+		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
+	}
+
     Framebuffer:function() {
         var GL = $W.GL;
         var RBUF = GL.RENDERBUFFER;
@@ -923,84 +1003,5 @@ $W = {
     },
 
 
-    /** Create a new ShaderProgram and add it to the program list.
-     * @param {String} name The global name for this program.
-     */
-    newProgram: function(name) {
-        this.programs[name] = new $W.GLSL.ShaderProgram(name);
-    },
-            
-    /** Add the given object to the object list.
-     * @param {Object} obj The object to add.
-     */
-    addObject: function(obj) {
-        this.objects.push(obj);
-    },
-
-    clearObjects: function() {
-        this.objects = [];
-    },
-
-    _setupMatrices: function() {
-        $W.modelview.loadIdentity();
-        $W.projection.loadIdentity();
-
-        $W.projection.multMatrix(
-            $W.GLU.perspective( $W.camera.yfov, $W.camera.aspectRatio, 
-                                0.01, 10000)); 
-        $W.projection.multMatrix($W.GLU.lookAt(
-            $W.camera.position.e(1),
-            $W.camera.position.e(2),
-            $W.camera.position.e(3),
-            $W.camera.target.e(1),
-            $W.camera.target.e(2),
-            $W.camera.target.e(3),
-            $W.camera.up.e(1),
-            $W.camera.up.e(2),
-            $W.camera.up.e(3)));
-
-        $W.modelview.rotate($W.camera.rotation.e(1), [1, 0, 0]);
-        $W.modelview.rotate($W.camera.rotation.e(2), [0, 1, 0]);
-        $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
-    },
-
-
-    /** Draw all objects from the camera's perspective. */
-    draw: function() {
-        $W.clear();
-
-        $W._setupMatrices();
-
-        $W._drawObjects();                            
-    },
-
-	_updateState : function() {
-		$W.timer.tick();
-		$W.fpsTracker.update($W.timer.dt);
-		$W.FPS = Math.round($W.fpsTracker.fps);
-	},
-
-    /** Update all objects. */
-	update : function() {
-		$W._updateState();
-
-        for (var i = 0; i < this.objects.length; i++) {
-            $W.objects[i].update($W.timer.dt);
-        }
-
-        $W.camera.update();
-	},
-
-    _drawObjects : function() {
-        for (var i = 0; i < $W.objects.length; i++) {
-            $W.objects[i].draw();
-        }
-    },
-
-    /** Clear the canvas */
-	clear : function() {
-		// clearing the color buffer is really slow
-		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
-	}
 };
 
