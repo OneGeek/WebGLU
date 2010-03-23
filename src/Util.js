@@ -289,6 +289,89 @@ $W.util.getGLContext= function getGLContext(canvas) {
     return gl;
 };
 
+/* Calculate normals at each vertex in vertices, by looking
+ * at triangles formed by every face and averaging.
+ * (c) 2009 Vladimir Vukicevic
+ */
+$W.util.calculateNormals = function(vertices, faces) {
+    var nvecs;
+
+    if (vertices[0].length == 3) {
+        nvecs = new Array(vertices.length);
+
+        for (var i = 0; i < faces.length; i++) {
+            var j0 = faces[i][0];
+            var j1 = faces[i][1];
+            var j2 = faces[i][2];
+
+            var v1 = $V(vertices[j0]);
+            var v2 = $V(vertices[j1]);
+            var v3 = $V(vertices[j2]);
+
+
+            var va = v2.subtract(v1);
+            var vb = v3.subtract(v1);
+
+            var n = va.cross(vb).toUnitVector();
+
+            if (!nvecs[j0]) nvecs[j0] = [];
+            if (!nvecs[j1]) nvecs[j1] = [];
+            if (!nvecs[j2]) nvecs[j2] = [];
+
+            nvecs[j0].push(n);
+            nvecs[j1].push(n);
+            nvecs[j2].push(n);
+        }
+
+    }else { // handle flattened arrays
+        nvecs = new Array(vertices.length / 3)
+
+        for (var i = 0; i < faces.length; i+=3) {
+            var j0 = faces[i+0];
+            var j1 = faces[i+1];
+            var j2 = faces[i+2];
+
+            var v1 = $V([vertices[j0], vertices[j0+1], vertices[j0+2]]);
+            var v2 = $V([vertices[j1], vertices[j2+1], vertices[j2+2]]);
+            var v3 = $V([vertices[j2], vertices[j2+1], vertices[j2+2]]);
+
+
+            var va = v2.subtract(v1);
+            var vb = v3.subtract(v1);
+
+            var n = va.cross(vb).toUnitVector();
+
+            if (!nvecs[j0]) nvecs[j0] = [];
+            if (!nvecs[j1]) nvecs[j1] = [];
+            if (!nvecs[j2]) nvecs[j2] = [];
+
+            nvecs[j0].push(n);
+            nvecs[j1].push(n);
+            nvecs[j2].push(n);
+        }
+    }
+
+    var normals = new Array(vertices.length);
+
+    // now go through and average out everything
+    for (var i = 0; i < nvecs.length - 1; i++) {
+        var count = nvecs[i].length;
+        var x = 0;
+        var y = 0;
+        var z = 0;
+
+        for (var j = 0; j < count; j++) {
+            x += nvecs[i][j].elements[0];
+            y += nvecs[i][j].elements[1];
+            z += nvecs[i][j].elements[2];
+        }
+
+        normals[i] = [x/count, y/count, z/count];
+    }
+
+    return normals;
+}
+
 //--------------------------------------------------------------------------
 //
 // augment Sylvester some
