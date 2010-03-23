@@ -771,8 +771,10 @@ $W = {
         },
 
         include: function(path) {
+            console.groupCollapsed('Including ' + path);
             var script = $W.util.loadFileAsText(path);
             window.eval(script);
+            console.groupEnd();
         }
     },
 
@@ -786,6 +788,7 @@ $W = {
      */
     initialize:function(canvasNode) {
         $W.initLogging();
+        console.group("Initializing WebGLU");
 
         $W.util.include($W.paths.libsrc + 'Util.js');
         $W.util.include($W.paths.libsrc + 'Constants.js');
@@ -796,7 +799,6 @@ $W = {
         $W.extendArray();
         $W.loadSylvester();
 
-        console.group("Initializing WebGLU");
 
         // Prep the shader subsystem
         $W.GLSL.initialize();
@@ -1000,281 +1002,5 @@ $W = {
 		// clearing the color buffer is really slow
 		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
 	}
-}
-
-// Utility functions
-
-$W.extendArray = function() {
-    Array.prototype.findByAttributeValue = function(attribute, value) {
-        for (var i = 0; i < this.length; i++) {
-            if (this[i][attribute] === value) {
-                return this[i];
-            }
-        }
-        return null;
-    };
-
-    /** Returns this array less any objects for which the given attribute
-     * is equal to the given value.
-     * @param {String} attribute The name of the attribute.
-     * @param {Any} value The value to exclude on.
-     */
-    Array.prototype.removeByAttributeValue = function(attribute, value) {
-        var result = [];
-
-        for (var i = 0; i < this.length; i++) {
-            if (this[i][attribute] !== value) {
-                result.push(this[i]);
-            }
-        }
-    };
-
-    //--------------------------------------------------------------------------
-    // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
-    //--------------------------------------------------------------------------
-    Array.prototype.flatten = function() {
-        var res = [];
-        if (this[0].length !== undefined) {
-            for (var i = 0; i < this.length; i++) {
-                res = res.concat(this[i]);
-            }
-        }else {
-            res = this;
-        }
-        return res;
-    }
-
-    Array.prototype.remove = function(item) {
-        var res = [];
-
-        if (item.equals !== undefined) {
-            for (var i = 0; i < this.length; i++) {
-                if (!(item.equals(this[i]))) {
-                    res.push(this[i]);
-                }
-            }
-        }else{
-            for (var i = 0; i < this.length; i++) {
-                if (this[i] != item) {
-                    res.push(this[i]);
-                }
-            }
-        }
-
-        return res;
-    }
-    // returns the index into this array of
-    // if it's an array of arrays it assumes the
-    // item in the first index of each subarry
-    // is the key.
-    Array.prototype.indexOf = function(item) {
-        for (var i = 0; i < this.length; i++) {
-            if (!this[i].length) {
-                if (this[i] == item) {
-                    return i;
-                }
-            }else {
-                if (this[i][0] == item) {
-                    return i;
-                }
-            }
-        }
-
-        return undefined;
-    }
-}
-
-
-/* Calculate normals at each vertex in vertices, by looking
- * at triangles formed by every face and averaging.
- * (c) 2009 Vladimir Vukicevic
- */
-$W.util.calculateNormals = function(vertices, faces) {
-    var nvecs;
-
-    if (vertices[0].length == 3) {
-        nvecs = new Array(vertices.length);
-
-        for (var i = 0; i < faces.length; i++) {
-            var j0 = faces[i][0];
-            var j1 = faces[i][1];
-            var j2 = faces[i][2];
-
-            var v1 = $V(vertices[j0]);
-            var v2 = $V(vertices[j1]);
-            var v3 = $V(vertices[j2]);
-
-
-            var va = v2.subtract(v1);
-            var vb = v3.subtract(v1);
-
-            var n = va.cross(vb).toUnitVector();
-
-            if (!nvecs[j0]) nvecs[j0] = [];
-            if (!nvecs[j1]) nvecs[j1] = [];
-            if (!nvecs[j2]) nvecs[j2] = [];
-
-            nvecs[j0].push(n);
-            nvecs[j1].push(n);
-            nvecs[j2].push(n);
-        }
-
-    }else { // handle flattened arrays
-        nvecs = new Array(vertices.length / 3)
-
-        for (var i = 0; i < faces.length; i+=3) {
-            var j0 = faces[i+0];
-            var j1 = faces[i+1];
-            var j2 = faces[i+2];
-
-            var v1 = $V([vertices[j0], vertices[j0+1], vertices[j0+2]]);
-            var v2 = $V([vertices[j1], vertices[j2+1], vertices[j2+2]]);
-            var v3 = $V([vertices[j2], vertices[j2+1], vertices[j2+2]]);
-
-
-            var va = v2.subtract(v1);
-            var vb = v3.subtract(v1);
-
-            var n = va.cross(vb).toUnitVector();
-
-            if (!nvecs[j0]) nvecs[j0] = [];
-            if (!nvecs[j1]) nvecs[j1] = [];
-            if (!nvecs[j2]) nvecs[j2] = [];
-
-            nvecs[j0].push(n);
-            nvecs[j1].push(n);
-            nvecs[j2].push(n);
-        }
-    }
-
-    var normals = new Array(vertices.length);
-
-    // now go through and average out everything
-    for (var i = 0; i < nvecs.length - 1; i++) {
-        var count = nvecs[i].length;
-        var x = 0;
-        var y = 0;
-        var z = 0;
-
-        for (var j = 0; j < count; j++) {
-            x += nvecs[i][j].elements[0];
-            y += nvecs[i][j].elements[1];
-            z += nvecs[i][j].elements[2];
-        }
-
-        normals[i] = [x/count, y/count, z/count];
-    }
-
-    return normals;
-}
-
-
-//--------------------------------------------------------------------------
-//
-// augment Sylvester some
-// (c) 2009 Vladimir Vukicevic
-$W.loadSylvester = function() {
-    $W.util.include($W.paths.external + $W.paths.sylvester);
-
-    Matrix.Translation = function (v)
-    {
-        if (v.elements.length == 2) {
-            var r = Matrix.I(3);
-            r.elements[2][0] = v.elements[0];
-            r.elements[2][1] = v.elements[1];
-            return r;
-        }
-
-        if (v.elements.length == 3) {
-            var r = Matrix.I(4);
-            r.elements[0][3] = v.elements[0];
-            r.elements[1][3] = v.elements[1];
-            r.elements[2][3] = v.elements[2];
-            return r;
-        }
-
-        throw "Invalid length for Translation";
-    }
-
-
-    Matrix.prototype.trace = function() {
-        return this[0][0] + this[1][1] + this[2][2];
-    }
-
-    Matrix.prototype.flatten = function ()
-    {
-        var result = [];
-        if (this.elements.length === 0) {
-            return [];
-        }
-
-
-        for (var j = 0; j < this.elements[0].length; j++) {
-            for (var i = 0; i < this.elements.length; i++) {
-                result.push(this.elements[i][j]);
-            }
-        }
-        return result;
-    }
-
-    Matrix.prototype.ensure4x4 = function()
-    {
-        if (this.elements.length == 4 && 
-                this.elements[0].length == 4) {
-            return this;
-        }
-
-        if (this.elements.length > 4 ||
-                this.elements[0].length > 4) {
-            return null;
-        }
-
-        for (var i = 0; i < this.elements.length; i++) {
-            for (var j = this.elements[i].length; j < 4; j++) {
-                if (i == j) {
-                    this.elements[i].push(1);
-                }else {
-                    this.elements[i].push(0);
-                }
-            }
-        }
-
-        for (var i = this.elements.length; i < 4; i++) {
-            if (i === 0) {
-                this.elements.push([1, 0, 0, 0]);
-            }else if (i == 1) {
-                this.elements.push([0, 1, 0, 0]);
-            }else if (i == 2) {
-                this.elements.push([0, 0, 1, 0]);
-            }else if (i == 3) {
-                this.elements.push([0, 0, 0, 1]);
-            }
-        }
-
-        return this;
-    };
-
-    Matrix.prototype.make3x3 = function()
-    {
-        if (this.elements.length != 4 ||
-                this.elements[0].length != 4) {
-            return null;
-        }
-
-        return Matrix.create([[this.elements[0][0], this.elements[0][1], this.elements[0][2]],
-                [this.elements[1][0], this.elements[1][1], this.elements[1][2]],
-                [this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
-    };
-
-    Vector.prototype.flatten = function ()
-    {
-        return this.elements;
-    }; 
-
-    Vector.prototype.vec3Zero = Vector.Zero(3);
-
-    Vector.prototype.invert = function() {
-        return Vector.prototype.vec3Zero.subtract(this);
-    }
-}
+};
 
