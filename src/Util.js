@@ -63,7 +63,6 @@ if ($W.util === undefined) {
             var script = $W.util.loadFileAsText(path);
             window.eval(script);
         }
-
     }
 }
 
