@@ -791,14 +791,14 @@ $W = {
         console.group("Initializing WebGLU");
 
         $W.util.include($W.paths.libsrc + 'Util.js');
+
+        $W.util.extendArray();
+        $W.util.loadSylvester();
+
         $W.util.include($W.paths.libsrc + 'Constants.js');
         $W.util.include($W.paths.libsrc + 'GLSL.js');
         $W.util.include($W.paths.libsrc + 'GLU.js');
         $W.util.include($W.paths.libsrc + 'Object.js');
-
-        $W.extendArray();
-        $W.loadSylvester();
-
 
         // Prep the shader subsystem
         $W.GLSL.initialize();
