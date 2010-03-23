@@ -433,11 +433,11 @@ $W = {
 
             this.bind = function() {
                 $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
-            }
+            };
                 
             this.unbind = function() {
                 $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
-            }
+            };
         },
 
         Canvas: function(name, src) {
