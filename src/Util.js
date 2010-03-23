@@ -64,7 +64,7 @@ if ($W.util === undefined) {
             window.eval(script);
         }
 
-    };
+    }
 }
 
 /** Clips a value to a given range.
