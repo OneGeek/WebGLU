@@ -5,7 +5,7 @@
  * return. If null is passed, there is no minimum.
  * @param {Number} val The value to clip.
  */
-$W.util.clip= function(val, min, max) {
+$W.util.clip= function clip(val, min, max) {
     if (min !== null && val < min) {
         return min;
     }else if (max !== null && val > max) {
@@ -15,7 +15,7 @@ $W.util.clip= function(val, min, max) {
     }
 };
 
-$W.util.sphereCollide=function(p1, p2, r1, r2) {
+$W.util.sphereCollide=function sphereCollide(p1, p2, r1, r2) {
     return p1.distanceFrom(p2) < r1 + r2;
 };
 
@@ -23,7 +23,7 @@ $W.util.sphereCollide=function(p1, p2, r1, r2) {
  * Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htm
  * XXX unused
  */
-$W.util.getAxisAngle = function(rotation) {
+$W.util.getAxisAngle = function getAxisAngle(rotation) {
     if (rotation.elements == [0,0,0]) {return {angle:0,axis:[1,0,0]};}
     var c1 = Math.cos(rotation.e(2) / 2); // c1 = cos(heading / 2)
     var c2 = Math.cos(rotation.e(1) / 2); // c2 = cos(attitude / 2)
@@ -65,7 +65,7 @@ $W.util.getAxisAngle = function(rotation) {
  * with given number of rings and slices.
  * @returns {Array} sphere.indices Per element indices.
  */
-$W.util.genSphere= function(rings, slices, r) {
+$W.util.genSphere= function genSphere(rings, slices, r) {
     // Default to unit sphere
     if (r === undefined) { r = 1; }
 
@@ -116,7 +116,7 @@ $W.util.genSphere= function(rings, slices, r) {
  * @param {Quaternion} q1 {@link Quaternion} to interpolate from.
  * @param {Quaternion} q2 {@link Quaternion} to interpolate to.
  */
-$W.util.slerp=function(t, q1, q2) {
+$W.util.slerp=function slerp(t, q1, q2) {
     var result = new $W.Quaternion();
 
     var cosHalfTheta = q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z;
@@ -161,7 +161,7 @@ $W.util.slerp=function(t, q1, q2) {
  * @param {Number} t Value from 0 to 1 representing the fraction
  * between the two values to interpolate by.
  */
-$W.util.lerp=function(t,a,b) {
+$W.util.lerp= function lerp(t,a,b) {
     return a + t * (b - a);
 };
 
@@ -171,7 +171,7 @@ $W.util.lerp=function(t,a,b) {
  * @param {Number} t Value from 0 to 1 representing the fraction
  * between the two sets of values to interpolate by.
  */
-$W.util.lerpTriple=function(t,a,b) {
+$W.util.lerpTriple=function lerpTriple(t,a,b) {
     return [$W.util.lerp(t, a[0], b[0]),
             $W.util.lerp(t, a[1], b[1]),
             $W.util.lerp(t, a[2], b[2])
@@ -186,7 +186,7 @@ $W.util.lerpTriple=function(t,a,b) {
  * @return {WebGLFloatArray} 3x3 inverse transpose, ready to be sent as
  * a uniform.
  */
-$W.util.getNormalMatrixForUniform= function() {
+$W.util.getNormalMatrixForUniform= function getNormalMatrixForUniform() {
     return new WebGLFloatArray($W.modelview.matrix.inverse().transpose().make3x3().flatten());
 };
 
@@ -195,7 +195,7 @@ $W.util.getNormalMatrixForUniform= function() {
  * @return {WebGL Context} A WebGL context for the passed
  * canvas.
  */
-$W.util.getGLContext= function(canvas) {
+$W.util.getGLContext= function getGLContext(canvas) {
     var gl = null;
     var type = '';
 
