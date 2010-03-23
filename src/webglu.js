@@ -189,7 +189,7 @@ $W = {
 	clear : function() {
 		// clearing the color buffer is really slow
 		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
-	}
+	},
 
     Framebuffer:function() {
         var GL = $W.GL;
@@ -1000,8 +1000,6 @@ $W = {
             console.log('WebGL init failed');
             return false;
 		}
-    },
-
-
+    }
 };
 
