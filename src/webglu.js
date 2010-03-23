@@ -758,7 +758,7 @@ $W = {
         include: function(path) {
             var script = $W.util.loadFileAsText(path);
             window.eval(script);
-        },
+        }
     },
 
 
