@@ -477,3 +477,84 @@ $W.util.loadSylvester = function() {
         return Vector.prototype.vec3Zero.subtract(this);
     }
 };
+
+$W.util.extendArray = function() {
+    Array.prototype.findByAttributeValue = function(attribute, value) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i][attribute] === value) {
+                return this[i];
+            }
+        }
+        return null;
+    };
+
+    /** Returns this array less any objects for which the given attribute
+     * is equal to the given value.
+     * @param {String} attribute The name of the attribute.
+     * @param {Any} value The value to exclude on.
+     */
+    Array.prototype.removeByAttributeValue = function(attribute, value) {
+        var result = [];
+
+        for (var i = 0; i < this.length; i++) {
+            if (this[i][attribute] !== value) {
+                result.push(this[i]);
+            }
+        }
+    };
+
+    //--------------------------------------------------------------------------
+    // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
+    //--------------------------------------------------------------------------
+    Array.prototype.flatten = function() {
+        var res = [];
+        if (this[0].length !== undefined) {
+            for (var i = 0; i < this.length; i++) {
+                res = res.concat(this[i]);
+            }
+        }else {
+            res = this;
+        }
+        return res;
+    };
+
+    Array.prototype.remove = function(item) {
+        var res = [];
+
+        if (item.equals !== undefined) {
+            for (var i = 0; i < this.length; i++) {
+                if (!(item.equals(this[i]))) {
+                    res.push(this[i]);
+                }
+            }
+        }else{
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] != item) {
+                    res.push(this[i]);
+                }
+            }
+        }
+
+        return res;
+    };
+
+    // returns the index into this array of
+    // if it's an array of arrays it assumes the
+    // item in the first index of each subarry
+    // is the key.
+    Array.prototype.indexOf = function(item) {
+        for (var i = 0; i < this.length; i++) {
+            if (!this[i].length) {
+                if (this[i] == item) {
+                    return i;
+                }
+            }else {
+                if (this[i][0] == item) {
+                    return i;
+                }
+            }
+        }
+
+        return undefined;
+    };
+};
