@@ -58,9 +58,9 @@ $W = {
 
 
     /** Renderable objects */
-    renderableObjects:[],
-    pickableObjects:[],
-    objects  : [],
+    renderables:[],
+    pickables  :[],
+    objects    :[],
 
     /** GLSL shaders */
     shaders  : [],
@@ -104,8 +104,8 @@ $W = {
         $W.timer = null;
         $W.canvas = null;
         $W.objects = [];
-        $W.renderableObjects = [];
-        $W.pickableObjects = [];
+        $W.renderables = [];
+        $W.pickables = [];
         $W.shaders = [];
         $W.programs = [];
         $W.textures = [];
