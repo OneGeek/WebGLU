@@ -747,20 +747,19 @@ $W = {
 
             try {
 
-            xhr.open("GET", path, false);
-            // Ignore cache if the file is served from localhost or is at a
-            // file:// url as it's safe to assume that's a developer.
-            var url = window.location.href;
-            if (    url.match(/^http:\/\/localhost/) !== null ||
-                    url.match(/^http:\/\/127\.0\.0\.1/) !== null ||
-                    url.match(/^file:/) !== null) {
+                xhr.open("GET", path, false);
 
-                xhr.setRequestHeader('Pragma', 'Cache-Control: no-cache');
-                //xhr.setRequestHeader("If-Modified-Since", "Sat, 1 Jan 2005 00:00:00 GMT");
-            }
+                // Ignore cache if the file is served from localhost or is at a
+                // file:// url as it's safe to assume that's a developer.
+                var url = window.location.href;
+                if (    url.match(/^http:\/\/localhost/) !== null ||
+                        url.match(/^http:\/\/127\.0\.0\.1/) !== null ||
+                        url.match(/^file:/) !== null) {
 
+                    xhr.setRequestHeader('Pragma', 'Cache-Control: no-cache');
+                }
 
-            xhr.send(null);
+                xhr.send(null);
 
             }catch (e) { 
                 throw e; 

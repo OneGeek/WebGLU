@@ -33,7 +33,7 @@ $W.constants.NormalMatrixUniform = 'NormalMatrix'
 /** Data for a unit cube.
  * Intended to be used with setElements.
  */
-$W.constants.unitCube:{
+$W.constants.unitCube = {
     /** Vertices on the unit cube. */
     vertices : [
         // Front face
