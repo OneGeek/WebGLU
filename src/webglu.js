@@ -453,7 +453,7 @@ $W = {
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
                 this.texture.unbind();
-            }
+            };
 
         },
 
@@ -482,7 +482,7 @@ $W = {
                 this.video.autobuffer = true;
                 this.video.play();
                 this.video.addEventListener("timeupdate", this.update, true);
-            }
+            };
 
             this.update = function() {
                 var gl = $W.GL;
