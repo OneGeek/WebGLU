@@ -1,9 +1,22 @@
--Spline interpolation
--Inverse kinematics
+NEED
 -Handle multi-pass shaders
--Automatic handling of framebuffers as needed
+-Automatic handling of framebuffers as needed - mostly done
 -Integrate object picking
+-Lighting system
+-'Attachment' system for shader programs overrideable from objects
+    -Textures
+    -Cubemaps
+    -Defaults for each
+-Object specific override hooks for pretty much everything
+
+WANT
 -Further optimization for speed
 -Robust library of shaders
 -Lots of examples
--Lighting system
+-Spline interpolation
+-Inverse kinematics
+-Attachment system checks compatability with currently associated shader 
+ program
+        -Warns if issues are found e.g. attaching a texture, but there's no
+         sampler in the shader.
+        -Warning doesn't block and can be overridden with additional param
