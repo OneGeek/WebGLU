@@ -180,7 +180,7 @@ $W = {
 	},
 
     _drawObjects : function() {
-        for (var i = 0; i < $W.objects.length; i++) {
+        for (var i = 0; i < $W.renderables.length; i++) {
             $W.objects[i].draw();
         }
     },
@@ -192,6 +192,7 @@ $W = {
 	},
 
     Framebuffer:function() {
+        console.log("Creating framebuffer");
         var GL = $W.GL;
         var RBUF = GL.RENDERBUFFER;
         var FBUF = GL.FRAMEBUFFER;
@@ -200,13 +201,33 @@ $W = {
         this.glRenderbuffers = [];
         this.glTextures = [];
 
+        this.isGood = function() {
+            try {
+                if (!GL.isFramebuffer(this.glFramebuffer)) {
+                    throw("Invalid framebuffer");
+                }
+                var status = GL.checkFramebufferStatus(this.glFramebuffer);
+                switch (status) {
+                    case GL.FRAMEBUFFER_COMPLETE:
+                        break;
+                    default:
+                        throw("Incomplete framebuffer");
+                }
+            }catch (e) {
+                console.error(e);
+                return false;
+            }
+            return true;
+        };
+        //this.isGood();
+
         this.bind = function() {
             GL.bindFramebuffer(FBUF, this.glFramebuffer);
-        }
+        };
 
         this.unbind = function() {
             GL.bindFramebuffer(FBUF, null);
-        }
+        };
 
         this.attachRenderbuffer = function(storageFormat, width, height, attachment) {
             var rBuffer = GL.createRenderbuffer();
@@ -217,7 +238,7 @@ $W = {
             GL.bindRenderbuffer(RBUF, null);
 
             GL.framebufferRenderbuffer(FBUF, attachment, RBUF, rBuffer);
-        }
+        };
 
         this.attachExistingTexture = function(texture, attachment) {
             this.glTextures.push(texture.glTexture);
@@ -228,8 +249,14 @@ $W = {
             var texture = new $W.texture.Texture('Texture' + $W.textures.length);
 
             texture.bind();
-            GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
+            try{
+                GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
                           0, format, $W.GL.UNSIGNED_BYTE, null);
+            } catch (e) {
+                var tex = new WebGLUnsignedByteArray(4 * width * height);
+                GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
+                          0, format, $W.GL.UNSIGNED_BYTE, tex);
+            }
             texture.unbind();
 
             this.attachExistingTexture(texture, attachment);
