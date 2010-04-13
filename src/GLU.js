@@ -132,6 +132,7 @@ $W.GLU.MatrixStack = function()  {
             this._matrixStack.push(this.matrix.dup());
         }
     };
+    this.push = this.pushMatrix;
 
     /** glPopMatrix
      * (c) 2009 Vladimir Vukicevic
@@ -143,6 +144,7 @@ $W.GLU.MatrixStack = function()  {
         this.matrix = this._matrixStack.pop();
         return this.matrix;
     };
+    this.pop = this.popMatrix;
 
     /** glMultMatrix
      * (c) 2009 Vladimir Vukicevic
@@ -151,6 +153,7 @@ $W.GLU.MatrixStack = function()  {
     this.multMatrix = function (m) {
         this.matrix = this.matrix.x(m);
     };
+    this.multiply = this.multMatrix;
 
     /** glTranslate
      * (c) 2009 Vladimir Vukicevic
