@@ -13,9 +13,65 @@ $W.GLSL = {
     }
 };
 
+$W.light = function(light, pname, param) {
 
+};
 
 $W.GLSL.util = {
+    handlePragmas: function(source) {
+        var pragmas = source.match(/^#pragma.*/gm);
+
+        if (pragmas !== null) {
+            for (var i = 0; i < pragmas.length; i++) {
+                if (pragmas[i] !== null) {
+                    var pragma = pragmas[i].split(/\s+/g);
+                    
+                    if (pragma[1] === "WEBGLU_LIGHTS") {
+                        source = source.replace(pragmas[i], 
+                                "#pragma INCLUDE 'lighting.glsl'");
+
+                        $W.lights = [];
+                        for (var j = 0; j < 3; j++) {
+                            $W.lights[j] = {
+                                ambient:[0,0,0,0],
+                                diffuse:[0,0,0,0],
+                                specular:[0,0,0,0],
+                                position:[0,0,0,0]
+                            };
+                        }
+                        console.log("Lighting uniforms enabled");
+                    }
+                }
+            }
+            source = $W.GLSL.util.handleIncludes(source);
+        }
+        return source;
+    },
+
+    handleIncludes: function(source) {
+        var maxIncludeDepth = 32;
+        var includeDepth = 0;
+
+
+        var includes = source.match(/^#pragma\s*INCLUDE.*/gm);
+        if (includes !== null) {
+        }
+        while (includes !== null && includeDepth < maxIncludeDepth) {
+            for (var i = 0; i < includes.length; i++) {
+                var include = includes[i].replace(/^#pragma\s*INCLUDE\s*/g, "");
+                include = include.replace(/["'<>]/g,"");
+
+                console.log ("Including " + include);
+
+                source = source.replace(includes[i], 
+                        $W.util.loadFileAsText($W.paths.shaders + include));
+            }
+            var includes = source.match(/^#pragma.*/gm);
+            includeDepth++;
+        }
+        return source
+    },
+
     getShaderSourceById: function(id) {
         var source;
         var shaderScript = document.getElementById(id);
@@ -27,7 +83,7 @@ $W.GLSL.util = {
         source = "";
         var k = shaderScript.firstChild;
         while (k) {
-            if (k.nodeType == 3) {
+            if (k.nodeType === 3) {
                 source += k.textContent;
             }
             k = k.nextSibling;
@@ -44,9 +100,9 @@ $W.GLSL.util = {
             return null;
         }
     
-        if (shaderScript.type == "x-shader/x-fragment") {
+        if (shaderScript.type === "x-shader/x-fragment") {
             type = $W.GL.FRAGMENT_SHADER;
-        } else if (shaderScript.type == "x-shader/x-vertex") {
+        } else if (shaderScript.type === "x-shader/x-vertex") {
             type = $W.GL.VERTEX_SHADER;
         } else {
             console.log('invalid shader type' + shaderScript.type);
@@ -96,6 +152,10 @@ $W.GLSL.Uniform = function (name, action, type) {
     this.clone = function() {
         return new $W.GLSL.Uniform(this.name, this.action, this.type);
     }
+};
+
+$W.GLSL.useLighting = function(shader) {
+
 };
 
 
@@ -162,22 +222,22 @@ $W.GLSL.Shader = function(name, src, type) {
             $W.programs[programs[i]].dirty();                            
         }
         isDirty = true;
-    }
+    };
 
     var clean = function() {
         isDirty = false;
-    }
+    };
     this.isDirty = function() {
         return isDirty;
-    }
+    };
 
 
     this.addProgram = function(name) {
         programs.push(name);
-    }
+    };
     this.removeProgram = function(name) {
         programs = programs.remove(name);
-    }
+    };
     
     /** Change the source for this shader 
      * @param {String} src The source code.
@@ -185,7 +245,11 @@ $W.GLSL.Shader = function(name, src, type) {
     this.setSource = function(src) {
         dirty();
         source = src;
-    }
+    };
+
+    this.source = function() {
+        return source;
+    };
 
     /** Set up a Uniform for the modelview matrix.
      * Creates the appropriate action for sending the matrix
@@ -196,19 +260,12 @@ $W.GLSL.Shader = function(name, src, type) {
         console.log("using '" + name + "' as ModelView uniform");
 
         var uniform = this.uniforms.findByAttributeValue('name', name);
-        /*
-        for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name == name) {
-                uniform = this.uniforms[i];
-            }
-        }
-        */
 
         uniform.action = function() {
             $W.GL.uniformMatrix4fv(this.location, false, 
                     $W.modelview.getForUniform());
-        }
-    }
+        };
+    };
 
     /** Set up a Uniform for the projection matrix.
      * Creates the appropriate action for sending the matrix
@@ -220,7 +277,7 @@ $W.GLSL.Shader = function(name, src, type) {
 
         var uniform;
         for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name == name) {
+            if (this.uniforms[i].name === name) {
                 uniform = this.uniforms[i];
             }
         }
@@ -228,8 +285,8 @@ $W.GLSL.Shader = function(name, src, type) {
         uniform.action = function() {
             $W.GL.uniformMatrix4fv(this.location, false, 
                     $W.projection.getForUniform());
-        }
-    }
+        };
+    };
 
     /** Set up a Uniform for the normal matrix.
      * Creates the appropriate action for sending the matrix
@@ -241,7 +298,7 @@ $W.GLSL.Shader = function(name, src, type) {
 
         var uniform;
         for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name == name) {
+            if (this.uniforms[i].name === name) {
                 uniform = this.uniforms[i];
             }
         }
@@ -249,7 +306,7 @@ $W.GLSL.Shader = function(name, src, type) {
         uniform.action = function() {
             $W.GL.uniformMatrix3fv(this.location, false, 
                     $W.util.getNormalMatrixForUniform());
-        }
+        };
     }
 
     /** @returns The raw WebGL shader object */
@@ -295,33 +352,53 @@ $W.GLSL.Shader = function(name, src, type) {
 
     // Find and initialize all uniforms and attributes found in the source
     this.parseShaderVariables = function(str) {
-        var tokens = str.split(/[\s\n;]+?/);
+        var tokens = str.split(/[\[\]\s\n;]+?/);
 
         for (var i = 0; i < tokens.length; i++) {
-            if (tokens[i] == "attribute") {
+            if (tokens[i] === "attribute") {
                 var type = tokens[i+1];
                 var name = tokens[i+2];
                 var length = $W.GLSL.shaderVarLengths[type];
                 this.addAttribute(name, length);
             }                               
-            if (tokens[i] == "uniform") {
+            if (tokens[i] === "uniform") {
                 var type = tokens[i+1];
                 var name = tokens[i+2];
                 this.addUniform(name, function(){}, type);
 
 
-                if (name == $W.constants.ModelViewUniform) {
+                if (name === $W.constants.ModelViewUniform) {
                     this.setModelViewUniform($W.constants.ModelViewUniform);
 
-                }else if (name == $W.constants.ProjectionUniform) {
+                }else if (name === $W.constants.ProjectionUniform) {
                     this.setProjectionUniform($W.constants.ProjectionUniform);
 
-                }else if (name == $W.constants.NormalMatrixUniform) {
+                }else if (name === $W.constants.NormalMatrixUniform) {
                     this.setNormalMatrixUniform($W.constants.NormalMatrixUniform);
+
+                }else if (name === $W.constants.LightSourceUniform) {
+
+                    var uniform;
+                    for (var j = 0; j < this.uniforms.length; j++) {
+                        if (this.uniforms[j].name === name) {
+                            uniform = this.uniforms[j];
+                        }
+                    }
+
+                    console.log(source);
+            
+                    uniform.name = ($W.constants.LightSourceUniform + 
+                                    "");
+                    uniform.type = "vec4";
+
+                    uniform.action = function() {
+                        $W.GL.uniform4fv(this.location, false, 
+                                new WebGLFloatArray($W.lights[0].position));
+                    };
                 }
             }
         }
-    }
+    };
 
     /** Compile the shader if able.
      * Lets any shader programs which use this shader know they need to
@@ -346,8 +423,7 @@ $W.GLSL.Shader = function(name, src, type) {
         $W.GL.compileShader(shader);
 
         if (!$W.GL.getShaderParameter(shader, $W.GL.COMPILE_STATUS)) {
-            console.group('Compile error');
-            //console.error('error compiling ' + this.name + ': ' + $W.GL.getShaderInfoLog(shader));
+            console.groupCollapsed('Compile error');
             console.log(source);
             console.groupEnd();
             glShader = null;
@@ -357,8 +433,9 @@ $W.GLSL.Shader = function(name, src, type) {
         }
 
         return (glShader !== null);
-    }
+    };
 
+    source = $W.GLSL.util.handlePragmas(source);
     this.parseShaderVariables(source);
     this.compile();
 
@@ -440,6 +517,7 @@ $W.GLSL.ShaderProgram = function(name) {
 
                 // locations are unique to each shader program (I think)
                 uniform.location = $W.GL.getUniformLocation(this.glProgram, uniform.name);
+                console.log(uniform.name + " " + uniform.location);
                 this.uniforms.push(uniform);
             }
         }
@@ -460,7 +538,7 @@ $W.GLSL.ShaderProgram = function(name) {
 
         var uniform;
         for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name == name) {
+            if (this.uniforms[i].name === name) {
                 uniform = this.uniforms[i];
             }
         }
@@ -491,7 +569,7 @@ $W.GLSL.ShaderProgram = function(name) {
 
         var uniform;
         for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name == name) {
+            if (this.uniforms[i].name === name) {
                 uniform = this.uniforms[i];
             }
         }
@@ -504,7 +582,7 @@ $W.GLSL.ShaderProgram = function(name) {
         }
 
         //XXX deal with other types too
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             var val = arguments[1];
             if (uniform.type === "int") {
                 uniform.action = function() {
@@ -516,20 +594,20 @@ $W.GLSL.ShaderProgram = function(name) {
                 }
             }
 
-        } else if (arguments.length == 3) {
+        } else if (arguments.length === 3) {
             uniform.action = function() {
                 $W.GL.uniform2f(this.location, 
                     arguments[1], arguments[2]);
             }
 
-        } else if (arguments.length == 4) {
+        } else if (arguments.length === 4) {
             uniform.action = function() {
                 $W.GL.uniform3f(this.location, 
                     arguments[1], arguments[2], 
                     arguments[3]);
             }
 
-        } else if (arguments.length == 5) {
+        } else if (arguments.length === 5) {
             uniform.action = function() {
                 $W.GL.uniform4f(this.location, 
                     arguments[1], arguments[2], 
@@ -629,20 +707,20 @@ $W.GLSL.ShaderProgram = function(name) {
     this.attachShader = function(shader, path, type) {
         // Shader from node ID, filename, or source.
         // Otherwise we've been passed a shader object.
-        if (typeof shader == 'string') { 
+        if (typeof shader === 'string') { 
             // Shader from ID
-            if (arguments.length == 1) {
+            if (arguments.length === 1) {
                 shader = new $W.GLSL.Shader(shader);
 
             // Shader from file
-            }else if (arguments.length == 2){
+            }else if (arguments.length === 2){
 
                 // Try to infer type
                 var ext = path.slice(path.length - 4);
-                if (ext == 'vert' || ext.slice(2) == 'vp') {
+                if (ext === 'vert' || ext.slice(2) === 'vp') {
                     type = $W.GL.VERTEX_SHADER;
                 }
-                if (ext == 'frag' || ext.slice(2) == 'fp') {
+                if (ext === 'frag' || ext.slice(2) === 'fp') {
                     type = $W.GL.FRAGMENT_SHADER;
                 }
 
