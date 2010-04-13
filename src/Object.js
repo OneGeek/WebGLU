@@ -1,4 +1,6 @@
 
+$W.RENDERABLE   = 1;
+$W.PICKABLE     = 2;
 /** @class Contains pertinent render information for an individual renderable entity.
  *
  * Make sure to set vertexCount correctly
@@ -17,16 +19,24 @@
  * list in case you want to handle rendering in a specific manner, e.g. as
  * the child of another object.
  */
-$W.Object = function (type, isRenderable, isPickable) {
+$W.Object = function (type, flags) {
     //console.group("Creating object");
     $W.ObjectState.call(this);
 
     $W.addObject(this);
-    if (isRenderable !== false) {
+
+    if (typeof(flags) === 'undefined' ||/*backcompat*/ flags === true) {
+        flags = $W.RENDERABLE | $W.PICKABLE;
+    }/*backcompat*/else if(flags === false) {
+        flags = $W.PICKABLE;
+    }
+
+
+    if (flags & $W.RENDERABLE){
         $W.renderables.push(this);
     }
 
-    if (isPickable !== false) {
+    if (flags & $W.PICKABLE) {
         $W.pickables.push(this);
     }
 
@@ -150,6 +160,7 @@ $W.Object = function (type, isRenderable, isPickable) {
         if (elements === false) {
             this._elements = false;
             this._drawFunction = this._drawArrays();
+            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, null);
 
         // use drawElements
         }else {
@@ -157,6 +168,9 @@ $W.Object = function (type, isRenderable, isPickable) {
             this._elementCount = this._elements.length;
             this._elementBuffer = $W.GL.createBuffer();
             this._drawFunction = this._drawElements();
+            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
+            $W.GL.bufferData($W.GL.ELEMENT_ARRAY_BUFFER,new WebGLUnsignedShortArray(this._elements), 
+                    $W.GL.STATIC_DRAW);
         }
     };
 
@@ -176,127 +190,51 @@ $W.Object = function (type, isRenderable, isPickable) {
         if (this.buffers[name] === undefined) {
             this.buffers[name] = $W.GL.createBuffer();
         }
+        this.bufferArray(name);
     };
 
-
-
-
-
-    /** XXX Not working Buffers the data for this object once. */
-    this.bufferArrays = function() {
+    this.bufferArray = function(name) {
         var gl = $W.GL;
         var prg= $W.programs[this.shaderProgram];
-
-        for (var i = 0; i < prg.attributes.length; i++) {
-            try{
-                if (this.arrays[prg.attributes[i].name] !== undefined) {
-                    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[prg.attributes[i].name]);
-                    gl.bufferData(gl.ARRAY_BUFFER, this.arrays[prg.attributes[i].name], 
-                            gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(prg.attributes[i].location, 
-                            prg.attributes[i].length, 
-                            gl.FLOAT, false, 0, 0);
-
-                    gl.enableVertexAttribArray(prg.attributes[i].location);
-                }
-            }catch (err) {
-                console.error(e);
-            }
+        var atrb = prg.attributes.findByAttributeValue('name', name);
+        if (atrb === null) {
+            return;
         }
 
-        if (this._elements !== false) {
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new WebGLUnsignedShortArray(this._elements), 
+        try {
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[atrb.name]);
+            gl.bufferData(gl.ARRAY_BUFFER, this.arrays[atrb.name], 
                     gl.STATIC_DRAW);
+
+            gl.enableVertexAttribArray(atrb.location);
+            gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        }catch (err) {
+            console.error("Object attribute buffer error");
+            console.error(atrb.name);
+            console.error(err);
         }
-
-    }
-
-    /** XXX Not working Binds the data buffers for rendering. */
-    this.bindBuffers = function() {
-        var gl = $W.GL;
-        var prg= $W.programs[this.shaderProgram];
-        //with ($W.GL){ with ($W.programs[this.shaderProgram]) {
-
-        for (var i = 0; i < prg.attributes.length; i++) {
-            try {
-                gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[prg.attributes[i].name]);
-                gl.bufferData(gl.ARRAY_BUFFER, this.arrays[prg.attributes[i].name], gl.STATIC_DRAW);
-                gl.vertexAttribPointer(prg.attributes[i].location, 
-                        prg.attributes[i].length, 
-                        gl.FLOAT, false, 0, 0);
-                gl.enableVertexAttribArray(prg.attributes[i].location);
-            }catch (e) {
-                console.error(e);
-                //$W.draw = function() {};
-                // Stop rendering after error
-            }
-        }
-
-        if (!(this._elements === false)) {
-            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
-        }
-        //}}
+        
     };
 
-    /** Buffer all the data stored in this object's attribute
-     * arrays and set vertexAttribPointers for them.
-     * XXX I'm pretty sure this is naive. I think I can buffer once,
-     * then just rebind when I draw
-     */
-    this._bufferArrays = function() {
+    this.bind = function() {
+        var gl = $W.GL;
         var program = $W.programs[this.shaderProgram];
 
-        for (var i = 0; i < program.attributes.length; i++) {
-            var name      = program.attributes[i].name; 
-            var attribute = program.attributes[i].location;
-            var length    = program.attributes[i].length;
-            var buffer    = program.attributes[i].buffer;
+        try{
+            for (var i = 0; i < program.attributes.length; i++) {
+                var atrb = program.attributes[i];
 
-            var step = 0;
-            try{
-                $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.buffers[name]);
-
-                step++;
-
-                $W.GL.bufferData($W.GL.ARRAY_BUFFER, 
-                        this.arrays[name], $W.GL.STATIC_DRAW);
-
-                step++;
-
-                $W.GL.vertexAttribPointer(attribute, length, $W.GL.FLOAT, false, 0, 0);
-
-                step++;
-
-                $W.GL.enableVertexAttribArray(attribute);
-
-                step++;
-
-            }catch (e) {
-                if (typeof(this.arrays[name]) === 'undefined') {
-                    console.error("`" + name + "` data is undefined");
-                }else if (step === 0) {
-                    console.error("err: binding `" + name + "` buffer");
-                }else if (step === 1) {
-                    console.error("err: buffering data for `" + name + "`");
-                }else if (step === 2) {
-                    console.error("err: in vertexAttribPointer `" + name + "`");
-                }else if (step === 3) {
-                    console.error("err: enabling attrib array`" + name + "`");
-                }
+                gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers[atrb.name]);
+                gl.vertexAttribPointer(atrb.location, atrb.length, 
+                        gl.FLOAT, false, 0, 0);
+                gl.bindBuffer(gl.ARRAY_BUFFER, null);
             }
+        }catch (e) {
+            console.error("Object attribute bind error");
+            console.error(e);
         }
 
-        
-        // if elements aren't disabled
-        // XXX convert to callback to avoid `if`
-        if (this._elements !== false) {
-            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
-            $W.GL.bufferData($W.GL.ELEMENT_ARRAY_BUFFER,new WebGLUnsignedShortArray(this._elements), 
-                    $W.GL.STATIC_DRAW);
-        }
     };
-
 
     this.setTexture = function(texture, sampler) {
         this.textures[0] = texture;
@@ -312,14 +250,6 @@ $W.Object = function (type, isRenderable, isPickable) {
     };
 
 
-    /** Bind the textures for this object.
-     * XXX Will only work with single texturing
-     * @deprecated Use setTexture(texture, sampler) instead.
-     */
-    this.bindTextures = function() {
-        return;
-    };
-
     // These allow us to do array or element drawing without
     // testing a boolean every frame
     this._drawArrays = function() {
@@ -334,6 +264,7 @@ $W.Object = function (type, isRenderable, isPickable) {
 
     this._drawElements = function() {
         return (function() {
+            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
             try {
                 $W.GL.drawElements(this.type, this._elementCount, 
                     $W.GL.UNSIGNED_SHORT, this._elements);
@@ -352,10 +283,10 @@ $W.Object = function (type, isRenderable, isPickable) {
      * @param {3 Element Array} scale Scaling array.
      */
     this.drawAt = function(pos, rot, scale) {
-            $W.modelview.pushMatrix();
+            $W.modelview.push();
 
             $W.modelview.translate(pos);
-            $W.modelview.multMatrix(rot);
+            $W.modelview.multiply(rot);
             $W.modelview.scale(scale);
 
             for (var i = 0; i < this._children.length; i++) {
@@ -365,10 +296,9 @@ $W.Object = function (type, isRenderable, isPickable) {
             $W.programs[this.shaderProgram].use();
             $W.programs[this.shaderProgram].processUniforms(this);
 
-            $W.modelview.popMatrix();
+            $W.modelview.pop();
 
-            this._bufferArrays();
-            //this.bindBuffers();
+            this.bind();
 
             this._drawFunction();
             $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
