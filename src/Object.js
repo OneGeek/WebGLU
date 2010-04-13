@@ -17,12 +17,17 @@
  * list in case you want to handle rendering in a specific manner, e.g. as
  * the child of another object.
  */
-$W.Object = function (type, shouldAdd) {
+$W.Object = function (type, isRenderable, isPickable) {
     //console.group("Creating object");
     $W.ObjectState.call(this);
 
-    if (shouldAdd !== false) {
-        $W.addObject(this);
+    $W.addObject(this);
+    if (isRenderable !== false) {
+        $W.renderables.push(this);
+    }
+
+    if (isPickable !== false) {
+        $W.pickables.push(this);
     }
 
     /** Name of shader program used to render this object */
@@ -251,15 +256,22 @@ $W.Object = function (type, shouldAdd) {
             var step = 0;
             try{
                 $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.buffers[name]);
+
                 step++;
+
                 $W.GL.bufferData($W.GL.ARRAY_BUFFER, 
                         this.arrays[name], $W.GL.STATIC_DRAW);
+
                 step++;
 
                 $W.GL.vertexAttribPointer(attribute, length, $W.GL.FLOAT, false, 0, 0);
+
                 step++;
+
                 $W.GL.enableVertexAttribArray(attribute);
+
                 step++;
+
             }catch (e) {
                 if (typeof(this.arrays[name]) === 'undefined') {
                     console.error("`" + name + "` data is undefined");
@@ -306,18 +318,7 @@ $W.Object = function (type, shouldAdd) {
      */
     this.bindTextures = function() {
         return;
-        var gl = $W.GL;
-        for (var i = 0; i < this.textures.length; i++) {
-            gl.activeTexture(gl.TEXTURE0);
-            this.textures[i].bind();
-            gl.uniform1i(gl.getUniformLocation($W.programs[this.shaderProgram].glProgram, 'sampler'), 0);
-        }
     };
-
-
-
-
-
 
     // These allow us to do array or element drawing without
     // testing a boolean every frame
@@ -366,10 +367,8 @@ $W.Object = function (type, shouldAdd) {
 
             $W.modelview.popMatrix();
 
-            //this.bindBuffers();
             this._bufferArrays();
-            //this.bindTextures();
-            
+            //this.bindBuffers();
 
             this._drawFunction();
             $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
