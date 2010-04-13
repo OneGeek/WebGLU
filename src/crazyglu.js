@@ -26,8 +26,8 @@
 
 $W.usePicking = function() {
     $W.newProgram('pick');
-    $W.programs['pick'].attachShader('pickVS', $W.paths.shaders + 'pick.vert');
-    $W.programs['pick'].attachShader('pickFS', $W.paths.shaders + 'pick.frag');
+    $W.programs.pick.attachShader('pickVS', $W.paths.shaders + 'pick.vert');
+    $W.programs.pick.attachShader('pickFS', $W.paths.shaders + 'pick.frag');
 
     try{
         $W.pickBuffer = new $W.Framebuffer();
@@ -38,6 +38,28 @@ $W.usePicking = function() {
     }
 }
 
+$W.drawForPicking = function() {
+    $W.modelview.pushMatrix();
+
+    $W.modelview.translate(this.animatedPosition().elements);
+    $W.modelview.multMatrix(this.animatedRotation().matrix());
+    $W.modelview.scale(this.animatedScale().elements);
+
+    for (var i = 0; i < this._children.length; i++) {
+        $W.drawForPicking.call(this._children[i]);
+    }
+
+    $W.programs.pick.use();
+    $W.programs.pick.setUniform( 'pickColor', this.id / 255 );
+    $W.programs.pick.processUniforms(this);
+
+    this._bufferArrays();
+    this._drawFunction();
+
+    $W.modelview.popMatrix();
+    $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
+};
+
 $W.updatePickBuffer = function(shouldUnbind) {
     $W._setupMatrices();
     $W.pickBuffer.bind();
@@ -47,22 +69,9 @@ $W.updatePickBuffer = function(shouldUnbind) {
     $W.GL.disable($W.GL.BLEND);
     $W.GL.lineWidth(7);
 
-    for (var i = 0; i < $W.objects.length; i++) {
-        var obj = $W.objects[i]
-        for (var j = 0; j < obj._children.length; j++) {
-            obj._children[j].setShaderProgram('pick');
 
-            $W.programs['pick'].setUniform('pickColor', (64 + j) / 255 );
-            obj._children[j].draw();
-
-            obj._children[j].revertShaderProgram();
-        }
-        obj.setShaderProgram('pick');
-
-        $W.programs['pick'].setUniform('pickColor', i / 255 );
-        obj.draw();
-
-        obj.revertShaderProgram();
+    for (var i = 0; i < $W.pickables.length; i++) {
+        $W.drawForPicking.call($W.pickables[i]);
     }
 
     if (shouldUnbind !== false) {
@@ -73,13 +82,13 @@ $W.updatePickBuffer = function(shouldUnbind) {
     $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
 }
 
-$W.getObjectIndexAt = function(x, y) {
+$W.getObjectIDAt = function(x, y) {
     $W.updatePickBuffer(false);
-    var index = $W.GL.readPixels(x,$W.canvas.height-y,1,1, 
+    var id = $W.GL.readPixels(x,$W.canvas.height-y,1,1, 
                          $W.GL.RGBA, $W.GL.UNSIGNED_BYTE)[0];
     $W.pickBuffer.unbind();
 
-    return index;
+    return id;
 }
 
 if (typeof(V3) === 'undefined') {
@@ -874,51 +883,51 @@ $W.util.parseOBJ = function(obj) {
     var counts = [0,0,0,0];
 
     // Parse vertices
-    model.vertices = obj.match(/^v\s.+/gm);
-    if (model.vertices !== null) {
+    data.vertices = obj.match(/^v\s.+/gm);
+    if (data.vertices !== null) {
         console.log("Parsing vertices");
-        for (var i = 0; i < model.vertices.length; i++) {
-            model.vertices[i] = model.vertices[i].match(/[-0-9\.]+/g);
+        for (var i = 0; i < data.vertices.length; i++) {
+            data.vertices[i] = data.vertices[i].match(/[-0-9\.]+/g);
             counts[0]++;
         }
-        model.vertices = model.vertices.flatten();
-        model.vertices = model.vertices.flatten();
+        data.vertices = data.vertices.flatten();
+        data.vertices = data.vertices.flatten();
 
         // convert to numbers
-        for (var i = 0; i < model.vertices.length; i++) {
-            model.vertices[i] = model.vertices[i] * 1; 
+        for (var i = 0; i < data.vertices.length; i++) {
+            data.vertices[i] = data.vertices[i] * 1; 
             counts[0]++;
         }
     }
 
     // Parse normals
-    model.normals = obj.match(/^vn.+/gm);
-    if (model.normals !== null) {
+    data.normals = obj.match(/^vn.+/gm);
+    if (data.normals !== null) {
         console.log("Parsing normals");
-        for (var i = 0; i < model.normals.length; i++) {
-            model.normals[i] = model.normals[i].match(/[0-9\.]+/g);
+        for (var i = 0; i < data.normals.length; i++) {
+            data.normals[i] = data.normals[i].match(/[0-9\.]+/g);
             counts[1]++;
         }
-        model.normals = model.normals.flatten();
+        data.normals = data.normals.flatten();
     }
 
     // Parse texture coordinates
-    model.texCoords = obj.match(/^vt.+/gm);
-    if (model.texCoords !== null) {
+    data.texCoords = obj.match(/^vt.+/gm);
+    if (data.texCoords !== null) {
         console.log("Parsing texture coordinates");
-        for (var i = 0; i < model.texCoords.length; i++) {
-            model.texCoords[i] = model.texCoords[i].match(/[0-9\.]+/g);
+        for (var i = 0; i < data.texCoords.length; i++) {
+            data.texCoords[i] = data.texCoords[i].match(/[0-9\.]+/g);
             counts[2]++;
         }
-        model.texCoords = model.texCoords.flatten();
-        model.texCoords = model.texCoords.flatten();
+        data.texCoords = data.texCoords.flatten();
+        data.texCoords = data.texCoords.flatten();
     }
-    /*
     // parse faces
     // faces start with `f `
     // `f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 [v4/vt4/vn4]
     model.faces = obj.match(/^f[\s.]+/gm); 
     if (model.faces != null) {}
+    /*
     model.indices = {};
     console.log("parsing faces");
     // face format : v/vt/vn
@@ -926,12 +935,12 @@ $W.util.parseOBJ = function(obj) {
     // pull the vertices from each face
     model.indices.vertex = [];
     for (var i = 0; i < model.faces.length; i++) {
-// vertex indices match ` 123/`
-model.indeces.vertex.push(/\s\d*\//g);
-model.faces[i] = model.faces[i].match(/\s\d*\//g);
+        // vertex indices match ` 123/`
+        model.indeces.vertex.push(/\s\d*\//g);
+        model.faces[i] = model.faces[i].match(/\s\d*\//g);
 
-}
-*/
+    }
+    */
 
 // Parse faces
 model.faces = obj.match(/^f.+/gm);
