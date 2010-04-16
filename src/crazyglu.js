@@ -23,10 +23,12 @@
      *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
      *  OTHER DEALINGS IN THE SOFTWARE.
 */
+
 $W.AMBIENT = 'ambient';
 $W.SPECULAR = 'specular';
 $W.DIFFUSE = 'diffuse';
 $W.POSITION = 'position';
+$W.constants = {};
 $W.constants.LightSourceUniform = "wglu_LightSource";
 
 $W.usePicking = function() {
