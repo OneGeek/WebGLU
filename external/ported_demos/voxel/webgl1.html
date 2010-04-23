@@ -1,0 +1,284 @@
+
+<html>
+<head>
+<title>WebGL Voxel</title>
+<script language="javascript" src="Vector.js"></script>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+<script id="vshader" type="x-shader/x-vertex">
+</script>
+
+
+<script type="text/javascript">
+
+function MatrixMultiply(a, b)
+{
+	return [a[0] * b[0] + a[1] * b[3] + a[2] * b[6],
+	        a[0] * b[1] + a[1] * b[4] + a[2] * b[7],
+	        a[0] * b[2] + a[1] * b[5] + a[2] * b[8],
+	        a[3] * b[0] + a[4] * b[3] + a[5] * b[6],
+	        a[3] * b[1] + a[4] * b[4] + a[5] * b[7],
+	        a[3] * b[2] + a[4] * b[5] + a[5] * b[8],
+	        a[6] * b[0] + a[7] * b[3] + a[8] * b[6],
+	        a[6] * b[1] + a[7] * b[4] + a[8] * b[7],
+	        a[6] * b[2] + a[7] * b[5] + a[8] * b[8]];
+}
+
+function MatrixVectorMultiply(a, v)
+{
+	return [a[0] * v[0] + a[1] * v[1] + a[2] * v[2],
+	        a[3] * v[0] + a[4] * v[1] + a[5] * v[2],
+	        a[6] * v[0] + a[7] * v[1] + a[8] * v[2]];
+}
+
+function Initialize()
+{
+    var VERTEX = "aVertexPosition";
+    var TEX_COORD = "aTextureCoord";
+    //--Initialize WebGLU, shaders
+    with ($W) { 
+        if (!initialize('webglcanvas')) { return false };
+
+        $W.constants.ModelViewUniform = "uMVMatrix";
+        $W.constants.ProjectionUniform = "uPMatrix";
+
+        newProgram('voxel');
+        programs.voxel.attachShader('voxelVS', 'voxel.vert');
+        programs.voxel.attachShader('voxelFS', 'voxel.frag');
+
+        GL.clearColor(.9,.9,.9, 0.0);
+        $W.GL.depthFunc($W.GL.LEQUAL);
+
+        useGameGLU();
+        $G.state.moveUp = false;
+        $G.state.moveDown = false;
+        $G.state.moveLeft = false;
+        $G.state.moveRight = false;
+
+        $G.state.angleX = 0;
+        $G.state.angleY = 0;
+
+        $G.state.mouseX = 320;
+        $G.state.mouseY = 240;
+
+        $G.state.positionX = 5.0;
+        $G.state.positionY = 5.0;
+        $G.state.positionZ = 5.0;
+
+        $G.state.focus = false;
+        $G.state.focalLength = 0.2;
+    }
+
+	$W.projection.push($W.GLU.ortho(0, $W.canvas.width, $W.canvas.height, 0, -1, 1));
+
+	// Create the fullscreen quad that we'll run the shader on
+	var vertices = [-320.0, -240.0, 0.0,
+	                320.0, -240.0, 0.0,
+	                320.0, 240.0, 0.0,
+	                -320.0, 240.0, 0.0];
+	var textureCoords = [0.0, 0.0,
+	                     640.0, 0.0,
+	                     640.0, 480.0,
+	                     0.0, 480.0];
+
+    var screenQuad = new $W.Object($W.GL.TRIANGLE_FAN);
+    screenQuad.setShaderProgram('voxel');
+    screenQuad.fillArray(VERTEX, vertices);
+    screenQuad.fillArray(TEX_COORD, textureCoords);
+
+    var tileTextures = new $W.ImageTexture('tile', 'tiles.png');
+    screenQuad.setTexture('tile', 'tileTextures');
+
+    $G.event.bind('mousewheel', MouseWheel);
+
+    var prg = $W.programs.voxel;
+    prg.setUniformAction('cameraRotation', function() {
+        with($G.state){
+            var rotationMatrix = MatrixMultiply(
+                [Math.cos(angleX), -Math.sin(angleX), 0,
+                 Math.sin(angleX),  Math.cos(angleX), 0,
+                 0, 0, 1],
+                 [Math.cos(angleY), 0, Math.sin(angleY),
+                 0, 1, 0,
+                 -Math.sin(angleY), 0, Math.cos(angleY)]);
+        }
+        $W.GL.uniformMatrix3fv(this.location, true, new WebGLFloatArray(rotationMatrix));
+    });
+    prg.setUniformAction('cameraCenter', function() {
+        with($G.state){
+            $W.GL.uniform3f(this.location, 
+                $G.state.positionX, $G.state.positionY, $G.state.positionZ);
+        }
+    });
+    prg.setUniformAction('focalDistance', function() {
+            $W.GL.uniform1f(this.location, $G.state.focalLength);
+    });
+    prg.setUniformAction('voxelSize', function() {
+            $W.GL.uniform1f(this.location, 1.0);
+    });
+    prg.setUniformAction('atlasTextureSize', function() {
+            $W.GL.uniform2f(this.location, 100.0, 100.0);
+    });
+    prg.setUniformAction('textureSize', function() {
+            $W.GL.uniform2f(this.location, 32.0, 32.0);
+    });
+    prg.setUniformAction('textureColumnsRows', function() {
+            $W.GL.uniform2f(this.location, 3.0, 3.0);
+    });
+
+    var redraw = function () {
+        $W.draw();
+        $W.update();
+        Update();
+    };
+
+    setInterval(redraw,17);
+
+}
+
+function Update()
+{
+    document.getElementById("fps").innerHTML = "FPS: " + $W.FPS + "/60";
+    with ($G.state) {
+        var rotationZ = [Math.cos(angleX), -Math.sin(angleX), 0,
+                         Math.sin(angleX), Math.cos(angleX), 0,
+                         0, 0, 1];
+        var velocity = MatrixVectorMultiply(rotationZ, [(moveUp ? 1 : 0) - (moveDown ? 1 : 0), 0, 0]);
+        positionX += velocity[0] * 0.1;
+        positionY += velocity[1] * 0.1;
+
+        var velocity = MatrixVectorMultiply(rotationZ, [0, (moveLeft ? 1 : 0) - (moveRight ? 1 : 0), 0]);
+        positionX += velocity[0] * 0.1;
+        positionY += velocity[1] * 0.1;
+
+        if (positionX < 1.2) positionX = 1.2;
+        if (positionY < 1.2) positionY = 1.2;
+        if (positionZ < 1.2) positionZ = 1.2;
+
+        positionZ = 2.5;
+
+        var mouseDifference = new ExtVector((mouseX - 320.0) / 640.0, (mouseY - 240.0) / 480.0);
+        if (mouseDifference.Length() > 0.03)
+        {
+            angleX -= mouseDifference.X * 0.1 * 1.0 / focalLength;
+            angleX %= Math.PI * 2;
+            angleY += mouseDifference.Y * 0.1 * 1.0 / focalLength;
+            if (angleY < -Math.PI / 2) angleY = -Math.PI / 2;
+            if (angleY > Math.PI / 2) angleY = Math.PI / 2;
+        }
+
+        // Update the debug info
+        document.getElementById("angleX").innerHTML = "Angle X: " + angleX;
+        document.getElementById("angleY").innerHTML = "Angle Y: " + angleY;
+        document.getElementById("mouseX").innerHTML = "Mouse X: " + mouseX;
+        document.getElementById("mouseY").innerHTML = "Mouse Y: " + mouseY;
+        document.getElementById("focalDistance").innerHTML = "Focal Distance: " + focalLength;
+        //player.velocity.x = (moveRight ? 1 : 0) - (moveLeft ? 1 : 0);
+        //player.velocity.y = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
+        //player.velocity.Normalize();
+    }
+}
+
+function MouseMove(e)
+{
+    if (typeof($G) !== 'undefined') { with ($G.state) {
+        mouseX = e.clientX - $W.canvas.offsetTop;
+        mouseY = e.clientY - $W.canvas.offsetLeft;
+        if (mouseX < 0) mouseX = 0;
+        if (mouseY < 0) mouseY = 0;
+        if (mouseX > 640) mouseX = 640;
+        if (mouseY > 480) mouseY = 480;
+    }}
+}
+
+function KeyDown(e)
+{
+    with ($G.state) {
+        switch(window.event ? e.keyCode : e.which)
+        {
+            case 38: // Up Arrow
+            case 87: // W
+                moveUp = true;
+                break;
+            case 40: // Down Arrow
+            case 83: // S
+                moveDown = true;
+                break;
+            case 37: // Left Arrow
+            case 65: // A
+                moveLeft = true;
+                break;
+            case 39: // Right Arrow
+            case 68: // D
+                moveRight = true;
+                break;
+            case 27:
+                focus = false;
+                break;
+        }
+    }
+}
+
+function KeyUp(e)
+{
+    with ($G.state) {
+        switch(window.event ? e.keyCode : e.which)
+        {
+            case 38: // Up Arrow
+            case 87: // W
+                moveUp = false;
+                break;
+            case 40: // Down Arrow
+            case 83: // S
+                moveDown = false;
+                break;
+            case 37: // Left Arrow
+            case 65: // A
+                moveLeft = false;
+                break;
+            case 39: // Right Arrow
+            case 68: // D
+                moveRight = false;
+                break;
+        }
+    }
+}
+
+function Focus(event)
+{
+    if (typeof($G) !== 'undefined') {
+        $G.state.focus = true;
+    }
+}
+
+function LostFocus(event)
+{
+	$G.state.focus = false;
+	$G.state.mouseX = 320;
+	$G.state.mouseY = 240;
+}
+
+function MouseWheel(event)
+{
+    with ($G.state) {
+        var delta = -event.detail / 3;
+        focalLength += delta * 0.05;
+        if (focalLength < 0.1) focalLength = 0.1;
+        if (focalLength > 2.0) focalLength = 2.0;
+    }
+}
+
+</script>
+</head>
+<body onload="Initialize()" onkeydown="KeyDown(event)" onkeyup="KeyUp(event)" onfocus="Focus(event)" onblur="LostFocus(event)" onmousemove="MouseMove(event)">
+	<canvas id="webglcanvas" width="640" height="480">
+		<h1>Canvas is not supported in this browser.</h1>
+	</canvas>
+	</br>
+	<div id="fps"></div>
+	<div id="mouseX"></div>
+	<div id="mouseY"></div>
+	<div id="angleX"></div>
+	<div id="angleY"></div>
+	<div id="focalDistance"></div>
+</body>
+</html>
