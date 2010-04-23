@@ -114,6 +114,10 @@ $G = {
                 actions['mousemove'](
                     ev.clientX -  $G.offsetX, ev.clientY -  $G.offsetY);
             }, false);
+
+            BIND("DOMMouseScroll", function(ev) {
+                actions['mousewheel'](ev);
+            }, false);
         },
 
         /** 
@@ -156,6 +160,10 @@ $G = {
 
             }else if (key == "mousemove") {
                 actions['mousemove'] = action;
+
+            }else if (key == "mousewheel") {
+                actions['mousewheel'] = action;
+            
 
             // Keys
             }else if (key[0] == "+" || key[0] == "-") {
