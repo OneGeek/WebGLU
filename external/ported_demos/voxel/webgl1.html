@@ -3,7 +3,7 @@
 <head>
 <title>WebGL Voxel</title>
 <script language="javascript" src="Vector.js"></script>
-<script type="text/javascript" src="../../src/webglu.js"></script>
+<script type="text/javascript" src="../../../src/webglu.js"></script>
 <script id="vshader" type="x-shader/x-vertex">
 </script>
 
@@ -36,6 +36,10 @@ function Initialize()
     var TEX_COORD = "aTextureCoord";
     //--Initialize WebGLU, shaders
     with ($W) { 
+        paths.libsrc = "../../../src/";
+        paths.shaders = "../../../shaders/";
+        paths.external = "../../../external/";
+        
         if (!initialize('webglcanvas')) { return false };
 
         $W.constants.ModelViewUniform = "uMVMatrix";
@@ -45,7 +49,7 @@ function Initialize()
         programs.voxel.attachShader('voxelVS', 'voxel.vert');
         programs.voxel.attachShader('voxelFS', 'voxel.frag');
 
-        GL.clearColor(.9,.9,.9, 0.0);
+        GL.clearColor(.9,.9,.9, 1.0);
         $W.GL.depthFunc($W.GL.LEQUAL);
 
         useGameGLU();
@@ -115,6 +119,7 @@ function Initialize()
     prg.setUniformAction('voxelSize', function() {
             $W.GL.uniform1f(this.location, 1.0);
     });
+    /*
     prg.setUniformAction('atlasTextureSize', function() {
             $W.GL.uniform2f(this.location, 100.0, 100.0);
     });
@@ -124,6 +129,7 @@ function Initialize()
     prg.setUniformAction('textureColumnsRows', function() {
             $W.GL.uniform2f(this.location, 3.0, 3.0);
     });
+    */
 
     var redraw = function () {
         $W.draw();
