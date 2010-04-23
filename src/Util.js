@@ -66,6 +66,15 @@ if ($W.util === undefined) {
     }
 }
 
+$W.util.genDummyArray = function(contents, repeat) {
+    var result = [];
+    for (var i = 0; i < repeat; i++) {
+        result = result.concat(contents);
+    }
+    return result;
+};
+
+
 /** Clips a value to a given range.
  * @param {Number|null} min The minimum value this function can
  * return. If null is passed, there is no minimum.
