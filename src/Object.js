@@ -182,18 +182,22 @@ $W.Object = function (type, flags) {
      * not verified for you)
      * @param {Array} contents The data to pass to the attribute.
      */
-    this.fillArray = function(name, contents) {
-        console.log("Filling `" + name + "` array");
+    this.fillArray = function OBJ_fillArray(name, contents) {
+        console.group("Filling `" + name + "` array");
         this._debugArrays = contents;
-        this.arrays[name] = new WebGLFloatArray(contents.flatten());
+
+        this.arrays[name] = new WebGLFloatArray(contents);
+        console.log(name + " array has " + contents.length + " values");
 
         if (this.buffers[name] === undefined) {
             this.buffers[name] = $W.GL.createBuffer();
         }
         this.bufferArray(name);
+        console.groupEnd();
     };
 
-    this.bufferArray = function(name) {
+    this.bufferArray = function OBJ_bufferArray(name) {
+        console.log("Buffering `" + name + "` array");
         var gl = $W.GL;
         var prg= $W.programs[this.shaderProgram];
         var atrb = prg.attributes.findByAttributeValue('name', name);
@@ -216,7 +220,7 @@ $W.Object = function (type, flags) {
         
     };
 
-    this.bind = function() {
+    this.bind = function OBJ_bind() {
         var gl = $W.GL;
         var program = $W.programs[this.shaderProgram];
 
@@ -236,16 +240,21 @@ $W.Object = function (type, flags) {
 
     };
 
-    this.setTexture = function(texture, sampler) {
+    this.setTexture = function OBJ_setTexture(texture, sampler) {
         this.textures[0] = texture;
         console.log("Applying `" + texture + "` texture");
         $W.programs[this.shaderProgram].setUniformAction(sampler, 
-                function(obj) {
-                    var gl = $W.GL;
-                    gl.activeTexture(gl.TEXTURE0);
-                    gl.bindTexture(gl.TEXTURE_2D, 
-                        $W.textures[obj.textures[0]].glTexture);
-                    gl.uniform1i(this.location, 0);
+                function OBJ_setTexture_uniformAction(obj) {
+                    try {
+                        var gl = $W.GL;
+                        gl.activeTexture(gl.TEXTURE0);
+                        gl.bindTexture(gl.TEXTURE_2D, 
+                            $W.textures[obj.textures[0]].glTexture);
+                        gl.uniform1i(this.location, 0);
+                    }catch (e) {
+                        console.error("Texture binding error");
+                        console.error(e);
+                    }
                 });
     };
 
@@ -253,22 +262,24 @@ $W.Object = function (type, flags) {
     // These allow us to do array or element drawing without
     // testing a boolean every frame
     this._drawArrays = function() {
-        return (function() {
+        return (function OBJ_drawArrays() {
             try {
                 $W.GL.drawArrays(this.type, 0, this.vertexCount);
             }catch (e) {
+                console.error("drawArrays Failure");
                 console.error(e);
             }
         });
     };
 
     this._drawElements = function() {
-        return (function() {
+        return (function OBJ_drawElements() {
             $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
             try {
                 $W.GL.drawElements(this.type, this._elementCount, 
                     $W.GL.UNSIGNED_SHORT, this._elements);
             }catch (e) {
+                console.error("drawElements Failure");
                 console.error(e);
             }
         });
@@ -282,7 +293,7 @@ $W.Object = function (type, flags) {
      * @param {Matrix} rot Rotation matrix.
      * @param {3 Element Array} scale Scaling array.
      */
-    this.drawAt = function(pos, rot, scale) {
+    this.drawAt = function OBJ_drawAt(pos, rot, scale) {
             $W.modelview.push();
 
             $W.modelview.translate(pos);
@@ -293,14 +304,24 @@ $W.Object = function (type, flags) {
                 this._children[i].draw();
             }
 
-            $W.programs[this.shaderProgram].use();
-            $W.programs[this.shaderProgram].processUniforms(this);
+            try {
+                $W.programs[this.shaderProgram].use();
+                $W.programs[this.shaderProgram].processUniforms(this);
+            }catch (e) {
+                console.error("drawAt error, use/processUniforms");
+                console.error(e);
+            }
 
             $W.modelview.pop();
 
             this.bind();
 
-            this._drawFunction();
+            try {
+                this._drawFunction();
+            }catch (e) {
+                console.error("draw error");
+                console.error(e);
+            }
             $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
     };
 
@@ -321,7 +342,7 @@ $W.Object = function (type, flags) {
     /** draw this object at its internally stored position, rotation, and
      * scale, INCLUDING its current animation state.
      */
-    this.draw = function() {
+    this.draw = function OBJ_draw() {
         this.drawAt(
             this.animatedPosition().elements, 
             this.animatedRotation().matrix(),
