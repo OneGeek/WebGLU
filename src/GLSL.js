@@ -13,10 +13,6 @@ $W.GLSL = {
     }
 };
 
-$W.light = function(light, pname, param) {
-
-};
-
 $W.GLSL.util = {
     handlePragmas: function(source) {
         var pragmas = source.match(/^#pragma.*/gm);
@@ -364,38 +360,8 @@ $W.GLSL.Shader = function(name, src, type) {
             if (tokens[i] === "uniform") {
                 var type = tokens[i+1];
                 var name = tokens[i+2];
-                this.addUniform(name, function(){}, type);
 
-
-                if (name === $W.constants.ModelViewUniform) {
-                    this.setModelViewUniform($W.constants.ModelViewUniform);
-
-                }else if (name === $W.constants.ProjectionUniform) {
-                    this.setProjectionUniform($W.constants.ProjectionUniform);
-
-                }else if (name === $W.constants.NormalMatrixUniform) {
-                    this.setNormalMatrixUniform($W.constants.NormalMatrixUniform);
-
-                }else if (name === $W.constants.LightSourceUniform) {
-
-                    var uniform;
-                    for (var j = 0; j < this.uniforms.length; j++) {
-                        if (this.uniforms[j].name === name) {
-                            uniform = this.uniforms[j];
-                        }
-                    }
-
-                    console.log(source);
-            
-                    uniform.name = ($W.constants.LightSourceUniform + 
-                                    "");
-                    uniform.type = "vec4";
-
-                    uniform.action = function() {
-                        $W.GL.uniform4fv(this.location, false, 
-                                new WebGLFloatArray($W.lights[0].position));
-                    };
-                }
+                this.addUniform(name, $W.util.getUniformAction(name), type);
             }
         }
     };
@@ -441,10 +407,6 @@ $W.GLSL.Shader = function(name, src, type) {
 
     console.groupEnd();
 };
-
-
-
-
 
 /** @class Handles data and linking for a shader program.
  * Also ensures all shaders which it uses are compiled and up
@@ -536,12 +498,7 @@ $W.GLSL.ShaderProgram = function(name) {
     this.setUniformAction = function(name, action) {
         this.use();
 
-        var uniform;
-        for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name === name) {
-                uniform = this.uniforms[i];
-            }
-        }
+        var uniform = this.uniforms.findByAttributeValue('name', name);
 
         if (uniform === undefined) {
             console.error("Cannot set uniform `" + name + "` in shader program `" + this.name + "`, no uniform with that name exists");
@@ -620,7 +577,7 @@ $W.GLSL.ShaderProgram = function(name) {
     /** Called once per frame to calculate and set uniforms. */
     this.processUniforms = function(obj) {
         for (var i = 0; i < this.uniforms.length; i++) {
-            this.uniforms[i].action(obj);
+            this.uniforms[i].action(this.uniforms[i], obj);
         }
     }
 
