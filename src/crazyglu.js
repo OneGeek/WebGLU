@@ -31,6 +31,12 @@ $W.POSITION = 'position';
 $W.constants = {};
 $W.constants.LightSourceUniform = "wglu_LightSource";
 
+$W.uniformActions[$W.constants.LightSourceUniform] = 
+    function(uniform, object, material) {
+        $W.GL.uniform4fv(this.location, false, 
+                new WebGLFloatArray($W.lights[0].position));
+};
+
 $W.usePicking = function() {
     $W.newProgram('pick');
     $W.programs.pick.attachShader('pickVS', $W.paths.shaders + 'pick.vert');
@@ -504,7 +510,7 @@ $W.OS.Boid=function Boid() {
 $W.OS.Flock=function Flock(boidCount, boidModel) {
     this.boidModel = boidModel;
     this.flock = [];
-    this.worldRadius = 60;
+    this.worldRadius = 70;
     this.scale = 5;
 
     for (var i = 0; i < boidCount; i++) {
@@ -533,11 +539,11 @@ $W.OS.steering=function steering() {
         var radiusScale = 2;
         var separationRadius =  5.0 * radiusScale;
         var separationAngle  = -0.707;
-        var separationWeight =  10.0;
+        var separationWeight =  8.0;
         
         var alignmentRadius = 7.5 * radiusScale;
         var alignmentAngle  = 0.7;
-        var alignmentWeight = 9.0;
+        var alignmentWeight = 10.0;
          
         var cohesionRadius = 9.0 * radiusScale;
         var cohesionAngle  = -0.15;
@@ -873,8 +879,6 @@ $W.SimulatedObject = function(physType) {
 
 
 /** Parse a .obj model file
- * XXX Should I build the vertex/normal/texture coordinate arrays
- * explicitly from the face data? Can it work otherwise?
  * XXX Not quite working.
  * @return model An object containing model data as flat
  * arrays.
@@ -889,112 +893,61 @@ $W.util.parseOBJ = function(obj) {
     var model = {};
     var counts = [0,0,0,0];
 
-    // Parse vertices
-    data.vertices = obj.match(/^v\s.+/gm);
-    if (data.vertices !== null) {
-        console.log("Parsing vertices");
-        for (var i = 0; i < data.vertices.length; i++) {
-            data.vertices[i] = data.vertices[i].match(/[-0-9\.]+/g);
-            counts[0]++;
-        }
-        data.vertices = data.vertices.flatten();
-        data.vertices = data.vertices.flatten();
+    var getDataFromLinesStartingWith = function(str) {
+        var data = [];
+        var linePattern = new RegExp("^" + str + "\\s.*", 'gim');
 
-        // convert to numbers
-        for (var i = 0; i < data.vertices.length; i++) {
-            data.vertices[i] = data.vertices[i] * 1; 
-            counts[0]++;
+
+        var lines = obj.match(linePattern);
+        if (lines !== null) {
+            for (var i = 0; i < lines.length; i++) {
+                data.push(lines[i].match(/[-0-9e/\.\+]+/gi));
+            }
+        }
+
+        return data;
+    };
+
+
+    data.vertices   = getDataFromLinesStartingWith('v');
+    data.normals    = getDataFromLinesStartingWith('vn');
+    data.texCoords  = getDataFromLinesStartingWith('vt');
+    data.faces      = getDataFromLinesStartingWith('f');
+
+    for (var f = 0; f < data.faces.length; f++) {
+        var face = data.faces[f];
+
+        if (face.length === 4) {
+            data.faces[f] = [face[0],face[1],face[2]];
+            data.faces.push([face[1],face[2],face[3]]);
         }
     }
 
-    // Parse normals
-    data.normals = obj.match(/^vn.+/gm);
-    if (data.normals !== null) {
-        console.log("Parsing normals");
-        for (var i = 0; i < data.normals.length; i++) {
-            data.normals[i] = data.normals[i].match(/[0-9\.]+/g);
-            counts[1]++;
-        }
-        data.normals = data.normals.flatten();
-    }
-
-    // Parse texture coordinates
-    data.texCoords = obj.match(/^vt.+/gm);
-    if (data.texCoords !== null) {
-        console.log("Parsing texture coordinates");
-        for (var i = 0; i < data.texCoords.length; i++) {
-            data.texCoords[i] = data.texCoords[i].match(/[0-9\.]+/g);
-            counts[2]++;
-        }
-        data.texCoords = data.texCoords.flatten();
-        data.texCoords = data.texCoords.flatten();
-    }
-    // parse faces
-    // faces start with `f `
-    // `f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 [v4/vt4/vn4]
-    model.faces = obj.match(/^f[\s.]+/gm); 
-    if (model.faces != null) {}
-    /*
-    model.indices = {};
-    console.log("parsing faces");
+    model.vertices   = [];
+    model.normals    = [];
+    model.texCoords  = [];
     // face format : v/vt/vn
+    for (var f = 0; f < data.faces.length; f++) {
+        for (var v = 0; v < data.faces[f].length; v++) {
+            var vertex = data.faces[f][v].split('/');;
 
-    // pull the vertices from each face
-    model.indices.vertex = [];
-    for (var i = 0; i < model.faces.length; i++) {
-        // vertex indices match ` 123/`
-        model.indeces.vertex.push(/\s\d*\//g);
-        model.faces[i] = model.faces[i].match(/\s\d*\//g);
-
-    }
-    */
-
-// Parse faces
-model.faces = obj.match(/^f.+/gm);
-if (model.faces !== null) {
-    console.log("Parsing faces");
-    // face format : v/vt/vn
-    for (var i = 0; i < model.faces.length; i++) {
-        // Parse face vertices
-        model.faces[i] = model.faces[i].match(/\s\d*\//g);
-        for (var j = 0; j < model.faces[i].length; j++) {
-            model.faces[i][j] = model.faces[i][j].slice(1, model.faces[i][j].length-1) - 1; // -1 to force into numeral form and change to zero indexing
+            model.vertices  = 
+                model.vertices.concat (data.vertices [vertex[0]-1]); // v
+            model.texCoords = 
+                model.texCoords.concat(data.texCoords[vertex[1]-1]); // vt
+            model.normals   = 
+                model.normals.concat  (data.normals  [vertex[2]-1]); // vn
         }
+    };
 
+    model.vertexCount = model.vertices.length / 3;
 
+    console.log(data.vertices.length + " unique vertices" +
+            "\n" + data.faces.length + " faces" +
+            "\nfor a total of " + model.vertexCount + " model vertices"
+            );
+    console.groupEnd();
 
-        //model.faces[i] = model.faces[i].match(/[0-9\/]+/g);
-
-        // Convert quads to triangles
-        /*
-           if (model.faces[i].length == 4) {
-           model.faces[i] = [
-           model.faces[i][0],model.faces[i][1],model.faces[i][2],
-           model.faces[i][1],model.faces[i][2],model.faces[i][3]
-           ];
-           }
-
-           for (var j = 0; j < model.faces[i].length; j++) {
-           model.faces[i][j] = (model.faces[i][j]).split("/");
-           }
-           */
-        counts[3]++;
-    }
-    model.faces = model.faces.flatten();
-    model.faces = model.faces.flatten();
-
-    // convert to numbers
-    for (var i = 0; i < model.faces.length; i++) {
-        model.faces[i] = model.faces[i] * 1; 
-        counts[0]++;
-    }
-}
-
-console.log("Processed\n  " + counts[0] + " vertices" +
-        "\n  " + counts[1] + " normals" +
-        "\n  " + counts[2] + " texture coordinates" +
-        "\n  " + counts[3] + " faces"
-        );
-console.groupEnd();
-return model;
+    model.data = data;
+    return model;
 }
