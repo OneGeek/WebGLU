@@ -36,6 +36,27 @@ $W.renderer.renderObject = function RNDR_render(obj, mat, drawFun) {
         console.error(e);
     }
 };
+
+$W.renderer.drawArrays = function OBJ_drawArrays(obj, mat) {
+    try {
+        $W.GL.drawArrays(obj.type, 0, obj.vertexCount);
+    }catch (e) {
+        console.error("drawArrays Failure");
+        console.error(e);
+    }
+};
+
+$W.renderer.drawElements = function OBJ_drawElements(obj, mat) {
+    var elements = obj.arrayBuffers.wglu_internal_elements;
+    $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, elements.glBuffer);
+    try {
+        $W.GL.drawElements(obj.type, elements.data.length, 
+            $W.GL.UNSIGNED_SHORT, elements.data);
+    }catch (e) {
+        console.error("drawElements Failure");
+        console.error(e);
+    }
+};
 /** @author Benjamin DeLillo */
 /*
      *  Copyright (c) 2009 Benjamin P. DeLillo
