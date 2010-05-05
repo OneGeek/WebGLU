@@ -65,15 +65,14 @@ $W.Material = function(name, program) {
                     // type is Image, Canvas, or Video. this calls
                     // ImageTexture, CanvasTexture or VideoTexture.
                     if (textureDef.type === "Image") {
-                        $W.ImageTexture(textureDef.name, textureDef.path);
+                        new $W.ImageTexture(textureDef.name, textureDef.path);
 
                     }else if (textureDef.type == "Canvas") {
-                        $W.CanvasTexture(textureDef.name, 
+                        new $W.CanvasTexture(textureDef.name, 
                                 document.getElementById(textureDef.element_id));
 
                     }else if (textureDef.type === "Video") {
-                        $W.VideoTexture(textureDef.name, textureDef.path);
-
+                        new $W.VideoTexture(textureDef.name, textureDef.path);
                     }
 
                     this.textures.push(textureDef.name);
