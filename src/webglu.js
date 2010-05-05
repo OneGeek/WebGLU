@@ -595,6 +595,14 @@ $W = {
             this.scale.elements    = [x, y, z]; 
         }
 
+        /** Set the x y and z components of the object's scale to the given
+         * value.
+         * @param {Number} s New scale of the object.
+         */
+        this.setScaleUniformly = function(s) { 
+            this.scale = $V([s,s,s]); 
+        };
+
 
         this.equals = function(other) {
             if ((other.scale !== undefined &&
