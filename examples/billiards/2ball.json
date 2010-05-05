@@ -1,0 +1,14 @@
+{
+    name: "2ball",
+    program: {
+        name: "2ball" ,
+        shaders: [
+            {name:"textured_vs", path:$W.paths.shaders+"wglu_texture.vert"},
+            {name:"textured_fs", path:$W.paths.shaders+"wglu_texture.frag"}
+        ] 
+    },
+
+    textures: [
+        {name:"2ball", type:"Image", path:"2.jpg"}
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    name: "8ball",
+    program: {
+        name: "8ball" ,
+        shaders: [
+            {name:"textured_vs", path:$W.paths.shaders+"wglu_texture.vert"},
+            {name:"textured_fs", path:$W.paths.shaders+"wglu_texture.frag"}
+        ] 
+    },
+
+    textures: [
+        {name:"8ball", type:"Image", path:"8.jpg"}
+    ]
+}

@@ -6,16 +6,11 @@
 <script type="application/x-javascript">
 function init() {
     $W.useGameGLU();
-    $W.useCrazyGLU();
 
     //--Initialize WebGLU, shaders
     with ($W) {
         if (!initialize()) return false;
-
-        newProgram('textured');
-        programs.textured.attachShader('texVS', $W.paths.shaders + 'texture.vert');
-        programs.textured.attachShader('texFS', $W.paths.shaders + 'texture.frag');
-
+        useCrazyGLU();
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         camera.setPosition(10,10,15);
         camera.setTarget(1.5,2,0);
@@ -63,12 +58,11 @@ function createObjects() {
     }
 
     var setupTextures = function() {
-        new $W.texture.Image('b1', '1.jpg');
-        new $W.texture.Image('b8', '8.jpg');
-        new $W.texture.Image('b15', '15.jpg');
-        new $W.texture.Image('cue', 'cue.png');
-        new $W.texture.Image('check', 'check.png');
-        new $W.texture.Image('tiger', 'tiger.png');
+        new $W.Material('1ball.json');
+        new $W.Material('2ball.json');
+        new $W.Material('8ball.json');
+        new $W.Material('15ball.json');
+        new $W.Material('cueball.json');
     }
 
     var scale = 0.1;
@@ -97,18 +91,15 @@ function createObjects() {
 
     balls[0] = new $W.SimulatedObject("sphere");
     balls[0].setPosition(0,1,4);
-    balls[0].setShaderProgram('textured');
-    balls[0].setTexture('cue', 'sampler');
+    balls[0].setMaterial('cueball');
 
     balls[1] = new $W.SimulatedObject("sphere",false);
     balls[1].setPosition(1,1,-5);
-    balls[1].setShaderProgram('textured');
-    balls[1].setTexture('b15', 'sampler');
+    balls[1].setMaterial('15ball');
 
     balls[2] = new $W.SimulatedObject("sphere");
     balls[2].setPosition(-1,1,-5);
-    balls[2].setShaderProgram('textured');
-    balls[2].setTexture('b1', 'sampler');
+    balls[2].setMaterial('1ball');
 
     walls[0] = new $W.SimulatedObject   ("wall");
     walls[0].setPosition(tableHalfWidth,1,0);
@@ -148,7 +139,6 @@ function createObjects() {
     for (var i = 0; i < balls.length; i++) {
         balls[i].name = 'ball';
         fillBallData(balls[i]);
-        balls[i].setShaderProgram('textured');
         balls[i].setScaleUniformly(scale);
         balls[i].radius = 0.08 / scale;
         balls[i].mass = 1;
