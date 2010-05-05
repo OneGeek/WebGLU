@@ -31,11 +31,13 @@ $W.POSITION = 'position';
 $W.constants = {};
 $W.constants.LightSourceUniform = "wglu_LightSource";
 
-$W.uniformActions[$W.constants.LightSourceUniform] = 
+/*
+$W.defaultUniformActions[$W.constants.LightSourceUniform] = 
     function(uniform, object, material) {
         $W.GL.uniform4fv(this.location, false, 
                 new WebGLFloatArray($W.lights[0].position));
 };
+*/
 
 $W.usePicking = function() {
     $W.newProgram('pick');
