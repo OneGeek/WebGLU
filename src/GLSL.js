@@ -121,13 +121,12 @@ $W.GLSL.initialize = function() {
  * @param {String} name Attributes have the name they are given in
  * the shader code.
  */
-$W.GLSL.Attribute = function (name, length) {
+$W.GLSL.Attribute = function (name, length, location) {
     this.name = name;
     this.length = length;
-    this.location = null;
-    this.buffer = null;
+    this.location = location;
     this.clone = function() {
-        return new $W.GLSL.Attribute(this.name, this.length);
+        return new $W.GLSL.Attribute(this.name, this.length, this.location);
     }
 };
 
@@ -139,23 +138,16 @@ $W.GLSL.Attribute = function (name, length) {
  * @param {Function} action The function to update the data in the 
  * uniform each frame.
  */
-$W.GLSL.Uniform = function (name, action, type) {
+$W.GLSL.Uniform = function (name, action, type, location) {
     this.name = name;
-    this.location = 0;  // only used by the shader program
+    this.location = location;  // only used by the shader program
     this.action = action;
     this.type = type;
 
     this.clone = function() {
-        return new $W.GLSL.Uniform(this.name, this.action, this.type);
+        return new $W.GLSL.Uniform(this.name, this.action, this.type, this.location);
     }
 };
-
-$W.GLSL.useLighting = function(shader) {
-
-};
-
-
-
 
 
 /** @class Handles compilation, attributes, and uniforms of a GLSL
@@ -247,64 +239,6 @@ $W.GLSL.Shader = function(name, src, type) {
         return source;
     };
 
-    /** Set up a Uniform for the modelview matrix.
-     * Creates the appropriate action for sending the matrix
-     * each frame.
-     * @param {String} name Name of the uniform in the shader.
-     */
-    this.setModelViewUniform = function(name) {
-        console.log("using '" + name + "' as ModelView uniform");
-
-        var uniform = this.uniforms.findByAttributeValue('name', name);
-
-        uniform.action = function() {
-            $W.GL.uniformMatrix4fv(this.location, false, 
-                    $W.modelview.getForUniform());
-        };
-    };
-
-    /** Set up a Uniform for the projection matrix.
-     * Creates the appropriate action for sending the matrix
-     * each frame.
-     * @param {String} name Name of the uniform in the shader.
-     */
-    this.setProjectionUniform = function(name) {
-        console.log("using '" + name + "' as Projection uniform");
-
-        var uniform;
-        for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name === name) {
-                uniform = this.uniforms[i];
-            }
-        }
-
-        uniform.action = function() {
-            $W.GL.uniformMatrix4fv(this.location, false, 
-                    $W.projection.getForUniform());
-        };
-    };
-
-    /** Set up a Uniform for the normal matrix.
-     * Creates the appropriate action for sending the matrix
-     * each frame.
-     * @param {String} name Name of the uniform in the shader.
-     */
-    this.setNormalMatrixUniform = function(name) {
-        console.log("using '" + name + "' as normal transformation matrix");
-
-        var uniform;
-        for (var i = 0; i < this.uniforms.length; i++) {
-            if (this.uniforms[i].name === name) {
-                uniform = this.uniforms[i];
-            }
-        }
-
-        uniform.action = function() {
-            $W.GL.uniformMatrix3fv(this.location, false, 
-                    $W.util.getNormalMatrixForUniform());
-        };
-    }
-
     /** @returns The raw WebGL shader object */
     this.getGLShader = function() {
         // Ensure the shader is valid before we return it
@@ -389,9 +323,9 @@ $W.GLSL.Shader = function(name, src, type) {
         $W.GL.compileShader(shader);
 
         if (!$W.GL.getShaderParameter(shader, $W.GL.COMPILE_STATUS)) {
-            console.groupCollapsed('Compile error');
+            console.error("Compile error in `" + this.name + "`\n" +
+                    $W.GL.getShaderInfoLog(shader));
             console.log(source);
-            console.groupEnd();
             glShader = null;
         } else {
             clean();
@@ -418,6 +352,7 @@ $W.GLSL.ShaderProgram = function(name) {
 
     /** Global name of the shader program. */
     this.name = name;
+    $W.programs[name] = this;
 
     /** WebGL shader program object. */
     this.glProgram  = null;
@@ -460,7 +395,9 @@ $W.GLSL.ShaderProgram = function(name) {
 
                 // but attribute locations are unique to each program
                 attribute.location = $W.GL.getAttribLocation(this.glProgram, attribute.name);
-                attribute.buffer   = $W.GL.createBuffer();
+
+                // buffers are unique to each object
+                //attribute.buffer   = $W.GL.createBuffer();
 
                 this.attributes.push(attribute);
             }
@@ -593,6 +530,7 @@ $W.GLSL.ShaderProgram = function(name) {
             console.log("already exists, deleting and relinking");
             $W.GL.deleteProgram(this.glProgram);
             this.attributes = [];
+            this.uniforms = [];
             this.glProgram = null;
         }
 
@@ -617,10 +555,9 @@ $W.GLSL.ShaderProgram = function(name) {
 
         // Check for errors
         if (!$W.GL.getProgramParameter(this.glProgram, $W.GL.LINK_STATUS)) {
-            console.group('Link error');
-            console.error($W.GL.getProgramInfoLog(this.glProgram));
+            console.error("Link error in `" + this.name + "`\n" +
+                    $W.GL.getProgramInfoLog(this.glProgram));
             dirty();
-            console.groupEnd();
         }
             
         clean();
@@ -728,3 +665,28 @@ $W.GLSL.ShaderProgram = function(name) {
 
     console.groupEnd();
 };
+/** @author Benjamin DeLillo */
+/*
+     *  Copyright (c) 2009 Benjamin P. DeLillo
+     *  
+     *  Permission is hereby granted, free of charge, to any person
+     *  obtaining a copy of this software and associated documentation
+     *  files (the "Software"), to deal in the Software without
+     *  restriction, including without limitation the rights to use,
+     *  copy, modify, merge, publish, distribute, sublicense, and/or sell
+     *  copies of the Software, and to permit persons to whom the
+     *  Software is furnished to do so, subject to the following
+     *  conditions:
+     *  
+     *  The above copyright notice and this permission notice shall be
+     *  included in all copies or substantial portions of the Software.
+     *  
+     *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+     *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+     *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+     *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+     *  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+     *  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+     *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+     *  OTHER DEALINGS IN THE SOFTWARE.
+*/
