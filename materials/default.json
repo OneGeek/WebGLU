@@ -1,0 +1,10 @@
+{
+    name: "wglu_default",
+    program: {
+        name: "default" ,
+        shaders: [
+            {name:"wglu_default_vs", path:$W.paths.shaders+"default.vert"},
+            {name:"wglu_default_fs", path:$W.paths.shaders+"default.frag"}
+        ] 
+    }
+}

@@ -10,6 +10,7 @@ function init() {
     $W.camera.setPosition(-2,0,17);
     $W.camera.setTarget(1,1,0);
     $W.camera.yfov = 90;
+    $W.camera.aspectRatio = 1;
     return true;
 }
 
@@ -50,7 +51,7 @@ function makeFlock() {
      * boids, where the first argument is the number of boids and
      * the second is the model to use for each.
      */
-    return new $W.OS.Flock(40, boid);
+    return new $W.OS.Flock(30, boid);
 }
 
 function start() {
@@ -68,6 +69,7 @@ function start() {
 }
 </script> </head>
 <body onload='start()'>
+<h1><strong>Boids</strong></h1> behavioral simulation in WebGL using WebGLU
 <div id="glCanvas"> <div id="overlay"></div>
 <canvas id='canvas' width='500' height='500'></canvas><br>
 </div>
