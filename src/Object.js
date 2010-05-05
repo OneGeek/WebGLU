@@ -23,7 +23,6 @@ $W.ArrayBuffer = function(name, data) {
         try {
             this.bind();
             $W.GL.enableVertexAttribArray(attrib.location);
-            //$W.GL.bufferData($W.GL.ARRAY_BUFFER, this.glData, $W.GL.STATIC_DRAW);
             $W.GL.vertexAttribPointer(attrib.location, attrib.length,
                     $W.GL.FLOAT, false, 0, 0);
             this.unbind();
@@ -96,10 +95,6 @@ $W.Object = function (type, flags) {
     /* The type of rendering to use for this object */
     this.type = type; 
 
-    this._elements = false;
-    this._elementBuffer = null;
-    this._elementCount = 0;
-
     this.material = $W.materials['wglu_default'];
 
     this.arrayBuffers = [];
@@ -109,32 +104,8 @@ $W.Object = function (type, flags) {
     /** The animation for this object. */
     this.animation = new $W.anim.ProceduralAnimation();
 
-    this._drawFunction = null;
-
-    this._drawArrays = function() {
-        return (function OBJ_drawArrays(obj, mat) {
-            try {
-                $W.GL.drawArrays(obj.type, 0, obj.vertexCount);
-            }catch (e) {
-                console.error("drawArrays Failure");
-                console.error(e);
-            }
-        });
-    };
-
-    this._drawElements = function() {
-        return (function OBJ_drawElements(obj, mat) {
-            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, obj._elementBuffer);
-            try {
-                $W.GL.drawElements(obj.type, obj._elementCount, 
-                    $W.GL.UNSIGNED_SHORT, obj._elements);
-            }catch (e) {
-                console.error("drawElements Failure");
-                console.error(e);
-            }
-        });
-    };
-
+    // drawArrays by default
+    this._drawFunction = $W.renderer.drawArrays;
 
     /** Name of shader program used to render this object */
     /** Add an object as a child to this object.
@@ -154,19 +125,22 @@ $W.Object = function (type, flags) {
     this.setElements = function(elements) {
         // don't use drawElements
         if (elements === false) {
-            this._elements = false;
-            this._drawFunction = this._drawArrays();
+            this.arrayBuffers.wglu_internal_elements = undefined;
             $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, null);
 
         // use drawElements
         }else {
-            this._elements = elements.flatten();
-            this._elementCount = this._elements.length;
-            this._elementBuffer = $W.GL.createBuffer();
-            this._drawFunction = this._drawElements();
-            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, this._elementBuffer);
-            $W.GL.bufferData($W.GL.ELEMENT_ARRAY_BUFFER,new WebGLUnsignedShortArray(this._elements), 
+            this._drawFunction = $W.renderer.drawElements;
+
+            var elementAB = new $W.ArrayBuffer('wglu_internal_elements',
+                    $W.util.flattenArray(elements));
+
+            $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, elementAB.glBuffer);
+            $W.GL.bufferData($W.GL.ELEMENT_ARRAY_BUFFER,
+                    new WebGLUnsignedShortArray( elementAB.data), 
                     $W.GL.STATIC_DRAW);
+
+            this.arrayBuffers.wglu_internal_elements = elementAB;
         }
     };
 
@@ -197,12 +171,6 @@ $W.Object = function (type, flags) {
         this.arrayBuffers[name].buffer();
     };
 
-    // These allow us to do array or element drawing without
-    // testing a boolean every frame
-
-    // drawArrays by default
-    this._drawFunction = this._drawArrays();
-    
     /** draw this object at the given postion, rotation, and scale
      * @param {3 Element Array} pos Position array.
      * @param {Matrix} rot Rotation matrix.
@@ -295,14 +263,6 @@ $W.Object = function (type, flags) {
             this.scale.e(3) * this.animation.scale.e(2),
             this.scale.e(3) * this.animation.scale.e(3)
         ]);
-    };
-
-    /** Set the x y and z components of the object's scale to the given
-     * value.
-     * @param {Number} s New scale of the object.
-     */
-    this.setScaleUniformly = function(s) { 
-        this.scale = $V([s,s,s]); 
     };
 
     //console.groupEnd();
