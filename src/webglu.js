@@ -47,6 +47,10 @@ $W = {
         /** Where external libraries, like Sylvester, are stored */
         external : "../../external/",
 
+        textures : "../../textures/",
+
+        materials : "../../materials/",
+
         /** Which Sylvester lib to load
          * Sylvester.src.js or Sylvester.js
          * */
@@ -62,14 +66,17 @@ $W = {
     pickables  :[],
     objects    :[],
 
-    /** GLSL shaders */
+    /** Shaders */
     shaders  : [],
 
-    /** GLSL shader programs */
+    /** Shader Programs */
     programs : [],
 
     /** Textures */
     textures : [],
+
+    /** Materials */
+    materials: [],
 
     /** Model-View transform matrix */
     modelview:null,
@@ -84,6 +91,7 @@ $W = {
 
     /** Keeps track of the FPS */
     fpsTracker:null,
+
     /** Quick access to FPS */
     FPS : 0,
 
@@ -109,26 +117,17 @@ $W = {
         $W.shaders = [];
         $W.programs = [];
         $W.textures = [];
+        $W.materials = [];
     },
 
     /** Create a new ShaderProgram and add it to the program list.
      * @param {String} name The global name for this program.
      */
     newProgram: function(name) {
-        this.programs[name] = new $W.GLSL.ShaderProgram(name);
+        console.warn('$W.newProgram is deprecated, use $W.GLSL.ShaderProgram directly');
+        return new $W.GLSL.ShaderProgram(name);
     },
             
-    /** Add the given object to the object list.
-     * @param {Object} obj The object to add.
-     */
-    addObject: function(obj) {
-        this.objects.push(obj);
-    },
-
-    clearObjects: function() {
-        this.objects = [];
-    },
-
     _setupMatrices: function() {
         $W.modelview.loadIdentity();
         $W.projection.loadIdentity();
@@ -162,18 +161,22 @@ $W = {
         $W._drawObjects();                            
     },
 
-	_updateState : function() {
+	_updateState : function $W_updateState() {
 		$W.timer.tick();
 		$W.fpsTracker.update($W.timer.dt);
 		$W.FPS = Math.round($W.fpsTracker.fps);
 	},
 
-    /** Update all objects. */
+    /** Update all objects and textures. */
 	update : function $W_update() {
 		$W._updateState();
 
         for (var i = 0; i < this.objects.length; i++) {
             $W.objects[i].update($W.timer.dt);
+        }
+
+        for (var i = 0; i < this.textures.length; i++) {
+            $W.textures[i].update();
         }
 
         $W.camera.update();
@@ -767,9 +770,15 @@ $W = {
                 throw e; 
             }
 
-            console.log("\tCompleted with status: " + xhr.status);
 
-            return xhr.responseText;
+            if (xhr.status !== 200) {
+                console.error("\tCompleted with status: " + xhr.status);
+                return "File load error: " + xhr.status;
+            }else {
+                console.log("\tCompleted with status: " + xhr.status);
+                return xhr.responseText;
+            }
+
         },
 
         include: function(path) {
@@ -802,10 +811,13 @@ $W = {
         $W.util.loadSylvester();
 
         $W.util.include($W.paths.libsrc + 'Constants.js');
+        $W.util.include($W.paths.libsrc + 'DefaultUniformActions.js');
         $W.util.include($W.paths.libsrc + 'GLSL.js');
         $W.util.include($W.paths.libsrc + 'GLU.js');
         $W.util.include($W.paths.libsrc + 'Object.js');
         $W.util.include($W.paths.libsrc + 'Texture.js');
+        $W.util.include($W.paths.libsrc + 'Material.js');
+        $W.util.include($W.paths.libsrc + 'Renderer.js');
 
         $W.texture = {};
         $W.texture.Texture = $W.Texture;
@@ -815,6 +827,8 @@ $W = {
 
         // Prep the shader subsystem
         $W.GLSL.initialize();
+
+
 
         // create the matrix stacks we'll be using to store transformations
         $W.modelview  = new $W.GLU.MatrixStack();
@@ -829,6 +843,9 @@ $W = {
             console.log("WebGL init skipped");
         }else {
             success = $W.initWebGL(canvasNode);
+            new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
+            new $W.Material($W.paths.materials + 'default.json');
+
         }
 
         console.groupEnd();
@@ -918,12 +935,6 @@ $W = {
             // on by default
             $W.GL.enable(this.GL.DEPTH_TEST);
 
-            $W.newProgram('default');
-
-            // XXX Fragile paths
-            $W.programs['default'].attachShader('defaultVS', $W.paths.shaders + 'default.vert');
-            $W.programs['default'].attachShader('defaultFS', $W.paths.shaders + 'default.frag');
-            $W.programs['default'].link();
             
             $W.GL.viewport(0, 0, $W.canvas.width, $W.canvas.height);
 
