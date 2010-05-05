@@ -535,6 +535,17 @@ $W.util.extendArray = function() {
         }
         return res;
     };
+    $W.util.flattenArray = function UTIL_flattenArray(arr) {
+        var res = [];
+        if (arr[0].length !== undefined) {
+            for (var i = 0; i < arr.length; i++) {
+                res = res.concat(arr[i]);
+            }
+        }else {
+            res = arr;
+        }
+        return res;
+    };
 
     Array.prototype.remove = function(item) {
         var res = [];
