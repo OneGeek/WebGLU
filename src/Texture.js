@@ -87,10 +87,12 @@ $W.ImageTexture = function(name, src) {
         var gl = $W.GL;
         console.group('Loading texture `' + name + "`");
         this.texture.bind();
+
         gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.image);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
+
+        this.texture.unbind();
         console.log('Done');
         console.groupEnd();
     }
