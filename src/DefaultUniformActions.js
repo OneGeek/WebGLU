@@ -55,6 +55,26 @@ $W.setupUniformActions = function() {
             }
         };
 
+    genMultiTextureAction = function DUA_genMultiTextureAction(texNum) {
+        eval("var action = \n"+
+"        function DUA_MultiTextureAction"+texNum+"(uniform, object, material) {\n"+
+"           try {\n"+
+"               $W.GL.activeTexture($W.GL.TEXTURE0);\n"+
+"               if (typeof(material.textures["+texNum+"]) === 'undefined') {\n"+
+"                   $W.textures.wglu_internal_missing_texture.bind();\n"+
+"               }else {\n"+
+"                   $W.textures[material.textures["+texNum+"]].bind();\n"+
+"               }\n"+
+"               $W.GL.uniform1i(uniform.location, "+texNum+");\n"+
+"           }catch (e) {\n"+
+"               console.error('Material texture uniform error');\n"+
+"               console.error(e);\n"+
+"           }\n"+
+"        }");
+        return action;
+    };
+            
+
 
     $W.uniformActions = [];
     $W.uniformActions[$W.constants.ModelViewUniform]  = ModelViewAction;
