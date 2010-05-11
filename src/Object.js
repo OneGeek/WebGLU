@@ -171,6 +171,17 @@ $W.Object = function (type, flags) {
         this.arrayBuffers[name].buffer();
     };
 
+    this.fillArrays = function OBJ_fillArrays(arrays) {
+        for (var i = 0; i < arrays.length; i++) {
+            var arr = arrays[i];
+            if (arr[0] === 'wglu_elements') {
+                this.setElements(arr[1]);
+            }else {
+                this.fillArray(arr[0], arr[1]);
+            }
+        }
+    };
+
     /** draw this object at the given postion, rotation, and scale
      * @param {3 Element Array} pos Position array.
      * @param {Matrix} rot Rotation matrix.
@@ -179,8 +190,8 @@ $W.Object = function (type, flags) {
     this.drawAt = function OBJ_drawAt(pos, rot, scale) {
             $W.modelview.push();
 
-            $W.modelview.translate(pos);
             $W.modelview.multiply(rot);
+            $W.modelview.translate(pos);
             $W.modelview.scale(scale);
 
             for (var i = 0; i < this.children.length; i++) {
