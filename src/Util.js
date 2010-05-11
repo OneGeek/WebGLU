@@ -491,6 +491,19 @@ $W.util.loadSylvester = function() {
 };
 
 $W.util.extendArray = function() {
+    $W.util.searchArrayByPropertyValue = function(arr, propertyName, value) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i][propertyName] === value) {
+                return arr[i];
+            }
+        }
+        return null;
+    };                                              
+
+    $W.util.searchArrayByName = function(arr, name) {
+        return $W.util.searchArrayByPropertyValue(arr, 'name', name);
+    };
+
     Array.prototype.findByPropertyValue = function(propertyName, value) {
         for (var i = 0; i < this.length; i++) {
             if (this[i][propertyName] === value) {
