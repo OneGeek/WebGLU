@@ -159,6 +159,8 @@ $W = {
         $W._setupMatrices();
 
         $W._drawObjects();                            
+
+        $W.GL.flush();
     },
 
 	_updateState : function $W_updateState() {
@@ -194,17 +196,18 @@ $W = {
 		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
 	},
 
-    Framebuffer:function() {
+    Framebuffer:function(name) {
         console.log("Creating framebuffer");
         var GL = $W.GL;
         var RBUF = GL.RENDERBUFFER;
         var FBUF = GL.FRAMEBUFFER;
 
+        this.name = name;
         this.glFramebuffer = GL.createFramebuffer();
         this.glRenderbuffers = [];
-        this.glTextures = [];
+        this.textures = [];
 
-        this.isGood = function() {
+        this.isGood = function FBUF_isGood() {
             try {
                 if (!GL.isFramebuffer(this.glFramebuffer)) {
                     throw("Invalid framebuffer");
@@ -214,7 +217,7 @@ $W = {
                     case GL.FRAMEBUFFER_COMPLETE:
                         break;
                     default:
-                        throw("Incomplete framebuffer");
+                        throw("Incomplete framebuffer: " + status);
                 }
             }catch (e) {
                 console.error(e);
@@ -222,50 +225,53 @@ $W = {
             }
             return true;
         };
-        //this.isGood();
 
-        this.bind = function() {
+        this.bind = function FBUF_bind(){
             GL.bindFramebuffer(FBUF, this.glFramebuffer);
         };
 
-        this.unbind = function() {
+        this.unbind = function FBUF_unbind(){
             GL.bindFramebuffer(FBUF, null);
         };
 
-        this.attachRenderbuffer = function(storageFormat, width, height, attachment) {
+        this.attachRenderbuffer = function FBUF_attachRenderbuffer(storageFormat, width, height, attachment) {
             var rBuffer = GL.createRenderbuffer();
             this.glRenderbuffers.push(rBuffer);
             
+            this.bind();
             GL.bindRenderbuffer(RBUF, rBuffer);
             GL.renderbufferStorage(RBUF, storageFormat, width, height);
-            GL.bindRenderbuffer(RBUF, null);
-
             GL.framebufferRenderbuffer(FBUF, attachment, RBUF, rBuffer);
+            GL.bindRenderbuffer(RBUF, null);
+            this.unbind();
         };
 
-        this.attachExistingTexture = function(texture, attachment) {
-            this.glTextures.push(texture.glTexture);
-            GL.framebufferTexture2D(FBUF, attachment, GL.TEXTURE_2D, texture.glTexture, new WebGLUnsignedByteArray(4*500*500));
+        this.attachExistingTexture = function FBUF_attachExistingTexture(texture, attachment) {
+            this.textures.push(texture);
+            texture.bind();
+            GL.framebufferTexture2D(GL.FRAMEBUFFER, attachment, GL.TEXTURE_2D, texture.glTexture, 0);
+            texture.unbind();
         }
 
-        this.attachNewTexture = function(format, width, height, attachment) {
-            var texture = new $W.texture.Texture('Texture' + $W.textures.length);
+        this.attachNewTexture = function FBUF_attachNewTexture(format, width, height, attachment) {
+            var texture = new $W.Texture(this.name + 'Texture' + this.textures.length);
 
             texture.bind();
             try{
                 GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
                           0, format, $W.GL.UNSIGNED_BYTE, null);
             } catch (e) {
-                var tex = new WebGLUnsignedByteArray(4 * width * height);
+                console.warn('Using empty texture fallback');
+                var storage = new WebGLUnsignedByteArray(4 * width * height);
                 GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
-                          0, format, $W.GL.UNSIGNED_BYTE, tex);
+                          0, format, $W.GL.UNSIGNED_BYTE, storage);
             }
             texture.unbind();
 
             this.attachExistingTexture(texture, attachment);
         }
 
-        this.attachTexture = function() {
+        this.attachTexture = function FBUF_attachTexture() {
             this.bind();
             if (arguments.length === 4) {   
                 this.attachNewTexture.apply(this, arguments);
@@ -649,6 +655,10 @@ $W = {
             this.target.elements = [x, y, z];
         }
 
+        this.dir = function() {
+            return (this.target.subtract(this.position)).toUnitVector();
+        };
+
         /** Per frame update.
          * Replace as needed.
          */
@@ -852,7 +862,7 @@ $W = {
         }else {
             success = $W.initWebGL(canvasNode);
             new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
-            new $W.Material($W.paths.materials + 'default.json');
+            new $W.Material(null, $W.paths.materials + 'default.json');
 
         }
 
