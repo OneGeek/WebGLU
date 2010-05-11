@@ -1,4 +1,4 @@
-$W.Material = function(name, program) {
+$W.Material = function(name) {
 
     console.group("Creating material `" + name + "`");
 
@@ -10,10 +10,16 @@ $W.Material = function(name, program) {
     this.framebuffer= null;
 
     this.setUniformAction = function MAT_setUniformAction(name, action) {
-        this.uniforms.findByName(name).action = action;
+        var uniform = $W.util.searchArrayByName(this.uniforms, name);
+        if (uniform !== null) { 
+            uniform.action = action;
+        }else {
+            console.warn("Cannot set uniform action for nonexistant uniform `"+
+                    name + "`");
+        }
     };
 
-    this.reset = function MAT_reset() {
+    this.setupUniforms = function MAT_setupUniforms() {
         this.uniforms = [];
         this.attributes = [];
 
@@ -54,7 +60,7 @@ $W.Material = function(name, program) {
         }
 
         this.program = program;
-        this.reset();
+        this.setupUniforms();
 
         // If textures specified in the material do not exist, create them.
         if (typeof(materialDef.textures) !== 'undefined') {
@@ -76,30 +82,53 @@ $W.Material = function(name, program) {
                     }
 
                     this.textures.push(textureDef.name);
-
-                    var sampler = this.uniforms.findByName('wglu_mat_texture' + i);
-                    sampler.action = MaterialTextureAction;
+                    this.setupTextureUniforms();
                 }
             }
         }
     };
 
+    this.setupTextureUniforms = function MAT_setupTextureUniforms() {
+        for (var i = 0; i < this.textures.length; i++) {
+            var action = genMultiTextureAction(i);
+            console.log(action);
+            this.setUniformAction('wglu_mat_texture'+i, action);
+        }
+    };
 
 
-    if (arguments.length === 2) {
+    // Manual
+    // Material(name)
+    if (arguments.length === 1) {
         this.name = name;
 
-        if (typeof(program) == "string") {
-            this.program = $W.programs[program];
+    // Load from file
+    // Material(name, path)
+    }else if (arguments.length === 2) {
+        this.initFromJSON($W.util.loadFileAsText(arguments[1]));
+
+        // Passing null as the name when loading from file
+        // uses the file's provided name.
+        if (name !== null) {
+            this.name = name;
+        }
+
+/*
+    // Manual
+    // Material(name, program)
+    }else if (arguments.length === 2) {
+        this.name = name;
+
+        // with existing program
+        if (typeof(arguments[2]) == "string") {
+            this.program = $W.programs[arguments[2]];
         }else {
-            this.program = program;
+            this.program = arguments[2];
         }
         this.program.use();
         this.reset();
 
-    // Load from file
-    }else if (arguments.length === 1) {
-        this.initFromJSON($W.util.loadFileAsText(name));
+*/
 
     }else {
         throw new Error("No Material() overload for " + arguments.length + " arguments");
