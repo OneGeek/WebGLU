@@ -1,6 +1,5 @@
 $W.Material = function(name) {
 
-    console.group("Creating material `" + name + "`");
 
     this.name = null;
     this.program = null;
@@ -43,6 +42,8 @@ $W.Material = function(name) {
         var materialDef = eval('(' + file.replace(/\n/g, '') + ')');
 
         this.name = materialDef.name;
+        $W.log('loading material `' + this.name + '` from file');
+        $W.indentLog();
 
         // If a program of the name specified in the material doesn't already
         // exist, create it with the specified parameters.
@@ -86,6 +87,7 @@ $W.Material = function(name) {
                 }
             }
         }
+        $W.dedentLog();
     };
 
     this.setupTextureUniforms = function MAT_setupTextureUniforms() {
@@ -100,6 +102,7 @@ $W.Material = function(name) {
     // Manual
     // Material(name)
     if (arguments.length === 1) {
+        $W.log("creating material `" + name + "`");
         this.name = name;
 
     // Load from file
@@ -135,7 +138,6 @@ $W.Material = function(name) {
     }
 
     $W.materials[this.name] = this;
-    console.groupEnd();
 };
 
 /** @author Benjamin DeLillo */

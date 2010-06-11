@@ -101,20 +101,12 @@ $W.GLSL.util = {
         } else if (shaderScript.type === "x-shader/x-vertex") {
             type = $W.GL.VERTEX_SHADER;
         } else {
-            console.log('invalid shader type' + shaderScript.type);
+            console.warn('invalid shader type' + shaderScript.type);
         }
     
         return type;
     }
 };
-
-
-
-/** Nothing, for now */
-$W.GLSL.initialize = function() {
-    
-};
-
 
 
 /** @class Holds data for shader attribute variables.
@@ -161,8 +153,8 @@ $W.GLSL.Uniform = function (name, action, type, location) {
  * $W.GL.FRAGMENT_SHADER<br>
  */
 $W.GLSL.Shader = function(name, src, type) {
-    //console.groupCollapsed("creating shader '" + name + "'");
-    console.group("creating shader '" + name + "'");
+    $W.log("creating shader '" + name + "'");
+    $W.indentLog();
     $W.shaders[name] = this;
 
     /** Name of the shader. */
@@ -204,9 +196,9 @@ $W.GLSL.Shader = function(name, src, type) {
     // programs which use this shader.
     var dirty = function() {
         glShader = null;
-        console.log("Marking shader `" + name + "` as dirty");
+        $W.log("Marking shader `" + name + "` as dirty", $W.LL.INFO);
         for (var i = 0; i < programs.length; i++) {
-            console.log('dirtying program `' + programs[i] + "`");
+            $W.log('dirtying program `' + programs[i] + "`", $W.LL.INFO);
             $W.programs[programs[i]].dirty();                            
         }
         isDirty = true;
@@ -243,14 +235,14 @@ $W.GLSL.Shader = function(name, src, type) {
     this.getGLShader = function() {
         // Ensure the shader is valid before we return it
         if (isDirty) {
-            console.log("'" + this.name + "' is dirty");
+            $W.info("'" + this.name + "' is dirty");
             if (!this.compile()) {
                 return false;
             }else {
                 clean();
             }
         }else {
-            console.log("'" + this.name + "' is clean, using");
+            $W.info("'" + this.name + "' is clean, using");
         }
         return glShader;
     }
@@ -262,7 +254,7 @@ $W.GLSL.Shader = function(name, src, type) {
      * each frame to prep/send this uniform to the shader.
      */
     this.addUniform = function(name, action, type) {
-        console.log("adding uniform '" + name + "'");
+        $W.debug("\tadding uniform '" + name + "'");
         if (!action) {
             action = function(){}
         }
@@ -275,7 +267,7 @@ $W.GLSL.Shader = function(name, src, type) {
      * @param {Integer} [length=3] The length of the attribute.
      */
     this.addAttribute = function(name, length) {
-        console.log("adding attribute '" + name + "'");
+        $W.debug("\tadding attribute '" + name + "'");
         if (!length) { length = 3; }
         this.attributes.push(new $W.GLSL.Attribute(name, length));
     }
@@ -306,9 +298,9 @@ $W.GLSL.Shader = function(name, src, type) {
      */
     this.compile = function() {
         if (this.type === $W.GL.VERTEX_SHADER) {
-            console.log("compiling '" + this.name + "' as vertex shader");
+            $W.debug("compiling '" + this.name + "' as vertex shader");
         }else if (this.type === $W.GL.FRAGMENT_SHADER) {
-            console.log("compiling '" + this.name + "' as vertex shader");
+            $W.debug("compiling '" + this.name + "' as vertex shader");
         }else {
             console.error("compiling '" + this.name + "' as unknown type " + this.type);
         }   
@@ -325,7 +317,6 @@ $W.GLSL.Shader = function(name, src, type) {
         if (!$W.GL.getShaderParameter(shader, $W.GL.COMPILE_STATUS)) {
             console.error("Compile error in `" + this.name + "`\n" +
                     $W.GL.getShaderInfoLog(shader));
-            console.log(source);
             glShader = null;
         } else {
             clean();
@@ -338,8 +329,7 @@ $W.GLSL.Shader = function(name, src, type) {
     source = $W.GLSL.util.handlePragmas(source);
     this.parseShaderVariables(source);
     this.compile();
-
-    console.groupEnd();
+    $W.dedentLog();
 };
 
 /** @class Handles data and linking for a shader program.
@@ -348,7 +338,8 @@ $W.GLSL.Shader = function(name, src, type) {
  * @param {String} name All shader programs need a unique name.
  */
 $W.GLSL.ShaderProgram = function(name) {
-    console.log("creating shader program '" + name + "'");
+    $W.log("creating shader program '" + name + "'");
+    $W.indentLog();
 
     /** Global name of the shader program. */
     this.name = name;
@@ -416,7 +407,7 @@ $W.GLSL.ShaderProgram = function(name) {
 
                 // locations are unique to each shader program (I think)
                 uniform.location = $W.GL.getUniformLocation(this.glProgram, uniform.name);
-                console.log(uniform.name + " " + uniform.location);
+                $W.debug(uniform.name + " " + uniform.location);
                 this.uniforms.push(uniform);
             }
         }
@@ -441,7 +432,7 @@ $W.GLSL.ShaderProgram = function(name) {
             console.error("Cannot set uniform `" + name + "` in shader program `" + this.name + "`, no uniform with that name exists");
             return;
         }else {
-            //console.log("Setting action for uniform `" + name + "` in shader program `" + this.name + "`");
+            $W.info("Setting action for uniform `" + name + "` in shader program `" + this.name + "`");
         }
 
         uniform.action = action;
@@ -472,7 +463,7 @@ $W.GLSL.ShaderProgram = function(name) {
             console.error("Cannot set uniform `" + name + "` in shader program `" + this.name + "`, no uniform with that name exists");
             return;
         }else {
-            //console.log("Setting uniform `" + name + "` in shader program `" + this.name + "`");
+            $W.log("Setting uniform `" + name + "` in shader program `" + this.name + "`", $W.LL.DEBUG);
         }
 
         //XXX deal with other types too
@@ -522,12 +513,12 @@ $W.GLSL.ShaderProgram = function(name) {
      * Will [re]compile all attached shaders if necessary.
      */
     this.link = function() {
-        console.group("linking program `" + this.name + "`");
+        $W.log("linking program `" + this.name + "`");
 
 
         // Only delete the program if one already exists
         if (this.glProgram !== null) {
-            console.log("already exists, deleting and relinking");
+            $W.log("already exists, deleting and relinking", $W.LL.INFO);
             $W.GL.deleteProgram(this.glProgram);
             this.attributes = [];
             this.uniforms = [];
@@ -544,10 +535,9 @@ $W.GLSL.ShaderProgram = function(name) {
             // if the shader is still dirty after calling get,
             // which should have cleaned it, then the compile failed.
             if (shader.isDirty()) {
-                console.log(this.shaders[i] + " failed to compile");
+                $W.warn(this.shaders[i] + " failed to compile");
             }else {
-                $W.GL.attachShader(this.glProgram, 
-                        $W.shaders[this.shaders[i]].getGLShader());
+                $W.GL.attachShader(this.glProgram, glShader);
             }	
         }
 
@@ -635,7 +625,7 @@ $W.GLSL.ShaderProgram = function(name) {
     }
 
     this._attachShader = function(shader) {
-        console.log("attaching '" + shader.name + "' to '" + this.name + "'");
+        $W.log("\tattaching '" + shader.name + "' to '" + this.name + "'", $W.LL.INFO);
         try{
             shader.addProgram(this.name);
         }catch(e) {
@@ -663,7 +653,7 @@ $W.GLSL.ShaderProgram = function(name) {
         return true;
     }
 
-    console.groupEnd();
+    $W.dedentLog();
 };
 /** @author Benjamin DeLillo */
 /*

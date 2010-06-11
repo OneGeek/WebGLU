@@ -11,7 +11,12 @@ $W.Texture = function(name) {
         $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
     };
 
-    $W.texture.update = function(){};
+    this.update = function(){};
+
+    this.bind();
+    $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_MIN_FILTER, $W.GL.LINEAR);
+    $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_WRAP_S, $W.GL.CLAMP_TO_EDGE);
+    $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_WRAP_T, $W.GL.CLAMP_TO_EDGE);
 
 };
 
@@ -38,7 +43,7 @@ $W.CanvasTexture = function(name, src) {
  * @param {String|Video} src Video path or DOM video element.
  */
 $W.VideoTexture = function(name, src) {
-    $W.texture.Texture.call(this, name);
+    $W.Texture.call(this, name);
 
     this.setSource = function(video) {
         // Path to video
@@ -79,13 +84,13 @@ $W.VideoTexture = function(name, src) {
  * @param {String} src Path to image file.
  */
 $W.ImageTexture = function(name, src) {
-    $W.texture.Texture.call(this, name);
+    $W.Texture.call(this, name);
     this.image = document.createElement('img');
     this.image.texture = this;
 
     this.image.onload = function() {
         var gl = $W.GL;
-        console.group('Loading texture `' + name + "`");
+        $W.debug('Loaded texture `' + name + "`");
         this.texture.bind();
 
         gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.image);
@@ -93,8 +98,6 @@ $W.ImageTexture = function(name, src) {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
         this.texture.unbind();
-        console.log('Done');
-        console.groupEnd();
     }
 
     this.setSource = function(src) {

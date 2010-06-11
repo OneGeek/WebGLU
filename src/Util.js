@@ -5,7 +5,7 @@ if ($W.util === undefined) {
          * @return {String} Data in the file as text.
          */
         loadFileAsText:function(path) {
-            console.log("Loading file `" + path + "`");
+            $W.info("Loading file `" + path + "`");
             var xhr = null;
             xhr = new XMLHttpRequest();
 
@@ -53,7 +53,7 @@ if ($W.util === undefined) {
                 throw e; 
             }
 
-            console.log("\tCompleted with status: " + xhr.status);
+            $W.debug("\tCompleted with status: " + xhr.status);
 
             return xhr.responseText;
 
@@ -64,7 +64,37 @@ if ($W.util === undefined) {
             window.eval(script);
         }
     }
-}
+}    
+
+$W.initWebGL = function(canvas) {
+    if (canvas === undefined) {
+        $W.canvas = document.getElementById('canvas');
+
+    }else if (typeof(canvas) == "string") {
+        $W.canvas = document.getElementById(canvas);
+
+    }else { $W.canvas = canvas; }
+
+    $W.GL = null;
+    $W.GL = $W.util.getGLContext($W.canvas);
+
+    if (typeof($W.GL) !== "undefined" && $W.GL !== null) {
+        $W.constants.VERTEX = $W.GL.VERTEX_SHADER;
+        $W.constants.FRAGMENT = $W.GL.FRAGMENT_SHADER;
+
+        // on by default
+        $W.GL.enable(this.GL.DEPTH_TEST);
+
+
+        $W.GL.viewport(0, 0, $W.canvas.width, $W.canvas.height);
+
+        $W.log('WebGL initialized');
+        return true;
+    }else {
+        $W.log('WebGL init failed');
+        return false;
+    }
+};
 
 $W.util.genDummyArray = function(contents, repeat) {
     var result = [];
@@ -296,7 +326,7 @@ $W.util.getGLContext= function UTIL_getGLContext(canvas) {
               gl = canvas.getContext(type);
     }} catch (e){}
 
-    if (!!gl) { console.log('using ' + type); }
+    if (!!gl) { $W.debug('using ' + type); }
 
     return gl;
 };

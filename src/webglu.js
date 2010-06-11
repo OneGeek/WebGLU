@@ -124,7 +124,7 @@ $W = {
      * @param {String} name The global name for this program.
      */
     newProgram: function(name) {
-        console.warn('$W.newProgram is deprecated, use $W.GLSL.ShaderProgram directly');
+        console.error('$W.newProgram is deprecated, use $W.GLSL.ShaderProgram directly');
         return new $W.GLSL.ShaderProgram(name);
     },
             
@@ -195,270 +195,6 @@ $W = {
 		// clearing the color buffer is really slow
 		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
 	},
-
-    Framebuffer:function(name) {
-        console.log("Creating framebuffer");
-        var GL = $W.GL;
-        var RBUF = GL.RENDERBUFFER;
-        var FBUF = GL.FRAMEBUFFER;
-
-        this.name = name;
-        this.glFramebuffer = GL.createFramebuffer();
-        this.glRenderbuffers = [];
-        this.textures = [];
-
-        this.isGood = function FBUF_isGood() {
-            try {
-                if (!GL.isFramebuffer(this.glFramebuffer)) {
-                    throw("Invalid framebuffer");
-                }
-                var status = GL.checkFramebufferStatus(this.glFramebuffer);
-                switch (status) {
-                    case GL.FRAMEBUFFER_COMPLETE:
-                        break;
-                    default:
-                        throw("Incomplete framebuffer: " + status);
-                }
-            }catch (e) {
-                console.error(e);
-                return false;
-            }
-            return true;
-        };
-
-        this.bind = function FBUF_bind(){
-            GL.bindFramebuffer(FBUF, this.glFramebuffer);
-        };
-
-        this.unbind = function FBUF_unbind(){
-            GL.bindFramebuffer(FBUF, null);
-        };
-
-        this.attachRenderbuffer = function FBUF_attachRenderbuffer(storageFormat, width, height, attachment) {
-            var rBuffer = GL.createRenderbuffer();
-            this.glRenderbuffers.push(rBuffer);
-            
-            this.bind();
-            GL.bindRenderbuffer(RBUF, rBuffer);
-            GL.renderbufferStorage(RBUF, storageFormat, width, height);
-            GL.framebufferRenderbuffer(FBUF, attachment, RBUF, rBuffer);
-            GL.bindRenderbuffer(RBUF, null);
-            this.unbind();
-        };
-
-        this.attachExistingTexture = function FBUF_attachExistingTexture(texture, attachment) {
-            this.textures.push(texture);
-            texture.bind();
-            GL.framebufferTexture2D(GL.FRAMEBUFFER, attachment, GL.TEXTURE_2D, texture.glTexture, 0);
-            texture.unbind();
-        }
-
-        this.attachNewTexture = function FBUF_attachNewTexture(format, width, height, attachment) {
-            var texture = new $W.Texture(this.name + 'Texture' + this.textures.length);
-
-            texture.bind();
-            try{
-                GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
-                          0, format, $W.GL.UNSIGNED_BYTE, null);
-            } catch (e) {
-                console.warn('Using empty texture fallback');
-                var storage = new WebGLUnsignedByteArray(4 * width * height);
-                GL.texImage2D(GL.TEXTURE_2D, 0, format, width, height,
-                          0, format, $W.GL.UNSIGNED_BYTE, storage);
-            }
-            texture.unbind();
-
-            this.attachExistingTexture(texture, attachment);
-        }
-
-        this.attachTexture = function FBUF_attachTexture() {
-            this.bind();
-            if (arguments.length === 4) {   
-                this.attachNewTexture.apply(this, arguments);
-            }else {
-                this.attachExistingTexture.apply(this, arguments);
-            }
-            this.unbind();
-        }
-    },
-
-    /** @namespace Contains animation objects 
-     * XXX unnecessary, flatten
-     */
-    anim:{
-        /** @class A procedurally generated animation. 
-         * Starts updating immediately.
-         */
-        ProceduralAnimation:function() {
-            $W.ObjectState.call(this); // subclass of ObjectState
-
-            /** XXX The right way to do this? */
-            var ptyp = $W.anim.ProceduralAnimation.prototype;
-
-            /** The time in milliseconds since this animation began */
-            this.age = 0;
-
-            /** Call to advance the animation by `dt` milliseconds */
-            this.update = function(dt){};
-            this._update = function(dt){};
-
-            /** Internal.
-             * @return {Function} Update this animation.
-             */
-            ptyp._play = function() {
-                return (function(dt) {
-                        this.preUpdate(dt);
-
-                        this.age += dt;
-
-                        this._update(dt);
-
-                        this.updatePosition(dt);
-                        this.updateRotation(dt);
-                        this.updateScale(dt);
-
-                        this.postUpdate(dt);
-                });
-            }
-
-            /** Internal.
-             * @return {Function} Do nothing.
-             */
-            ptyp._pause = function() {
-                return (function() {});
-            }
-
-            /** This animation will advance on subsequent update() 
-             * calls.
-             */
-            this.play = function() {
-                this.update = ptyp._play();
-            }
-
-            /** This animation will not change on subsequent update() 
-             * calls.
-             */
-            this.pause = function() {
-                this.update = ptyp._pause();
-            }
-
-            /** Called before `dt` is added to this.age 
-             * Does nothing by default.
-             */
-            this.preUpdate      = function(dt){}
-
-            /** Update the position. Does nothing by default. */
-            this.updatePosition = function(dt){}
-            /** Update the rotation. Does nothing by default. */
-            this.updateRotation = function(dt){}
-            /** Update the scale. Does nothing by default. */
-            this.updateScale    = function(dt){}
-
-            /** Called after all other update calls.
-             * Does nothing by default.
-             */
-            this.postUpdate     = function(dt){}
-
-            this.play();
-        },
-
-
-        /** @class A single frame of animation.
-         * A position, rotation, and scale at a particular point in time.
-         *
-         * @param {3 Array} pos Position.
-         * @param {3 Array} rot Rotation.
-         * @param {3 Array} scl Scale.
-         * @param {Number} atTime Time, in seconds, this keyframe occurs at.
-         */
-        KeyFrame:function (pos, rot, scl, atTime) {
-            if (arguments.length == 4) {
-                $W.ObjectState.call(this, pos, rot, scl); // Subclass ObjectState
-                this.atTime = atTime * 1000; // time, in seconds, this keyframe occurs at
-            }else {
-                $W.ObjectState.call(this); 
-                this.atTime = 0;
-            }
-        },
-
-        /** @class A keyframe based animation 
-         * Rotations interpolation uses quaternions.
-         */
-        KeyFrameAnimation:function() {
-            $W.anim.ProceduralAnimation.call(this); // Subclass ProceduralAnimation
-
-            this.keyframes = [];
-            /** Frame index to interpolate from. */
-            this.A = 0; 
-            /** Frame index to interpolate to. */
-            this.B = 1; 
-
-            /** Time scale multiplier */
-            this.timeScale = 1;
-
-
-            this.update = function(dt) {
-                this.age += dt * this.timeScale;
-
-                // Time for next frame?
-                if (this.age >= (this.keyframes[this.B]).atTime) {
-
-                    // Increment frame counters
-                    this.A = ++this.A % this.keyframes.length;
-                    this.B = ++this.B % this.keyframes.length;
-
-                    // Account for slop (by throwing it out)
-                    this.age = (this.keyframes[this.A]).atTime;
-                }
-
-
-                var progress = this.age - (this.keyframes[this.A]).atTime;
-                var duration = (this.keyframes[this.B]).atTime - (this.keyframes[this.A]).atTime;
-                var t = progress / duration;
-
-
-                // Interpolate position
-                this.position.elements = $W.util.lerpTriple(t, 
-                        this.keyframes[this.A].position.elements,
-                        this.keyframes[this.B].position.elements);
-
-                // Interpolate quaternions for rotation
-                this.q = $W.util.slerp(t,
-                        this.keyframes[this.A].q,
-                        this.keyframes[this.B].q);
-
-                // Interpolate scale
-                this.scale.elements = $W.util.lerpTriple(t, 
-                        this.keyframes[this.A].scale.elements,
-                        this.keyframes[this.B].scale.elements);
-            }
-
-            /** Add a new keyframe. 
-             * For now it needs to be added in time order as it
-             * doesn't sort on its own.
-             * @param {Keyframe} keyframe The keyframe to add.
-             */
-            this.addKeyframe = function(keyframe) {
-                this.keyframes.push(keyframe);
-            }
-
-            /** Remove the keyframe at index from the list of keyframes.
-             * @param {Integer} index The index of the keyframe to remove.
-             */
-            this.removeKeyframe = function(index) {
-                var result = [];
-
-                // - 1 for frame -1
-                for (var i = 0; i < this.keyframes.length - 1; i++) {
-                    if (i != index) {
-                        result.push(this.keyframes[i]);
-                    }
-                }
-            }
-        }
-
-    },
-
 
     // Classes
     /** @class Quaternion implementation.
@@ -740,7 +476,7 @@ $W = {
          * @return {String} Data in the file as text.
          */
         loadFileAsText:function(path) {
-            console.log("Loading file `" + path + "`");
+            $W.info("Loading file `" + path + "`");
             var xhr = null;
             xhr = new XMLHttpRequest();
 
@@ -793,21 +529,16 @@ $W = {
                 console.error("\tCompleted with status: " + xhr.status);
                 return "File load error: " + xhr.status;
             }else {
-                console.log("\tCompleted with status: " + xhr.status);
+                $W.debug("\tCompleted with status: " + xhr.status);
                 return xhr.responseText;
             }
 
         },
 
         include: function(path) {
-            try{
-                console.groupCollapsed('Including ' + path);
-            }catch(e){
-                console.group('Including ' + path);
-            }
+            $W.info('Including ' + path);
             var script = $W.util.loadFileAsText(path);
             window.eval(script);
-            console.groupEnd();
         }
     },
 
@@ -819,9 +550,8 @@ $W = {
      *              defaults to using the DOM element with ID 'canvas'.
      *              Pass `false` to skip init of WebGL subsystem.
      */
-    initialize:function(canvasNode) {
-        $W.initLogging();
-        console.group("Initializing WebGLU");
+    initialize:function $W_initialize(canvasNode) {
+        $W.log("Initializing WebGLU");
 
         $W.util.include($W.paths.libsrc + 'Util.js');
 
@@ -832,21 +562,12 @@ $W = {
         $W.util.include($W.paths.libsrc + 'DefaultUniformActions.js');
         $W.util.include($W.paths.libsrc + 'GLSL.js');
         $W.util.include($W.paths.libsrc + 'GLU.js');
+        $W.util.include($W.paths.libsrc + 'Animation.js');
         $W.util.include($W.paths.libsrc + 'Object.js');
         $W.util.include($W.paths.libsrc + 'Texture.js');
+        $W.util.include($W.paths.libsrc + 'Framebuffer.js');
         $W.util.include($W.paths.libsrc + 'Material.js');
         $W.util.include($W.paths.libsrc + 'Renderer.js');
-
-        $W.texture = {};
-        $W.texture.Texture = $W.Texture;
-        $W.texture.Canvas= $W.CanvasTexture;
-        $W.texture.Video = $W.VideoTexture;
-        $W.texture.Image = $W.ImageTexture;
-
-        // Prep the shader subsystem
-        $W.GLSL.initialize();
-
-
 
         // create the matrix stacks we'll be using to store transformations
         $W.modelview  = new $W.GLU.MatrixStack();
@@ -866,38 +587,10 @@ $W = {
 
         }
 
-        console.groupEnd();
         return success;
     },
 
     /** Ensure that we can log, or at least not error if we try to */
-    initLogging:function() {
-        if (window.console === undefined) {
-            console = {};
-        } // Dummy object
-
-        if (console.log === undefined) {
-            console.log = function(){};
-        }
-
-        // If console.log exists, but one or more of the others do not,
-        // use console.log in those cases.
-        if (console.warn === undefined) {
-            console.warn           = console.log;
-        }
-        if (console.error === undefined) {
-            console.error          = console.log;
-        }
-        if (console.group === undefined) {
-            console.group          = console.log;
-        }
-        if (console.groupCollapsed === undefined) {
-            console.groupCollapsed = console.group;
-        }
-        if (console.groupEnd === undefined) {
-            console.groupEnd       = console.log;
-        }
-    },
 
     /** Use debugging context.
      * Must be called <i>after</i> initialize().
@@ -965,3 +658,74 @@ $W = {
     }
 };
 
+$W.initLogging = function() {
+        if (window.console === undefined) {
+            console = {};
+        } // Dummy object
+
+        if (console.log === undefined) {
+            console.log = function(){};
+        }else {
+            $W.LL = {
+                DEBUG :0,
+                INFO  :1,
+                NOTE  :2,
+                WARN  :3
+            };
+            $W.logPrefix = '\t';
+            $W.logIndentAmount = 0;
+            $W.getLogPrefix = function() {
+                var prefix = '';
+                for (var i = 0; i < $W.logIndentAmount; i++) {
+                    prefix += $W.logPrefix;
+                }
+                return prefix;
+            };
+            $W.indentLog = function(){$W.logIndentAmount++;};
+            $W.dedentLog = function(){$W.logIndentAmount--;};
+                    
+                    
+            $W.loglevel = $W.LL.NOTE;
+            $W.log = function(message, level) {
+                if (typeof(level) === 'undefined') {level = $W.LL.NOTE;}
+
+                if (level >= $W.loglevel) {
+                    if (typeof(message) === 'string') {
+                        console.log($W.getLogPrefix() + message);
+                    }else {
+                        console.dir(message);
+                    }
+                }
+            };
+            $W.info = function(message) {
+                $W.log(message, $W.LL.INFO);
+            };
+            $W.debug = function(message) {
+                $W.log(message, $W.LL.DEBUG);
+            };
+            $W.warn = function(message) {  
+                if ($W.LL.WARN >= $W.loglevel) {
+                    console.warn($W.getLogPrefix() + message);
+                }
+            };
+        }
+
+        // If console.log exists, but one or more of the others do not,
+        // use console.log in those cases.
+        if (console.warn === undefined) {
+            console.warn           = console.log;
+        }
+        if (console.error === undefined) {
+            console.error          = console.log;
+        }
+        if (console.group === undefined) {
+            console.group          = console.log;
+        }
+        if (console.groupCollapsed === undefined) {
+            console.groupCollapsed = console.group;
+        }
+        if (console.groupEnd === undefined) {
+            console.groupEnd       = console.log;
+        }
+    };
+$W.initLogging();

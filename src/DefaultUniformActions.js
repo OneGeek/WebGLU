@@ -88,13 +88,11 @@ $W.util.getUniformAction = function(name) {
 
     if (typeof(action) === 'undefined') {
         action = function(){};
-        console.log(
-            "no default action for uniform `" + name + "` found");
+        $W.debug("\tno default action for uniform `" + name + "` found");
             
 
     }else {
-        console.log( 
-            "found `" + action.name + "` for uniform `" + name + "`");
+        $W.debug("\tfound `" + action.name + "` for uniform `" + name + "`");
     }
 
     return action;
