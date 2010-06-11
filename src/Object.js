@@ -1,3 +1,95 @@
+/** @class Common state representation (position, rotation, scale).
+ * A position, rotation, and scale.
+ * @param {3 Array} pos Position.
+ * @param {3 Array} rot Rotation.
+ * @param {3 Array} scl Scale.
+ */
+$W.ObjectState = function(position, rotation, scale) {
+    if (arguments.length == 3) {
+        this.position  = $V(position);
+        this.rotation  = $V(rotation);
+        this.scale      = $V(scale);
+    }else {
+        this.position  = Vector.Zero(3);
+        this.rotation  = Vector.Zero(3);
+        this.scale      = $V([1,1,1]);
+    }
+
+    this.recalculateQuaternion = function() {
+        // No need to calc for no rotation
+        if (this.rotation.eql(Vector.Zero(3))) {
+            this.q = new $W.Quaternion();
+
+        }else {
+            var qh = new $W.Quaternion(0, 1, 0, this.rotation.e(1));
+            var qp = new $W.Quaternion(1, 0, 0, this.rotation.e(2));
+            var qr = new $W.Quaternion(0, 0, 1, this.rotation.e(3));
+
+            this.q = (qr.multiply(qp)).multiply(qh);
+        }
+    }
+
+    this.recalculateQuaternion();
+
+    /** Set a new position. */
+    this.setPosition = function(x, y, z) { 
+        // Called as setPosition(x, y, z)
+        if (arguments.length == 3) {
+            this.position.elements = [x, y, z]; 
+
+            // Called as setPosition([x, y, z])
+        }else {
+            this.position.elements = arguments[0];
+        }
+    }
+
+    /** Set a new rotation. */
+    this.setRotation = function() { 
+        // Called as setRotation(x, y, z)
+        if (arguments.length == 3) {
+            this.rotation.elements = arguments; 
+
+            // Called as setRotation([x, y, z])
+        }else {
+            this.rotation.elements = arguments[0];
+        }
+
+        this.recalculateQuaternion();
+    }
+
+    /** Set a new scale. */
+    this.setScale = function(x, y, z){ 
+        this.scale.elements    = [x, y, z]; 
+    }
+
+    /** Set the x y and z components of the object's scale to the given
+     * value.
+     * @param {Number} s New scale of the object.
+     */
+    this.setScaleUniformly = function(s) { 
+        this.scale = $V([s,s,s]); 
+    };
+
+
+    this.equals = function(other) {
+        if ((other.scale !== undefined &&
+                    other.position !== undefined &&
+                    other.rotation !== undefined) && (
+
+                        this.scale == other.scale &&
+                        this.position == other.position &&
+                        this.rotation == other.rotation )) {
+
+            return true;
+        }else {
+            return false;
+        }
+    };
+};
+
+/** @class Storage and handling of GL data arrays
+ * @param {String} name Attribute name data is for
+ */
 $W.ArrayBuffer = function(name, data) {
     this.name = name;
     this.data = data;
@@ -102,7 +194,7 @@ $W.Object = function (type, flags) {
     this.children = [];
 
     /** The animation for this object. */
-    this.animation = new $W.anim.ProceduralAnimation();
+    this.animation = new $W.ProceduralAnimation();
 
     // drawArrays by default
     this._drawFunction = $W.renderer.drawArrays;
@@ -190,8 +282,8 @@ $W.Object = function (type, flags) {
     this.drawAt = function OBJ_drawAt(pos, rot, scale) {
             $W.modelview.push();
 
-            $W.modelview.multiply(rot);
             $W.modelview.translate(pos);
+            $W.modelview.multiply(rot);
             $W.modelview.scale(scale);
 
             for (var i = 0; i < this.children.length; i++) {
@@ -271,7 +363,7 @@ $W.Object = function (type, flags) {
     this.animatedScale    = function() { 
         return $V([
             this.scale.e(1) * this.animation.scale.e(1),
-            this.scale.e(3) * this.animation.scale.e(2),
+            this.scale.e(2) * this.animation.scale.e(2),
             this.scale.e(3) * this.animation.scale.e(3)
         ]);
     };
