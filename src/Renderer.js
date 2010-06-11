@@ -25,7 +25,7 @@ $W.renderer.processUniforms = function RNDR_processUniforms(obj, mat) {
         mat.uniforms[i].action(mat.uniforms[i], obj, mat);
     }
 };
-$W.renderer.renderObject = function RNDR_render(obj, mat, drawFun) {
+$W.renderer.renderObject = function RNDR_renderObject(obj, mat, drawFun) {
     mat.program.use();
     this.processUniforms(obj, mat);
     this.bindObjectAttributes(obj, mat);
