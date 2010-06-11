@@ -37,7 +37,7 @@ function createObjects() {
         return originLines
     }
 
-    new $W.Material($W.paths.materials + 'check.json');
+    new $W.Material(null, $W.paths.materials + 'check.json');
     var addTexturedCube = function() {
         // Create a solid object
         var cube = new $W.Object($W.GL.TRIANGLES);
@@ -64,22 +64,22 @@ function createObjects() {
     var cube2 = addTexturedCube();
 
     function anim1(cube2){
-        var ca = new $W.anim.KeyFrameAnimation();
-        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0], [0,90,0], [.3,.3,-.3] ,0));
-        ca.addKeyframe(new $W.anim.KeyFrame([1,1,0], [0,0,0], [.3,.3,.3]   ,3));
-        ca.addKeyframe(new $W.anim.KeyFrame([1,1,-1], [0,0,90], [-.2,-.6,.5],10));
-        ca.addKeyframe(new $W.anim.KeyFrame([1,0,-1], [0,0,180], [-.3,.3,.3],15));
-        ca.addKeyframe(new $W.anim.KeyFrame([0,0,-1], [90,0,0], [.3,.3,.3] ,20));
+        var ca = new $W.KeyFrameAnimation();
+        ca.addKeyframe(new $W.Keyframe([0,0,0], [0,90,0], [.3,.3,-.3] ,0));
+        ca.addKeyframe(new $W.Keyframe([1,1,0], [0,0,0], [.3,.3,.3]   ,3));
+        ca.addKeyframe(new $W.Keyframe([1,1,-1], [0,0,90], [-.2,-.6,.5],10));
+        ca.addKeyframe(new $W.Keyframe([1,0,-1], [0,0,180], [-.3,.3,.3],15));
+        ca.addKeyframe(new $W.Keyframe([0,0,-1], [90,0,0], [.3,.3,.3] ,20));
         return ca;
     }
 
     function anim2(cube){
-        var ca = new $W.anim.KeyFrameAnimation();
-        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0],[0,0,0], [0.3,0.3,0.3],0));
-        ca.addKeyframe(new $W.anim.KeyFrame([0,1,0],[0,0,0], [0.3,0.3,0.3],1));
-        ca.addKeyframe(new $W.anim.KeyFrame([1,1,0],[0,0,0], [0.3,0.3,0.3],10));
-        ca.addKeyframe(new $W.anim.KeyFrame([1,0,0],[0,0,0], [0.3,0.3,0.3],15));
-        ca.addKeyframe(new $W.anim.KeyFrame([0,0,0],[0,0,0], [0.3,0.3,0.3],20));
+        var ca = new $W.KeyFrameAnimation();
+        ca.addKeyframe(new $W.Keyframe([0,0,0],[0,0,0], [0.3,0.3,0.3],0));
+        ca.addKeyframe(new $W.Keyframe([0,1,0],[0,0,0], [0.3,0.3,0.3],1));
+        ca.addKeyframe(new $W.Keyframe([1,1,0],[0,0,0], [0.3,0.3,0.3],10));
+        ca.addKeyframe(new $W.Keyframe([1,0,0],[0,0,0], [0.3,0.3,0.3],15));
+        ca.addKeyframe(new $W.Keyframe([0,0,0],[0,0,0], [0.3,0.3,0.3],20));
         return ca;
     }
 
