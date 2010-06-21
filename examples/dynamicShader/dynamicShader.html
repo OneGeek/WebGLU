@@ -1,6 +1,7 @@
 <html><head>
 
 <script type="text/javascript" src="../../src/webglu.js"></script>
+<script type="text/javascript" src="urlUtil.js"></script>
 
 <style type="text/css">
 	body{
@@ -37,80 +38,11 @@
 
 <script type="application/x-javascript">
 
-// There's obviously a better way, but this was quick and dirty
-function stringToUrl(str) {
-    str = str.replace(/%/g, "%25");
-    str = str.replace(/\n/g, "%0A");
-    str = str.replace(/ /g, "%20");
-    str = str.replace(/=/g, "%3D");
-    str = str.replace(/;/g, "%3B");
-    str = str.replace(/{/g, "%7B");
-    str = str.replace(/}/g, "%7D");
-    str = str.replace(/</g, "%3C");
-    str = str.replace(/>/g, "%3E");
-    str = str.replace(/\|/g, "%7C");
-    str = str.replace(/\[/g, "%5B");
-    str = str.replace(/\]/g, "%5D");
-    str = str.replace(/\"/g, "%22");
-    str = str.replace(/\\\\/g, "%5C");
-    str = str.replace(/&/g, "%36");
-    str = str.replace(/\+/g, "%2B");
-    str = str.replace(/,/g, "%2C");
-    str = str.replace(/\//g, "%2F");
-	return str
-}
-
-function urlToString(url) {
-    url = url.replace(/%0A/g, "\n");
-    url = url.replace(/%20/g, " ");
-    url = url.replace(/%3D/g, "=");
-    url = url.replace(/%3B/g, ";");
-    url = url.replace(/%7B/g, "{");
-    url = url.replace(/%7D/g, "}");
-    url = url.replace(/%3C/g, "<");
-    url = url.replace(/%3E/g, ">");
-    url = url.replace(/%25/g, "%");
-    url = url.replace(/%7C/g, "|");
-    url = url.replace(/%5B/g, "[");
-    url = url.replace(/%5D/g, "]");
-    url = url.replace(/%22/g, "\"");
-    url = url.replace(/%5C/g, "\\");
-    url = url.replace(/%36/g, "&");
-    url = url.replace(/%2B/g, "+");
-    url = url.replace(/%2C/g, ",");
-    url = url.replace(/%2F/g, "/");
-    return url;
-}
-
-function getURLwithParams() {
-    var url = window.location.href;
-    var sliceTo = url.indexOf('?');
-    if (sliceTo === -1) sliceTo = url.length;
-    var url = window.location.href.slice(0, sliceTo);
-	var params = "?vs=";
-	params += stringToUrl(getVertSource());
-	params += "&fs=";
-	params += stringToUrl(getFragSource());
-	document.getElementById('shareURL').value = (url+params);
-}
-
-// Read a page's GET URL variables and return them as an associative array.
-function getUrlVars()
-{
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++)
-    {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
-    return vars;
-}
 
 function setup() {
     //--Initialize WebGLU, shaders
     if (!$W.initialize()) return false;
+    $W.loglevel = $W.LL.DEBUG;
     $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
     $W.camera.setPosition(2,2,3);
     $W.camera.setTarget(0,1,0);
@@ -149,15 +81,12 @@ function setup() {
 
     // Create pyramid
     var addPyramid = function() {
-        $W.newProgram('dynamic');
-        $W.programs.dynamic.attachShader('vs', getVertSource(), $W.GL.VERTEX_SHADER);
-        $W.programs.dynamic.attachShader('fs', getFragSource(), $W.GL.FRAGMENT_SHADER);
-
         pyramid = new $W.Object($W.GL.TRIANGLES);
         pyramid.vertexCount = 12;
-        
-        pyramid.setShaderProgram('dynamic');
 
+        updateMaterial();
+        pyramid.setMaterial('dynMat');
+        
         pyramid.animation._update = function(dt) {
             this.setRotation(this.age / 60, 0, 0);
         }
@@ -182,10 +111,19 @@ function getVertSource() {
     return document.getElementById('vs-source').value
 }
 
-function updateShaders() {
-    $W.shaders.vs.setSource(getVertSource());
-    $W.shaders.fs.setSource(getFragSource());
-}
+function updateMaterial() {
+    $W.programs.dynamic = undefined;
+    new $W.Material({
+        name:"dynMat", 
+        program:{ name:"dynamic",
+            shaders: [
+                {name:'vs', source:getVertSource(), type:$W.GL.VERTEX_SHADER},
+                {name:'fs', source:getFragSource(), type:$W.GL.FRAGMENT_SHADER}
+            ]
+        }
+    });
+    $W.objects[1].setMaterial('dynMat')
+};
 
 function start() {
     if (setup()) {
@@ -210,9 +148,9 @@ function start() {
 
 <canvas id='canvas' width='500' height='500'></canvas><br>
 <div id='buttons'>
-<button onclick="javascript:updateShaders();" id="updateshaders">Update Shaders</button><br>
+<button onclick="javascript:updateMaterial();" id="updateshaders">Update Shaders</button><br>
 <button onclick="javascript:getURLwithParams();" id="copytoclip">Get shareable URL</button>
-<input id='shareURL' type='text' onClick="javascript:this.form.text_area.focus();this.form.text_area.select();"></input>
+<input id='shareURL' type='text' onClick="javascript:this.form.text_area.focus();this.form.text_area.select();">
 <br>
 </div>
 </div>

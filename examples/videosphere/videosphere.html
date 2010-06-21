@@ -56,7 +56,7 @@ function createObjects() {
         sphere.type = $W.GL.LINE_LOOP;
     }
 
-    sphere.setMaterial(new $W.Material('video', 'video.json'));
+    sphere.setMaterial(new $W.Material({path:'video.json'}));
 
     // Generate a unit sphere with 40 horizontal rings and 40
     // vertical slices
