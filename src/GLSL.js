@@ -518,7 +518,7 @@ $W.GLSL.ShaderProgram = function(name) {
 
         // Only delete the program if one already exists
         if (this.glProgram !== null) {
-            $W.log("already exists, deleting and relinking", $W.LL.INFO);
+            $W.log("already exists, deleting and relinking");
             $W.GL.deleteProgram(this.glProgram);
             this.attributes = [];
             this.uniforms = [];

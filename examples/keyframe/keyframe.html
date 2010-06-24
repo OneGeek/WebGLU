@@ -37,7 +37,7 @@ function createObjects() {
         return originLines
     }
 
-    new $W.Material(null, $W.paths.materials + 'check.json');
+    new $W.Material({path:$W.paths.materials + 'check.json'});
     var addTexturedCube = function() {
         // Create a solid object
         var cube = new $W.Object($W.GL.TRIANGLES);

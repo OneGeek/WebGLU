@@ -58,11 +58,11 @@ function createObjects() {
     }
 
     var setupTextures = function() {
-        new $W.Material(null, '1ball.json');
-        new $W.Material(null, '2ball.json');
-        new $W.Material(null, '8ball.json');
-        new $W.Material(null, '15ball.json');
-        new $W.Material(null, 'cueball.json');
+        new $W.Material({path:'1ball.json'});
+        new $W.Material({path:'2ball.json'});
+        new $W.Material({path:'8ball.json'});
+        new $W.Material({path:'15ball.json'});
+        new $W.Material({path:'cueball.json'});
     }
 
     var scale = 0.1;

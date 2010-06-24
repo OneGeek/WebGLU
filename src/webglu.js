@@ -551,6 +551,7 @@ $W = {
      *              Pass `false` to skip init of WebGL subsystem.
      */
     initialize:function $W_initialize(canvasNode) {
+        $W.initLogging();
         $W.log("Initializing WebGLU");
 
         $W.util.include($W.paths.libsrc + 'Util.js');
@@ -583,7 +584,7 @@ $W = {
         }else {
             success = $W.initWebGL(canvasNode);
             new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
-            new $W.Material(null, $W.paths.materials + 'default.json');
+            new $W.Material({path:$W.paths.materials + 'default.json'});
 
         }
 

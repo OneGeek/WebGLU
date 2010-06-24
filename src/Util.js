@@ -64,7 +64,20 @@ if ($W.util === undefined) {
             window.eval(script);
         }
     }
-}    
+};
+
+$W.util.loadFileAsJSON = function UTIL_loadFileAsJSON(path) {
+    // Get JSON text from file
+    var file = $W.util.loadFileAsText(path);
+
+    // Reformat to single line and surround with ()
+    var JSONtext = '(' + file.replace(/\n/g, '') + ')';
+
+    // Evaluate to JSON object 
+    var JSON = eval(JSONtext)
+
+    return JSON
+};
 
 $W.initWebGL = function(canvas) {
     if (canvas === undefined) {
