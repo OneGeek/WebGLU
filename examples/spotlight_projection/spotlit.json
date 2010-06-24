@@ -1,0 +1,11 @@
+
+{
+    name: "spotlit",
+    program: {
+        name: "spotlit",
+        shaders: [
+            {name:"spotlit_vs", path:"spotlit.vert"},
+            {name:"spotlit_fs", path:"spotlit.frag"}
+        ] 
+    }
+}

@@ -1,0 +1,166 @@
+<html><head>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+  <style type="text/css">
+    .label { float:left; }
+    .slider { margin: 10px; width:200px; float:left; }
+    video { display: none; }
+  </style>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+<script type="application/x-javascript">
+function init() {
+    $W.loglevel = $W.LL.DEBUG;
+    if (!$W.initialize()) return false;
+
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+    $W.camera.setPosition(0,0,-15);
+    $W.camera.setTarget(0,0,-2);
+    $W.camera.yfov = 30;
+
+    return true;
+}
+
+function createObjects() {
+    var VERTEX = "vertex"; var COLOR     = "color";
+    var NORMAL = "normal"; var TEX_COORD = "texCoord";
+
+    light = {
+        position: [0,0,-7], target:   [0,0,0], color:    [1,1,1],
+        fieldAngle: 25, beamAngle: 10, focus: 0,
+        distanceFalloffRatio: 5
+    };
+    smoke = {
+        color: [0.5, 0.5, 0.5],
+        density:0.5
+    };
+
+    var sphereData = $W.util.genSphere(30,30);
+    var sphereModel= [[COLOR, $W.util.genDummyArray([0,1,0], sphereData.vertices.length)], [VERTEX, sphereData.vertices ], [TEX_COORD, sphereData.texCoords], [NORMAL,  sphereData.normals], ['wglu_elements', sphereData.indices] ]; 
+    var wallModel  = [[COLOR, [1,0,0, 1,0,0, 1,0,0, 1,0,0]], [VERTEX,    [[5, 5,0], [-5, 5,0], [5,-5,0], [-5,-5,0]]], [TEX_COORD, [0,1, 1,1, 1,0, 0,0]], [NORMAL,    $W.util.genDummyArray([0,0,-1], 4)]]; 
+    var floorModel = [[COLOR, [1,1,.5, 1,1,.5, 1,1,.5, 1,1,.5]], [VERTEX,    [[ 15,-5, 15], [-15,-5, 15], [ 15,-5,-15], [-15,-5,-15]]], [TEX_COORD, [0,1, 1,1, 1,0, 0,0]], [NORMAL,    $W.util.genDummyArray([0,1,0], 4)]]; 
+
+    var spotlit = new $W.Material(null, 'spotlit.json');
+    //new $W.VideoTexture('gobo', 'new_york.ogv');
+    new $W.ImageTexture('gobo', 'textures/star.png');
+
+    var wall = new $W.Object($W.GL.TRIANGLE_STRIP);
+    wall.setMaterial(spotlit);
+    wall.vertexCount = 4;
+    wall.fillArrays(wallModel);
+    wall.color = [0.8,0.8,0.8];
+    wall.shininess = 100;
+
+    //wall.animation._update = function() {this.setRotation(0, this.age/60, 0);};
+
+    var floor = new $W.Object($W.GL.TRIANGLE_STRIP);
+    floor.setMaterial(spotlit);
+    floor.vertexCount = 4;
+    floor.fillArrays(floorModel);
+    floor.color = [1,1,.5];
+    floor.shininess = 1;
+
+    /*
+    var sphere = new $W.Object($W.GL.TRIANGLES);
+    sphere.setMaterial(spotlit);
+    sphere.setPosition(0,0,-4);
+    sphere.color = [0.5,0.5,0.05];
+    sphere.shininess = 10;
+    sphere.fillArrays(sphereModel);
+    */
+
+    spotlit.setUniformAction('camera_position', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, $W.camera.position.elements); });
+    spotlit.setUniformAction('gobo', function(uniform, object, material) { $W.GL.activeTexture($W.GL.TEXTURE0); $W.textures.gobo.bind(); $W.GL.uniform1i(uniform.location, 0); });
+    spotlit.setUniformAction('global_ambient', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, 0.2); });
+    spotlit.setUniformAction('l0_distance_falloff', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.distanceFalloffRatio); });
+    spotlit.setUniformAction('l0_position', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, light.position); });
+    spotlit.setUniformAction('l0_color', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, light.color); });
+    spotlit.setUniformAction('l0_spot_field_angle', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.fieldAngle * (Math.PI / 180)); });
+    spotlit.setUniformAction('l0_beam_field_angle', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.beamAngle * (Math.PI / 180)); });
+    spotlit.setUniformAction('l0_focus', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.focus); });
+    spotlit.setUniformAction('l0_spot_target', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, light.target); });
+    spotlit.setUniformAction('mat_color', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, object.color); });
+    spotlit.setUniformAction('mat_shininess', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, object.shininess); });
+    spotlit.setUniformAction('smoke_color', 
+        function(uniform, object, material) {
+            $W.GL.uniform3fv(uniform.location, smoke.color);
+        }
+    );
+    spotlit.setUniformAction('smoke_density', 
+        function(uniform, object, material) {
+            $W.GL.uniform1f(uniform.location, smoke.density);
+        }
+    );
+}
+
+function start() {
+    $("#focus").slider({min:0,max:1,step:0.01});
+    $("#field").slider({min:0,max:90,step:1,value:25});
+    $("#beam").slider({min:0,max:90,step:1,value:10});
+    $("#density").slider({min:0,max:0.04,step:0.0001,value:0.001});
+    $("#camX").slider({min:-15,max:15,step:0.1,value:8.9});
+    if (init()) {
+        createObjects();
+
+        var FPS = document.getElementById('overlay');
+
+        redraw = function redraw() {
+            FPS.innerHTML = $W.FPS;
+            light.focus      = $("#focus").slider("option", "value");
+            light.fieldAngle = $("#field").slider("option", "value");
+            light.beamAngle  = $("#beam").slider("option", "value");
+            smoke.density = $('#density').slider('option', 'value');
+            $W.camera.setPosition($('#camX').slider('option', 'value'), 10, -13);
+            $W.update();
+            $W.draw();	
+        }
+
+        setInterval(redraw, 5000);        	
+        //redraw();
+    }
+}
+
+</script>
+
+</head>
+
+<body onload='start()'>
+
+<div class='label'>Focus</div><div class='slider' id="focus"></div><br><br>
+<div class='label'>Field</div><div class='slider' id="field"></div><br><br>
+<div class='label'>Beam</div><div  class='slider' id="beam"></div><br><br>
+<div class='label'>Density</div><div class='slider' id='density'></div><br><br>
+<div class='label'>CamX</div><div class='slider' id='camX'></div><br><br>
+<div id="glCanvas">
+
+<div id="overlay"></div>
+
+<canvas id='canvas' width='500' height='500'></canvas><br>
+</div>
+
+</body>
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
