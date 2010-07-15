@@ -151,6 +151,18 @@ $W = {
         $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
     },
 
+    updateDraw: function $W_updateDraw() {
+        $W.update();
+        $W.draw();
+    },
+
+    drawFn: function $W_draw() {
+        $W.updateDraw();
+    },
+
+    start: function $W_start() {
+        setInterval($W.drawFn,10);
+    },
 
     /** Draw all objects from the camera's perspective. */
     draw: function $W_draw() {

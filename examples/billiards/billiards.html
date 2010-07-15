@@ -1,198 +1,130 @@
 <html><head>
-
 <link   type="text/css" rel="stylesheet" href="billiards.css">
 <script type="text/javascript" src="../../src/webglu.js"></script>
 
 <script type="application/x-javascript">
 function init() {
-    $W.useGameGLU();
-
     //--Initialize WebGLU, shaders
     with ($W) {
         if (!initialize()) return false;
         useCrazyGLU();
+        useGameGLU();
+        $G.initialize();
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         camera.setPosition(10,10,15);
         camera.setTarget(1.5,2,0);
         camera.yfov = 90;
     }
-
     return true;
 }
 
 function createObjects() {
-    var VERTEX = "vertex";
-    var COLOR  = "color";
-    var NORMAL = "normal";
-    var TEX_COORD = "texCoord";
+    var VERTEX = "vertex"; var COLOR     = "color";
+    var NORMAL = "normal"; var TEX_COORD = "texCoord";
 
-    // AXIS
-    // Create lines representing the XYZ axes
-    var addAxisLines = function() {
-        var originLines = new $W.Object($W.GL.LINES);
-        originLines.vertexCount = 6;
-
-        originLines.fillArray(VERTEX,
-            [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
-        with ($W.constants.colors){
-          originLines.fillArray(COLOR, 
-            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
-        }
-    }
-
-    var sphereData = $W.util.genSphere(20, 20, 8);
-    var fillBallData = function(obj) {
-        // Fill the arrays with data for a sphere
-        obj.fillArray(VERTEX, sphereData.vertices);
-        obj.fillArray(NORMAL, sphereData.normals);
-        obj.fillArray(TEX_COORD, sphereData.texCoords);
-        obj.setElements(sphereData.indices);
-    }
-
-    var cubeData = $W.constants.unitCube;
-    var fillWallData = function(obj) {
-        obj.fillArray(VERTEX, cubeData.vertices);
-        obj.fillArray(NORMAL, cubeData.normals);
-        obj.fillArray(TEX_COORD, cubeData.texCoords);
-        obj.setElements(cubeData.indices);
-    }
-
-    var setupTextures = function() {
-        new $W.Material({path:'1ball.json'});
-        new $W.Material({path:'2ball.json'});
-        new $W.Material({path:'8ball.json'});
-        new $W.Material({path:'15ball.json'});
-        new $W.Material({path:'cueball.json'});
+    var fillArraysFromData = function(obj, data) {
+        obj.fillArrays([[VERTEX, data.vertices],
+                        [NORMAL, data.normals],
+                        [TEX_COORD, data.texCoords],
+                        ['wglu_elements', data.indices]]);
     }
 
     var scale = 0.1;
-
-    //addAxisLines();
-
-    setupTextures();
+    var tableHalfWidth  = 129.0 * scale / 2;
+    var tableHalfHeight = 243.8 * scale / 2;
+    var longSide  = [0,0,-tableHalfHeight/scale,  0,0,tableHalfHeight/scale];
+    var shortSide = [-tableHalfWidth/scale,0,0,  tableHalfWidth/scale,0,0];
+    var poolGreen = [49/255, 185/255, 77/255];
 
     balls = [];
     walls = [];
 
-    var tableHalfWidth = 129.0 * scale / 2;
-    var tableHalfHeight = 243.8 * scale  / 2;
-    var longSide = [0,0,-tableHalfHeight/scale,  0,0,tableHalfHeight/scale];
-    var shortSide = [-tableHalfWidth/scale,0,0,  tableHalfWidth/scale,0,0];
+    var ballInfo = [{position:[ 0, 1, 4], material:{path:'cueball.json'}},
+                    {position:[ 1, 1,-5], material:{path:'15ball.json' }},
+                    {position:[-1, 1,-5], material:{path:'1ball.json'  }}]
 
-    var poolGreen = [49/255, 185/255, 77/255];
-    table = new $W.Object($W.GL.TRIANGLE_STRIP);
-    table.setPosition(-tableHalfWidth, 0, -tableHalfHeight);
-    //table.setScaleUniformly(2);
-    table.vertexCount = 4;
-    table.fillArray(VERTEX, [0,0,0, tableHalfWidth * 2, 0, 0, 0,0, tableHalfHeight * 2, 
-    tableHalfWidth * 2, 0, tableHalfHeight * 2 ]);
-    table.fillArray(COLOR, [poolGreen, poolGreen, poolGreen, poolGreen]);
+    for (var i = 0; i < ballInfo.length; i++) {
+        var ball = ballInfo[i];
+        balls[i] = new $W.SimulatedObject("sphere");
+        balls[i].setPosition(ball.position);
+        balls[i].setMaterial(new $W.Material(ball.material));
 
+        balls[i].name = 'ball';
+        balls[i].setScaleUniformly(scale);
+        balls[i].radius = 0.08 / scale;
+        balls[i].mass = 1;
+        balls[i].restitution = 1.0;
 
-    balls[0] = new $W.SimulatedObject("sphere");
-    balls[0].setPosition(0,1,4);
-    balls[0].setMaterial('cueball');
+        var sphereData = $W.util.genSphere(20, 20, 8);
+        fillArraysFromData(balls[i], sphereData);
+    }
 
-    balls[1] = new $W.SimulatedObject("sphere",false);
-    balls[1].setPosition(1,1,-5);
-    balls[1].setMaterial('15ball');
+    var wallInfo = [
+        {position:[ tableHalfWidth, 1, 0 ], direction:$V([0,0,1]), vertices:shortSide},
+        {position:[-tableHalfWidth, 1, 0 ], direction:$V([0,0,1]), vertices:shortSide},
+        {position:[ 0, 1, tableHalfHeight], direction:$V([1,0,0]), vertices:longSide},
+        {position:[ 0, 1,-tableHalfHeight], direction:$V([1,0,0]), vertices:longSide}]
 
-    balls[2] = new $W.SimulatedObject("sphere");
-    balls[2].setPosition(-1,1,-5);
-    balls[2].setMaterial('1ball');
-
-    walls[0] = new $W.SimulatedObject   ("wall");
-    walls[0].setPosition(tableHalfWidth,1,0);
-    walls[0].direction = $V([0,0,1]);
-    walls[0].fillArray(VERTEX, shortSide)
-
-    walls[1] = new $W.SimulatedObject   ("wall");
-    walls[1].setPosition(-tableHalfWidth,1,0);
-    walls[1].direction = $V([0,0,1]);
-    walls[1].fillArray(VERTEX, shortSide)
-
-    walls[2] = new $W.SimulatedObject   ("wall");
-    walls[2].setPosition(0,1,tableHalfHeight);
-    walls[2].direction = $V([1,0,0]);
-    walls[2].fillArray(VERTEX, longSide)
-
-    walls[3] = new $W.SimulatedObject   ("wall");
-    walls[3].setPosition(0,1,-tableHalfHeight);
-    walls[3].direction = $V([1,0,0]);
-    walls[3].fillArray(VERTEX, longSide)
-
-    for (var i = 0; i < walls.length; i++) {
+    for (var i = 0; i < wallInfo.length; i++) {
+        var wall = wallInfo[i];
+        walls[i] = new $W.SimulatedObject("wall");
+        walls[i].setPosition(wall.position);
+        walls[i].direction = wall.direction;
+        walls[i].fillArray(VERTEX, wall.vertices);
         walls[i].name = 'wall';
         walls[i].type = $W.GL.LINES;
         walls[i].vertexCount = 2;
         walls[i].line = Line.create(walls[i].position, walls[i].direction);
-        walls[i].fillArray(COLOR, [1,0,1, 1,0,1]);
         walls[i].fillArray(COLOR, poolGreen);
         walls[i].mass = 100000;
         walls[i].setScaleUniformly(scale);
         walls[i].restitution = 0.9;
         walls[i].radius = 0.01;
-    };
 
-
-
-    for (var i = 0; i < balls.length; i++) {
-        balls[i].name = 'ball';
-        fillBallData(balls[i]);
-        balls[i].setScaleUniformly(scale);
-        balls[i].radius = 0.08 / scale;
-        balls[i].mass = 1;
-        balls[i].restitution = 1.0;
+        var cubeData = $W.constants.unitCube;
+        fillArraysFromData(walls[i], cubeData);
     }
 
-    balls[0].velocity = $V([0, 0, -0.007]);
+    table = new $W.Object($W.GL.TRIANGLE_STRIP);
+    table.setPosition(-tableHalfWidth, 0, -tableHalfHeight);
+    table.vertexCount = 4;
+    table.fillArray(VERTEX, [
+            0,0,0, 
+            tableHalfWidth * 2,0,0, 
+            0,0,tableHalfHeight * 2, 
+            tableHalfWidth * 2, 0, tableHalfHeight * 2 ]);
+    table.fillArray(COLOR, [poolGreen, poolGreen, poolGreen, poolGreen]);
 
 }
 
 function start() {
         if (init()) {
-            $W.useGameGLU();
-            $G.initialize();
+            createObjects();
 
             $G.event.bind('space', function() {
-                var a = (Math.random() - 0.5) / 50;
-                var b = (Math.random() - 0.5) / 50;
-
-                balls[0].velocity = $V([a,0,b]);
+                balls[0].velocity = $V([0, 0, -0.007]);
             });
-
-                
-            createObjects();
 
             overlay = document.getElementById('overlay');
 
-            function redraw() {
+            $W.drawFn = function() {
                 overlay.innerHTML = $W.FPS;
                 $W.update();
                 if (typeof($W.world) != 'undefined') {
                     $W.world.update($W.timer.dt);
                 }
-                $W.draw();	
+                $W.draw();
             }
-
-            setInterval(redraw, 10);        	
+            $W.start();
         }
 }
-
 </script>
-
 </head>
-
 <body scroll='no' onload='start()'>
-
-
 <div id="glCanvasFS">
-
 <div id="overlay"></div>
-
 <canvas id='canvas' width='700' height='600'></canvas><br>
 </div>
-
 </body>
 </html>
 <!--
