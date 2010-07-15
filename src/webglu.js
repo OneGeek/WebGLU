@@ -713,6 +713,9 @@ $W.initLogging = function() {
 
         // If console.log exists, but one or more of the others do not,
         // use console.log in those cases.
+        if (console.dir === undefined) {
+            console.dir           = console.log;
+        }
         if (console.warn === undefined) {
             console.warn           = console.log;
         }
