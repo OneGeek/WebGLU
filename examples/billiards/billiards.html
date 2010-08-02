@@ -39,9 +39,12 @@ function createObjects() {
     balls = [];
     walls = [];
 
-    var ballInfo = [{position:[ 0, 1, 4], material:{path:'cueball.json'}},
-                    {position:[ 1, 1,-5], material:{path:'15ball.json' }},
-                    {position:[-1, 1,-5], material:{path:'1ball.json'  }}]
+    var ballInfo = [{position:[ 0, 1, 8], material:{path:'cueball.json'}},
+                    {position:[ 1, 1,-1], material:{path:'15ball.json' }},
+                    {position:[-1, 1,-1], material:{path:'1ball.json'  }},
+                    {position:[ 0, 1,-3], material:{path:'8ball.json' }},
+                    {position:[ 0, 1,1], material:{path:'2ball.json'  }}
+                   ]
 
     for (var i = 0; i < ballInfo.length; i++) {
         var ball = ballInfo[i];
@@ -102,18 +105,17 @@ function start() {
             createObjects();
 
             $G.event.bind('space', function() {
-                balls[0].velocity = $V([0, 0, -0.007]);
+                balls[0].velocity = $V([0, 0, -0.017]);
             });
 
             overlay = document.getElementById('overlay');
 
-            $W.drawFn = function() {
+            $W.updateFn = function() {
                 overlay.innerHTML = $W.FPS;
                 $W.update();
                 if (typeof($W.world) != 'undefined') {
-                    $W.world.update($W.timer.dt);
+                    $W.world.update(35);
                 }
-                $W.draw();
             }
             $W.start();
         }
@@ -125,6 +127,7 @@ function start() {
 <div id="overlay"></div>
 <canvas id='canvas' width='700' height='600'></canvas><br>
 </div>
+Press space to begin.
 </body>
 </html>
 <!--
