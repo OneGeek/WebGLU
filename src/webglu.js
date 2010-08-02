@@ -151,6 +151,18 @@ $W = {
         $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
     },
 
+    updateDraw: function $W_updateDraw() {
+        $W.update();
+        $W.draw();
+    },
+
+    drawFn: function $W_draw() {
+        $W.updateDraw();
+    },
+
+    start: function $W_start() {
+        setInterval($W.drawFn,10);
+    },
 
     /** Draw all objects from the camera's perspective. */
     draw: function $W_draw() {
@@ -732,6 +744,9 @@ $W.initLogging = function() {
 
         // If console.log exists, but one or more of the others do not,
         // use console.log in those cases.
+        if (console.dir === undefined) {
+            console.dir           = console.log;
+        }
         if (console.warn === undefined) {
             console.warn           = console.log;
         }

@@ -28,7 +28,9 @@ $W.AMBIENT = 'ambient';
 $W.SPECULAR = 'specular';
 $W.DIFFUSE = 'diffuse';
 $W.POSITION = 'position';
-$W.constants = {};
+if (typeof($W.constants) == 'undefined') {
+    $W.constants = {};
+}
 $W.constants.LightSourceUniform = "wglu_LightSource";
 
 
