@@ -29,7 +29,8 @@ $W.CanvasTexture = function(name, src) {
     this.update = function() {
         var gl = $W.GL;
         this.bind();
-        gl.texImage2D(gl.TEXTURE_2D, 0, this.canvas);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+            gl.UNSIGNED_BYTE, this.canvas);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         this.unbind();
@@ -68,7 +69,8 @@ $W.VideoTexture = function(name, src) {
     this.update = function() {
         var gl = $W.GL;
         this.texture.bind();
-        gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.video);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+            gl.UNSIGNED_BYTE, this.video);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         //gl.generateMipmap(gl.TEXTURE_2D);
@@ -93,7 +95,8 @@ $W.ImageTexture = function(name, src) {
         $W.debug('Loaded texture `' + name + "`");
         this.texture.bind();
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, this.texture.image);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+            gl.UNSIGNED_BYTE, this.texture.image);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 
