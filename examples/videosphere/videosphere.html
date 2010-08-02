@@ -11,6 +11,21 @@
 
 <script type="application/x-javascript">
 
+function initCanvas() {
+    var params = getUrlVars();
+
+    // A different width and height can be defined in the url
+    // as ?width=x&height=y
+    var width  = params['width'];
+    var height = params['height'];
+    var canvas = document.getElementById('canvas');
+    if (width !== undefined && height !== undefined) {
+        canvas.width = width;
+        canvas.height = height;
+    }
+};
+initCanvas();
+
 // Read a page's GET URL variables and return them as an associative array.
 function getUrlVars()
 {
@@ -25,56 +40,17 @@ function getUrlVars()
     return vars;
 }
 
-function init() {
-
-    //--Initialize WebGLU, shaders
-    with ($W) {
-        if (!initialize()) return false;
-        $W.useGameGLU();
-
-        GL.clearColor(0.9, 0.9, 0.9, 1.0);
-        camera.setPosition(0,0,0);
-        camera.setTarget(-1,0,0);
-        camera.yfov = 90;
-
-        camera.aspectRatio = $W.canvas.width / $W.canvas.height;
-    }
-
-    return true;
-}
-
-function createObjects() {
-    var VERTEX = "vertex";
-    var COLOR  = "color";
-    var NORMAL = "normal";
-    var TEX_COORD = "texCoord";
-
-    // Create a new renderable object
-    var sphere = new $W.Object($W.GL.TRIANGLES);
-
+function getRenderType() {
     if (getUrlVars()['wireframe'] == 1) {
-        sphere.type = $W.GL.LINE_LOOP;
+        return $W.GL.LINE_LOOP;
+    }else{
+        return $W.GL.TRIANGLES;
     }
-
-    sphere.setMaterial(new $W.Material({path:'video.json'}));
-
-    // Generate a unit sphere with 40 horizontal rings and 40
-    // vertical slices
-    var sphereModel = $W.util.genSphere(40,40);
-
-    // fill the arrays, which correspond to the attribute variables
-    // of the same name.
-    sphere.fillArray(VERTEX, sphereModel.vertices);
-    sphere.fillArray(NORMAL, sphereModel.normals);
-    sphere.fillArray(TEX_COORD, sphereModel.texCoords);
-
-    // Use drawElements
-    sphere.setElements(sphereModel.indices);
 }
-
-function initControl() {
-
+    
+function initControls() {
     // Using GameGLU to add interactivity
+    $W.useGameGLU();
     $G.initialize();
     var st = $G.state;
 
@@ -96,68 +72,47 @@ function initControl() {
     });
 
     $G.event.bind('mousemove', function(x,y) {
-            if (st.mouseDown) {
-
-            // avoid around when we click then release, move 
-            // the mouse, then click again.
-            if (st.wasMouseDown) {
+        if (st.mouseDown) {
+        // avoid around when we click then release, move 
+        // the mouse, then click again.
+        if (st.wasMouseDown) 
             st.lastM.elements = st.posM.elements;
-            }
-
             st.posM.elements = [x, y];
             st.deltaM = st.posM.subtract(st.lastM);
-
-
             st.totalM = st.totalM.add(st.deltaM);
-            }
+        }
 
-            st.wasMouseDown = st.mouseDown;
+        st.wasMouseDown = st.mouseDown;
     });
 
     $W.camera.update = function() {
         var x = -1 * st.totalM.e(1) / 100;
         var y = st.totalM.e(2) / 10;
 
-
         this.target.elements = [Math.cos(x), y / 10, Math.sin(x)];
         st.deltaM.elements = [0,0];
     }
 }
 
-function initCanvas() {
-    var params = getUrlVars();
-
-    // A different width and height can be defined in the url
-    // as ?width=x&height=y
-    var width  = params['width'];
-    var height = params['height'];
-    var canvas = document.getElementById('canvas');
-    if (width !== undefined && height !== undefined) {
-        canvas.width = width;
-        canvas.height = height;
-    }
-}
-
 function start() {
-    initCanvas();
+    if (!$W.initialize()) return;
+    initControls();
 
-    if (init()) {
-        createObjects();
+    $W.camera.setTarget(-1,0,0);
+    $W.camera.yfov = 90;
+    $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
 
-        initControl();
+    $W.createObject({type     : getRenderType(),
+                     material : new $W.Material({path:'video.json'}),
+                     model    : $W.util.genSphere(40,40)});
 
-        var vid = $W.textures['video'].video;
-
-        function redraw() {
-            document.getElementById('overlay').innerHTML = $W.FPS;
-            $W.update();
-            $W.draw();	
-            if (vid.readyState === 2) {
-                vid.play();
-            }
-        }
-        setInterval(redraw, 10);        	
-    }
+    $W.updateFn = function update(){
+        document.getElementById('overlay').innerHTML = $W.FPS;
+        if ($W.textures.video.video.readyState === 2) 
+            $W.textures.video.video.play();
+        $W.update();
+    };
+    $W.start();
 }
 
 </script>
