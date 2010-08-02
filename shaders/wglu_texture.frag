@@ -1,3 +1,6 @@
+#ifdef GL_ES
+precision highp float;
+#endif
 uniform sampler2D wglu_mat_texture0;
 varying vec2 vTexCoord;
 
