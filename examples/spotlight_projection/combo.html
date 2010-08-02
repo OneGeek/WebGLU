@@ -25,29 +25,29 @@ function createObjects() {
     var VERTEX = "vertex"; var COLOR     = "color";
     var NORMAL = "normal"; var TEX_COORD = "texCoord";
 
-    light = {
-        position: [0,0,-7], target:   [0,0,0], color:    [1,1,1],
-        fieldAngle: 25, beamAngle: 10, focus: 0,
-        distanceFalloffRatio: 5
-    };
-    smoke = {
-        color: [0.5, 0.5, 0.5],
-        density:0.5
-    };
 
-    var sphereData = $W.util.genSphere(30,30);
-    var sphereModel= [[COLOR, $W.util.genDummyArray([0,1,0], sphereData.vertices.length)], [VERTEX, sphereData.vertices ], [TEX_COORD, sphereData.texCoords], [NORMAL,  sphereData.normals], ['wglu_elements', sphereData.indices] ]; 
+    //var sphereData = $W.util.genSphere(30,30);
+    //var sphereModel= [[COLOR, $W.util.genDummyArray([0,1,0], sphereData.vertices.length)], [VERTEX, sphereData.vertices ], [TEX_COORD, sphereData.texCoords], [NORMAL,  sphereData.normals], ['wglu_elements', sphereData.indices] ]; 
     var wallModel  = [[COLOR, [1,0,0, 1,0,0, 1,0,0, 1,0,0]], [VERTEX,    [[5, 5,0], [-5, 5,0], [5,-5,0], [-5,-5,0]]], [TEX_COORD, [0,1, 1,1, 1,0, 0,0]], [NORMAL,    $W.util.genDummyArray([0,0,-1], 4)]]; 
     var floorModel = [[COLOR, [1,1,.5, 1,1,.5, 1,1,.5, 1,1,.5]], [VERTEX,    [[ 15,-5, 15], [-15,-5, 15], [ 15,-5,-15], [-15,-5,-15]]], [TEX_COORD, [0,1, 1,1, 1,0, 0,0]], [NORMAL,    $W.util.genDummyArray([0,1,0], 4)]]; 
 
-    var spotlit = new $W.Material(null, 'spotlit.json');
+    var spotlit = new $W.Material({path:'spotlit.json'});
     //new $W.VideoTexture('gobo', 'new_york.ogv');
     new $W.ImageTexture('gobo', 'textures/star.png');
+    spotlit.light = {
+        position: [0,0,-7], target:   [0,0,0], color:    [1,1,1],
+        field: 25, beam: 10, focus: 0,
+        falloff: 5
+    };
+    spotlit.smoke = {
+        color: [0.5, 0.5, 0.5],
+        density:0.5
+    };
+    spotlit.maxsteps = 700;
+    spotlit.stepsize = 0.05;
 
-    var wall = new $W.Object($W.GL.TRIANGLE_STRIP);
-    wall.setMaterial(spotlit);
-    wall.vertexCount = 4;
-    wall.fillArrays(wallModel);
+    var wall = $W.createObject({type:$W.GL.TRIANGLE_STRIP,
+            material:spotlit, vertexCount:4, data:wallModel});
     wall.color = [0.8,0.8,0.8];
     wall.shininess = 100;
 
@@ -69,28 +69,36 @@ function createObjects() {
     sphere.fillArrays(sphereModel);
     */
 
-    spotlit.setUniformAction('camera_position', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, $W.camera.position.elements); });
-    spotlit.setUniformAction('gobo', function(uniform, object, material) { $W.GL.activeTexture($W.GL.TEXTURE0); $W.textures.gobo.bind(); $W.GL.uniform1i(uniform.location, 0); });
-    spotlit.setUniformAction('global_ambient', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, 0.2); });
-    spotlit.setUniformAction('l0_distance_falloff', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.distanceFalloffRatio); });
-    spotlit.setUniformAction('l0_position', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, light.position); });
-    spotlit.setUniformAction('l0_color', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, light.color); });
-    spotlit.setUniformAction('l0_spot_field_angle', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.fieldAngle * (Math.PI / 180)); });
-    spotlit.setUniformAction('l0_beam_field_angle', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.beamAngle * (Math.PI / 180)); });
-    spotlit.setUniformAction('l0_focus', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, light.focus); });
-    spotlit.setUniformAction('l0_spot_target', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, light.target); });
-    spotlit.setUniformAction('mat_color', function(uniform, object, material) { $W.GL.uniform3fv(uniform.location, object.color); });
-    spotlit.setUniformAction('mat_shininess', function(uniform, object, material) { $W.GL.uniform1f(uniform.location, object.shininess); });
-    spotlit.setUniformAction('smoke_color', 
-        function(uniform, object, material) {
-            $W.GL.uniform3fv(uniform.location, smoke.color);
-        }
-    );
-    spotlit.setUniformAction('smoke_density', 
-        function(uniform, object, material) {
-            $W.GL.uniform1f(uniform.location, smoke.density);
-        }
-    );
+    var set = function(name, action) {
+        spotlit.setUniformAction(name, action);
+    };
+    
+    set('camera_position', function(uniform) { 
+        uniform.set($W.camera.position.elements); 
+    });
+    set('gobo', function(uniform) { 
+        $W.GL.activeTexture($W.GL.TEXTURE0); 
+        $W.textures.gobo.bind(); 
+        uniform.set(0); 
+    });
+
+    set('global_ambient',function(       ){this.set(0.5              )});
+
+    set('max_steps'     ,function(_,_,mat){this.set(mat.maxsteps     )}); 
+    set('step_size'     ,function(_,_,mat){this.set(mat.stepsize     )}); 
+
+    set('smoke_color'   ,function(_,_,mat){this.set(mat.smoke.color  )});
+    set('smoke_density' ,function(_,_,mat){this.set(mat.smoke.density)});
+
+    set('l0_focus'      ,function(_,_,mat){this.set(mat.light.focus   )});
+    set('l0_falloff'    ,function(_,_,mat){this.set(mat.light.falloff )});
+    set('l0_position'   ,function(_,_,mat){this.set(mat.light.position)});
+    set('l0_color'      ,function(_,_,mat){this.set(mat.light.color   )});
+    set('l0_spot_angle' ,function(_,_,mat){this.set(mat.light.field   )});
+    set('l0_beam_angle' ,function(_,_,mat){this.set(mat.light.beam    )});
+    set('l0_target'     ,function(_,_,mat){this.set(mat.light.target  )});
+    set('obj_shininess' ,function(_,obj,_){this.set(obj.shininess     )});
+
 }
 
 function start() {
@@ -99,24 +107,28 @@ function start() {
     $("#beam").slider({min:0,max:90,step:1,value:10});
     $("#density").slider({min:0,max:0.04,step:0.0001,value:0.001});
     $("#camX").slider({min:-15,max:15,step:0.1,value:8.9});
+    $("#maxsteps").slider({min:0,max:700,step:5,value:700});
+    $("#stepsize").slider({min:0,max:0.2,step:0.005,value:0.05});
     if (init()) {
         createObjects();
 
-        var FPS = document.getElementById('overlay');
 
-        redraw = function redraw() {
-            FPS.innerHTML = $W.FPS;
-            light.focus      = $("#focus").slider("option", "value");
-            light.fieldAngle = $("#field").slider("option", "value");
-            light.beamAngle  = $("#beam").slider("option", "value");
-            smoke.density = $('#density').slider('option', 'value');
-            $W.camera.setPosition($('#camX').slider('option', 'value'), 10, -13);
+        mat = $W.materials.spotlit;
+        $W.updateFn = function redraw() {
+            mat.maxsteps         = $("#maxsteps").slider("option", "value");
+            mat.stepsize         = $("#stepsize").slider("option", "value");
+            mat.light.focus      = $("#focus").slider("option", "value");
+            mat.light.field      = $("#field").slider("option", "value");
+            mat.light.beam       = $("#beam" ).slider("option", "value");
+            mat.smoke.density =  $('#density').slider('option', 'value');
+            $W.camera.setPosition($('#camX'  ).slider('option', 'value'), 10, -13);
             $W.update();
-            $W.draw();	
         }
 
-        setInterval(redraw, 5000);        	
-        //redraw();
+        $W.updateFn();
+        $W.draw()
+        $W.start(5000);
+
     }
 }
 
@@ -126,16 +138,19 @@ function start() {
 
 <body onload='start()'>
 
-<div class='label'>Focus</div><div class='slider' id="focus"></div><br><br>
-<div class='label'>Field</div><div class='slider' id="field"></div><br><br>
-<div class='label'>Beam</div><div  class='slider' id="beam"></div><br><br>
-<div class='label'>Density</div><div class='slider' id='density'></div><br><br>
-<div class='label'>CamX</div><div class='slider' id='camX'></div><br><br>
-<div id="glCanvas">
-
-<div id="overlay"></div>
-
-<canvas id='canvas' width='500' height='500'></canvas><br>
+<div class='wrapper' style:'overflow:hidden'>
+ <div class='controls' style:'float:left; width:100px;'>
+  <div class='label'>Focus</div><div class='slider' id="focus"></div><br><br>
+  <div class='label'>Field</div><div class='slider' id="field"></div><br><br>
+  <div class='label'>Beam</div><div  class='slider' id="beam"></div><br><br>
+  <div class='label'>Density</div><div class='slider' id='density'></div><br><br>
+  <div class='label'>CamX</div><div class='slider' id='camX'></div><br><br>
+  <div class='label'>Raymarch Steps</div><div class='slider' id='maxsteps'></div><br><br>
+  <div class='label'>Step Size</div><div class='slider' id='stepsize'></div><br><br>
+ </div>
+ <div style:'float:left; width:400px;'>
+  <canvas id='canvas' width='500' height='500'></canvas>
+ </div>
 </div>
 
 </body>

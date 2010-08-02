@@ -13,67 +13,47 @@ function init() {
 
     return true;
 }
+var VERTEX = "vertex", COLOR  = "color";
+var PYRAMID = [
+    [VERTEX, [0, 1, 0,   // tip 0 
+             -1,-1, 1,   // fl  1 
+              1,-1, 1,   // fr  2 
+             -1,-1,-1,   // bl  3 
+              1,-1,-1]], // br  4 
+
+    [COLOR,  [1, 1, 1, 
+              1, 0, 0, 
+              0, 1, 0, 
+              0, 0, 1, 
+              1, 0, 1 ]],
+
+    ['wglu_elements',  [0, 1, 2, 
+                        0, 3, 4, 
+                        0, 3, 1, 
+                        0, 2, 4 ]]
+    ];
 
 function createObjects() {
-    var vertexAttr = "vertex";
-    var colorAttr  = "color";
+    var C = $W.constants.colors;
+    $W.createObject({type:$W.GL.LINES, vertexCount:6, data:[
+        [VERTEX,[[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]],
+        [COLOR, [C.RED,   C.RED,    C.GREEN, C.GREEN,  C.BLUE,  C.BLUE]]] });
 
-    //  Create lines representing the XYZ axes
-    var addAxisLines = function() {
-        var originLines = new $W.Object($W.GL.LINES);
-        originLines.vertexCount = 6;
 
-        originLines.fillArray(vertexAttr,
-            [[0,0,0], [50,0,0], [0,0,0], [0,50,0], [0,0,0], [0,0,50]]);
-        with ($W.constants.colors){
-          originLines.fillArray(colorAttr, 
-            [ RED,     RED,      GREEN,   GREEN,    BLUE,    BLUE]);
-        }
-    }
-
-    addAxisLines();
-
-    // Create a multicolor pyramid that will spin around and
-    // use drawElements to render
-	pyramid = new $W.Object($W.GL.TRIANGLES);
+	pyramid = $W.createObject({type:$W.GL.TRIANGLES, data:PYRAMID});
     pyramid.setPosition(0, 1, 0);
-	pyramid.animation.updateRotation = function(dt) { 
-        this.setRotation((this.age/60) % 360, 0, 0);
-        //this.rotation.elements[0] = (this.age/60) % 360; 
+	pyramid.animation.updateRotation = function() { 
+        this.setRotation((this.age/60), 0, 0);
     }
-
-	pyramid.fillArray(vertexAttr, 
-            [0, 1, 0,   // tip 0 
-            -1,-1, 1,   // fl  1 
-             1,-1, 1,   // fr  2 
-            -1,-1,-1,   // bl  3 
-             1,-1,-1 ]);// br  4 
-		
-	pyramid.setElements(
-            [0, 1, 2,    
-             0, 3, 4,    
-             0, 3, 1,    
-             0, 2, 4 ]); 
-		
-    pyramid.fillArray(colorAttr, 
-            [1, 1, 1,
-             1, 0, 0,
-             0, 1, 0,
-             0, 0, 1,
-             1, 0, 1 ]);     
 }
 
 function start() {
         if (init()) {
             createObjects();
-
-            var FPS = document.getElementById('overlay');
-
-            setInterval(function() {
-                FPS.innerHTML = $W.FPS;
-                $W.update();
-                $W.draw();	
-            }, 10);        	
+            $W.updateFn = function() {
+                document.getElementById('overlay').innerHTML = $W.FPS;
+            };
+            $W.start()
         }
 }
 
