@@ -10,62 +10,47 @@ $W.GLSL = {
         vec2:2,
         vec3:3,
         vec4:4
+    },
+
+    uniformSetters: {
+        int:function(value) {
+            $W.GL.uniform1i(this.location, value);
+        },
+        float:function(value) {
+            $W.GL.uniform1f(this.location, value);
+        },
+        vec2:function(value) {
+            $W.GL.uniform2fv(this.location, value);
+        },
+        vec3:function(value) {
+            $W.GL.uniform3fv(this.location, value);
+        },
+        vec4:function(value) {
+            $W.GL.uniform4fv(this.location, value);
+        },
+        mat3:function(value) {
+            $W.GL.uniformMatrix3fv(this.location, value);
+        },
+        mat4:function(value) {
+            $W.GL.uniformMatrix4fv(this.location, value);
+        },
+        sampler2D:function(value) {
+            $W.GL.uniform1i(this.location, value);
+        }
     }
+
 };
 
 $W.GLSL.util = {
-    handlePragmas: function(source) {
-        var pragmas = source.match(/^#pragma.*/gm);
+    getUniformSetter: function GLSL_getUniformSetter(type){
+        setter = $W.GLSL.uniformSetters[type];
 
-        if (pragmas !== null) {
-            for (var i = 0; i < pragmas.length; i++) {
-                if (pragmas[i] !== null) {
-                    var pragma = pragmas[i].split(/\s+/g);
-                    
-                    if (pragma[1] === "WEBGLU_LIGHTS") {
-                        source = source.replace(pragmas[i], 
-                                "#pragma INCLUDE 'lighting.glsl'");
-
-                        $W.lights = [];
-                        for (var j = 0; j < 3; j++) {
-                            $W.lights[j] = {
-                                ambient:[0,0,0,0],
-                                diffuse:[0,0,0,0],
-                                specular:[0,0,0,0],
-                                position:[0,0,0,0]
-                            };
-                        }
-                        console.log("Lighting uniforms enabled");
-                    }
-                }
-            }
-            source = $W.GLSL.util.handleIncludes(source);
+        if (typeof(setter) !== 'undefined') {
+            return setter;
+        }else {
+            console.error("No setter for uniform of type `" + type + "`");
+            return null;
         }
-        return source;
-    },
-
-    handleIncludes: function(source) {
-        var maxIncludeDepth = 32;
-        var includeDepth = 0;
-
-
-        var includes = source.match(/^#pragma\s*INCLUDE.*/gm);
-        if (includes !== null) {
-        }
-        while (includes !== null && includeDepth < maxIncludeDepth) {
-            for (var i = 0; i < includes.length; i++) {
-                var include = includes[i].replace(/^#pragma\s*INCLUDE\s*/g, "");
-                include = include.replace(/["'<>]/g,"");
-
-                console.log ("Including " + include);
-
-                source = source.replace(includes[i], 
-                        $W.util.loadFileAsText($W.paths.shaders + include));
-            }
-            var includes = source.match(/^#pragma.*/gm);
-            includeDepth++;
-        }
-        return source
     },
 
     getShaderSourceById: function(id) {
@@ -135,6 +120,8 @@ $W.GLSL.Uniform = function (name, action, type, location) {
     this.location = location;  // only used by the shader program
     this.action = action;
     this.type = type;
+
+    this.set =$W.GLSL.util.getUniformSetter(type);
 
     this.clone = function() {
         return new $W.GLSL.Uniform(this.name, this.action, this.type, this.location);
@@ -326,7 +313,7 @@ $W.GLSL.Shader = function(name, src, type) {
         return (glShader !== null);
     };
 
-    source = $W.GLSL.util.handlePragmas(source);
+    //source = $W.GLSL.util.handlePragmas(source);
     this.parseShaderVariables(source);
     this.compile();
     $W.dedentLog();

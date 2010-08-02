@@ -155,6 +155,30 @@ $W.PICKABLE     = 2;
  * list in case you want to handle rendering in a specific manner, e.g. as
  * the child of another object.
  */
+$W.createObject = function(params) {
+    var obj = new $W.Object(params.type);
+    var has = function(param){
+        return typeof(param) !== 'undefined';
+    };
+
+    if (has(params.material)){
+        obj.setMaterial(params.material);
+    }
+
+    if (has(params.model)){
+        obj.fromModel(params.model);
+    }else if (has(params.data)){
+        obj.fillArrays(params.data);
+    }
+
+    if (has(params.vertexCount)){
+        obj.vertexCount = params.vertexCount;
+    }
+
+    return obj;
+};
+
+
 $W.Object = function (type, flags) {
     //console.group("Creating object");
     $W.ObjectState.call(this);
@@ -272,6 +296,14 @@ $W.Object = function (type, flags) {
                 this.fillArray(arr[0], arr[1]);
             }
         }
+    };
+
+    this.fromModel = function OBJ_fromModel(model) {
+        this.fillArrays([['vertex', model.vertices],
+                         ['normal', model.normals],
+                         ['texCoord', model.texCoords],
+                         ['wglu_elements', model.indices]]);
+
     };
 
     /** draw this object at the given postion, rotation, and scale

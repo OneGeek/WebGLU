@@ -133,6 +133,7 @@ $W.Material = function(materialDef) {
             if (typeof(texDef) !== 'undefined') {
                 for (var i = 0; i < texDef.length; i++) {
                     var texture = texDef[i];
+
                     if (typeof($W.textures[texture.name]) === 'undefined') {
 
                         // type is Image, Canvas, or Video. this calls
@@ -140,11 +141,12 @@ $W.Material = function(materialDef) {
                         if (texture.type === "Image") {
                             new $W.ImageTexture(texture.name, texture.path);
 
-                        }else if (textureDef.type == "Canvas") {
-                            new $W.CanvasTexture(textureDef.name, 
+                        }else if (texture.type == "Canvas") {
+                            new $W.CanvasTexture(texDef.name, 
                                     document.getElementById(texture.element_id));
 
-                        }else if (textureDef.type === "Video") {
+                        }else if (texture.type === "Video") {
+                            
                             new $W.VideoTexture(texture.name, texture.path);
                         }
 

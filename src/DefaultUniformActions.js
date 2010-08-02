@@ -9,30 +9,30 @@ $W.uniformNames.MaterialTexture = 'wglu_mat_texture';
 
 $W.setupUniformActions = function() {
     ModelViewAction = 
-        function DUA_ModelViewAction(uniform, object, material) {
-            $W.GL.uniformMatrix4fv(uniform.location, false, 
+        function DUA_ModelViewAction(_, object, material) {
+            $W.GL.uniformMatrix4fv(this.location, false, 
                     $W.modelview.getForUniform());
         };
 
     ProjectionAction = 
-        function DUA_ProjectionAction(uniform, object, material) {
-            $W.GL.uniformMatrix4fv(uniform.location, false, 
+        function DUA_ProjectionAction(_, object, material) {
+            $W.GL.uniformMatrix4fv(this.location, false, 
                     $W.projection.getForUniform());
         };
 
     NormalMatrixAction = 
-        function DUA_NormalMatrixAction(uniform, object, material){
-            $W.GL.uniformMatrix3fv(uniform.location, false, 
+        function DUA_NormalMatrixAction(_, object, material){
+            $W.GL.uniformMatrix3fv(this.location, false, 
                     $W.util.getNormalMatrixForUniform());
         };
 
     SimpleSamplerAction = 
-        function DUA_SimpleSamplerAction(uniform, object, material) {
+        function DUA_SimpleSamplerAction(_, object, material) {
             try {
                 var gl = $W.GL;
                 gl.activeTexture(gl.TEXTURE0);
                 $W.textures[object.textures[0]].bind();
-                gl.uniform1i(uniform.location, 0);
+                gl.uniform1i(this.location, 0);
             }catch (e) {
                 console.error("Simple texture uniform error");
                 console.error(e);
@@ -40,7 +40,7 @@ $W.setupUniformActions = function() {
         };
 
     MaterialTextureAction = 
-        function DUA_MaterialTextureAction(uniform, object, material) {
+        function DUA_MaterialTextureAction(_, object, material) {
             try {
                 $W.GL.activeTexture($W.GL.TEXTURE0);
                 if (typeof(material.textures[0]) === 'undefined') {
@@ -48,7 +48,7 @@ $W.setupUniformActions = function() {
                 }else {
                     $W.textures[material.textures[0]].bind();
                 }
-                $W.GL.uniform1i(uniform.location, 0);
+                $W.GL.uniform1i(this.location, 0);
             }catch (e) {
                 console.error("Material texture uniform error");
                 console.error(e);
@@ -57,7 +57,7 @@ $W.setupUniformActions = function() {
 
     genMultiTextureAction = function DUA_genMultiTextureAction(texNum) {
         eval("var action = \n"+
-"        function DUA_MultiTextureAction"+texNum+"(uniform, object, material) {\n"+
+"        function DUA_MultiTextureAction"+texNum+"(_ , object, material) {\n"+
 "           try {\n"+
 "               $W.GL.activeTexture($W.GL.TEXTURE0);\n"+
 "               if (typeof(material.textures["+texNum+"]) === 'undefined') {\n"+
@@ -65,7 +65,7 @@ $W.setupUniformActions = function() {
 "               }else {\n"+
 "                   $W.textures[material.textures["+texNum+"]].bind();\n"+
 "               }\n"+
-"               $W.GL.uniform1i(uniform.location, "+texNum+");\n"+
+"               $W.GL.uniform1i(this.location, "+texNum+");\n"+
 "           }catch (e) {\n"+
 "               console.error('Material texture uniform error');\n"+
 "               console.error(e);\n"+

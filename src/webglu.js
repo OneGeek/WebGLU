@@ -163,6 +163,22 @@ $W = {
         $W.GL.flush();
     },
 
+    redrawFn: function $W_redrawFn() {
+            $W.updateFn();
+            $W.drawFn();	
+    },
+
+    drawFn: null,
+    updateFn: null,
+
+    start: function $W_start(framelimit) {
+        if (typeof(framelimit) === 'undefined') {
+            framelimit = 10;
+        }
+        setInterval($W.redrawFn, framelimit);        	
+    },
+        
+
 	_updateState : function $W_updateState() {
 		$W.timer.tick();
 		$W.fpsTracker.update($W.timer.dt);
@@ -577,6 +593,9 @@ $W = {
         $W.camera     = new $W.Camera();
         $W.timer      = new $W.Timer();
         $W.fpsTracker = new $W.FPSTracker();
+
+        $W.drawFn = $W.draw;
+        $W.updateFn = $W.update;
 
         var success = true;
         if (canvasNode === false) {

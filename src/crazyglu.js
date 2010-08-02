@@ -31,6 +31,61 @@ $W.POSITION = 'position';
 $W.constants = {};
 $W.constants.LightSourceUniform = "wglu_LightSource";
 
+
+$W.GLSL.util.handleIncludes = function(source) {
+    var maxIncludeDepth = 32;
+    var includeDepth = 0;
+
+
+    var includes = source.match(/^#pragma\s*INCLUDE.*/gm);
+    if (includes !== null) {
+    }
+    while (includes !== null && includeDepth < maxIncludeDepth) {
+        for (var i = 0; i < includes.length; i++) {
+            var include = includes[i].replace(/^#pragma\s*INCLUDE\s*/g, "");
+            include = include.replace(/["'<>]/g,"");
+
+            console.log ("Including " + include);
+
+            source = source.replace(includes[i], 
+                    $W.util.loadFileAsText($W.paths.shaders + include));
+        }
+        var includes = source.match(/^#pragma.*/gm);
+        includeDepth++;
+    }
+    return source
+};
+
+$W.GLSL.util.handlePragmas =  function(source) {
+    var pragmas = source.match(/^#pragma.*/gm);
+
+    if (pragmas !== null) {
+        for (var i = 0; i < pragmas.length; i++) {
+            if (pragmas[i] !== null) {
+                var pragma = pragmas[i].split(/\s+/g);
+                
+                if (pragma[1] === "WEBGLU_LIGHTS") {
+                    source = source.replace(pragmas[i], 
+                            "#pragma INCLUDE 'lighting.glsl'");
+
+                    $W.lights = [];
+                    for (var j = 0; j < 3; j++) {
+                        $W.lights[j] = {
+                            ambient:[0,0,0,0],
+                            diffuse:[0,0,0,0],
+                            specular:[0,0,0,0],
+                            position:[0,0,0,0]
+                        };
+                    }
+                    console.log("Lighting uniforms enabled");
+                }
+            }
+        }
+        source = $W.GLSL.util.handleIncludes(source);
+    }
+    return source;
+}
+
 /*
 $W.defaultUniformActions[$W.constants.LightSourceUniform] = 
     function(uniform, object, material) {
