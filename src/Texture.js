@@ -68,11 +68,11 @@ $W.VideoTexture = function(name, src) {
 
     this.update = function() {
         var gl = $W.GL;
-        this.texture.bind();
+        this.bind();
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
             gl.UNSIGNED_BYTE, this.video);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         //gl.generateMipmap(gl.TEXTURE_2D);
         //gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
     }

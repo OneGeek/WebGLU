@@ -110,6 +110,7 @@ function start() {
         document.getElementById('overlay').innerHTML = $W.FPS;
         if ($W.textures.video.video.readyState === 2) 
             $W.textures.video.video.play();
+        $W.textures.video.update();
         $W.update();
     };
     $W.start();

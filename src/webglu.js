@@ -579,10 +579,16 @@ $W = {
      *              Pass `false` to skip init of WebGL subsystem.
      */
     initialize:function $W_initialize(canvasNode) {
+
+        // Some hacks for running in both the shell and browser,
+        // and for supporting F32 and WebGLFloat arrays
+
         $W.initLogging();
         $W.log("Initializing WebGLU");
 
         $W.util.include($W.paths.libsrc + 'Util.js');
+        try { WebGLFloatArray; } catch (x) { WebGLFloatArray = Float32Array; }
+        try { WebGLUnsignedShortArray; } catch (x) { WebGLUnsignedShortArray = Uint16Array; }
 
         $W.util.extendArray();
         $W.util.loadSylvester();
@@ -690,6 +696,13 @@ $W = {
     }
 };
 
+$W.LL = {
+DEBUG :0,
+       INFO  :1,
+       NOTE  :2,
+       WARN  :3
+};
+$W.loglevel = $W.LL.NOTE;
 $W.initLogging = function() {
         if (window.console === undefined) {
             console = {};
@@ -698,12 +711,6 @@ $W.initLogging = function() {
         if (console.log === undefined) {
             console.log = function(){};
         }else {
-            $W.LL = {
-                DEBUG :0,
-                INFO  :1,
-                NOTE  :2,
-                WARN  :3
-            };
             $W.logPrefix = '\t';
             $W.logIndentAmount = 0;
             $W.getLogPrefix = function() {
@@ -716,8 +723,6 @@ $W.initLogging = function() {
             $W.indentLog = function(){$W.logIndentAmount++;};
             $W.dedentLog = function(){$W.logIndentAmount--;};
                     
-                    
-            $W.loglevel = $W.LL.NOTE;
             $W.log = function(message, level) {
                 if (typeof(level) === 'undefined') {level = $W.LL.NOTE;}
 
