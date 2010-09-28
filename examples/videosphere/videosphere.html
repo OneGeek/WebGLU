@@ -47,6 +47,17 @@ function getRenderType() {
         return $W.GL.TRIANGLES;
     }
 }
+
+function getVideoPath() {
+    var vars = getUrlVars();
+    var path = '';
+    if (typeof(vars['video']) == 'undefined') {
+        path = 'new_york.ogv';
+    }else {
+        path = vars['video'];
+    }
+    return path;
+}
     
 function initControls() {
     // Using GameGLU to add interactivity
@@ -98,13 +109,15 @@ function start() {
     if (!$W.initialize()) return;
     initControls();
 
-    $W.camera.setTarget(-1,0,0);
+    $W.camera.setTarget(-1,0,10);
     $W.camera.yfov = 90;
     $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
 
     $W.createObject({type     : getRenderType(),
                      material : new $W.Material({path:'video.json'}),
-                     model    : $W.util.genSphere(40,40)});
+                     model    : $W.util.genSphere(20,20)});
+
+    $W.textures.video.setSource(getVideoPath());
 
     $W.updateFn = function update(){
         document.getElementById('overlay').innerHTML = $W.FPS;

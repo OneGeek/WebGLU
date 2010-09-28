@@ -9,6 +9,6 @@
     },
 
     textures: [
-        {name:"video", type:"Video", path:"new_york.ogv"}
+        {name:"video", type:"Video", path:""}
     ]
 }

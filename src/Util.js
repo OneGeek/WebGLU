@@ -202,9 +202,11 @@ $W.util.genSphere= function UTIL_genSphere(rings, slices, r) {
         for (var slice   = 0; slice <= slices; ++slice) {
             var theta    = ring * Math.PI / rings;
             var phi      = slice * 2 * Math.PI / slices;
+
             var sinTheta = Math.sin(theta);
-            var sinPhi   = Math.sin(phi);
             var cosTheta = Math.cos(theta);
+
+            var sinPhi   = Math.sin(phi);
             var cosPhi   = Math.cos(phi);
 
             var x = cosPhi * sinTheta;
@@ -212,8 +214,7 @@ $W.util.genSphere= function UTIL_genSphere(rings, slices, r) {
             var z = sinPhi * sinTheta;
 
             var u = 1 - (slice / slices);
-            var v = ring / rings;
-
+            var v = Math.abs(ring - 1) * (1 / rings);
             
             sphere.vertices = sphere.vertices.concat([r*x, r*y, r*z]);
             sphere.normals = sphere.normals.concat([x, y, z]);
@@ -221,12 +222,15 @@ $W.util.genSphere= function UTIL_genSphere(rings, slices, r) {
         }
     }
 
-    for (var ring = 0; ring < rings; ++ring) {
-        for (var slice   = 0; slice < slices; ++slice) {
-            var first = (ring * slices) + (slice % slices);
-            var second = first + slices;
+    for (var ring = 0; ring < rings; ring++) {
+        for (var slice = 0; slice < slices; slice++) {
+            var a = (ring * slices) + ring + slice;
+            var b = a + 1;
+            var c = b + slices;
+            var d = c + 1;
 
-            sphere.indices = sphere.indices.concat([first, second, first+1, second, second+1, first+1]);                    
+            sphere.indices = sphere.indices.concat([a, b, c]);
+            sphere.indices = sphere.indices.concat([c, d, b]);
         }
     }
 
