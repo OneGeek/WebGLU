@@ -52,6 +52,7 @@ function start() {
             createObjects();
             $W.updateFn = function() {
                 document.getElementById('overlay').innerHTML = $W.FPS;
+                $W.util.defaultUpdate();
             };
             $W.start()
         }
