@@ -90,16 +90,13 @@ function createObjects() {
 function start() {
         if (init()) {
             createObjects();
-            
             var FPS = document.getElementById('overlay');
 
-            function redraw() {
+            $W.updateFn = function() {
                 FPS.innerHTML = $W.FPS;
-                $W.update();
-                $W.draw();	
+                $W.defaultUpdate();
             }
-
-            setInterval(redraw, 10);        	
+            $W.start();
         }
 }
 
