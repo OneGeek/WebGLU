@@ -832,3 +832,67 @@ $W.FPSTracker = function () {
     }
 };
 
+/** Clear the canvas */
+$W.util.clear = function UTIL_clear() {
+    // clearing the color buffer is really slow
+    $W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
+},
+        
+$W.util.setupMatrices = function UTIL_setupMatrices() {
+    $W.modelview.loadIdentity();
+    $W.projection.loadIdentity();
+
+    $W.projection.multMatrix(
+        $W.GLU.perspective( $W.camera.yfov, $W.camera.aspectRatio, 
+                            0.01, 10000)); 
+    $W.projection.multMatrix($W.GLU.lookAt(
+        $W.camera.position.e(1),
+        $W.camera.position.e(2),
+        $W.camera.position.e(3),
+        $W.camera.target.e(1),
+        $W.camera.target.e(2),
+        $W.camera.target.e(3),
+        $W.camera.up.e(1),
+        $W.camera.up.e(2),
+        $W.camera.up.e(3)));
+
+    $W.modelview.rotate($W.camera.rotation.e(1), [1, 0, 0]);
+    $W.modelview.rotate($W.camera.rotation.e(2), [0, 1, 0]);
+    $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
+};
+
+$W.util.drawObjects = function UTIL_drawObjects() {
+    for (var i = 0; i < $W.renderables.length; i++) {
+        $W.objects[i].draw();
+    }
+};
+
+/** Draw all objects from the camera's perspective. */
+$W.util.defaultDraw = function UTIL_defaultDraw() {
+    $W.util.clear();
+    $W.util.setupMatrices();
+    $W.util.drawObjects();                            
+    $W.GL.flush();
+};
+
+/** Update the internal timer and FPS counter */
+$W.util.updateState = function UTIL_updateState() {
+    $W.timer.tick();
+    $W.fpsTracker.update($W.timer.dt);
+    $W.FPS = Math.round($W.fpsTracker.fps);
+};
+
+/** Update all objects and textures. */
+$W.util.defaultUpdate = function UTIL_defaultUpdate() {
+    $W.util.updateState();
+
+    for (var i = 0; i < this.objects.length; i++) {
+        $W.objects[i].update($W.timer.dt);
+    }
+
+    for (var i = 0; i < this.textures.length; i++) {
+        $W.textures[i].update();
+    }
+
+    $W.camera.update();
+};
