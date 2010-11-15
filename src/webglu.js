@@ -1,6 +1,6 @@
 /** @author Benjamin DeLillo */
 /*
-     *  Copyright (c) 2009 Benjamin P. DeLillo
+     *  Copyright (c) 2009-2010 Benjamin P. DeLillo
      *  
      *  Permission is hereby granted, free of charge, to any person
      *  obtaining a copy of this software and associated documentation
@@ -127,6 +127,12 @@ $W = {
         console.error('$W.newProgram is deprecated, use $W.GLSL.ShaderProgram directly');
         return new $W.GLSL.ShaderProgram(name);
     },
+
+    /** Clear the canvas */
+    clear : function() {
+        // clearing the color buffer is really slow
+        $W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
+    },
             
     _setupMatrices: function() {
         $W.modelview.loadIdentity();
@@ -151,55 +157,30 @@ $W = {
         $W.modelview.rotate($W.camera.rotation.e(3), [0, 0, 1]);
     },
 
-    updateDraw: function $W_updateDraw() {
-        $W.update();
-        $W.draw();
-    },
-
-    drawFn: function $W_draw() {
-        $W.updateDraw();
-    },
-
-    start: function $W_start() {
-        setInterval($W.drawFn,10);
+    _drawObjects : function $W_drawObjects() {
+        for (var i = 0; i < $W.renderables.length; i++) {
+            $W.objects[i].draw();
+        }
     },
 
     /** Draw all objects from the camera's perspective. */
-    draw: function $W_draw() {
+    defaultDraw: function $W_defaultDraw() {
         $W.clear();
-
         $W._setupMatrices();
-
         $W._drawObjects();                            
-
         $W.GL.flush();
     },
 
-    redrawFn: function $W_redrawFn() {
-            $W.updateFn();
-            $W.drawFn();	
+    /** Update the internal timer and FPS counter */
+    _updateState : function $W_updateState() {
+        $W.timer.tick();
+        $W.fpsTracker.update($W.timer.dt);
+        $W.FPS = Math.round($W.fpsTracker.fps);
     },
-
-    drawFn: null,
-    updateFn: null,
-
-    start: function $W_start(framelimit) {
-        if (typeof(framelimit) === 'undefined') {
-            framelimit = 10;
-        }
-        setInterval($W.redrawFn, framelimit);        	
-    },
-        
-
-	_updateState : function $W_updateState() {
-		$W.timer.tick();
-		$W.fpsTracker.update($W.timer.dt);
-		$W.FPS = Math.round($W.fpsTracker.fps);
-	},
 
     /** Update all objects and textures. */
-	update : function $W_update() {
-		$W._updateState();
+    defaultUpdate : function $W_defaultUpdate() {
+        $W._updateState();
 
         for (var i = 0; i < this.objects.length; i++) {
             $W.objects[i].update($W.timer.dt);
@@ -210,19 +191,21 @@ $W = {
         }
 
         $W.camera.update();
-	},
-
-    _drawObjects : function $W_drawObjects() {
-        for (var i = 0; i < $W.renderables.length; i++) {
-            $W.objects[i].draw();
-        }
     },
 
-    /** Clear the canvas */
-	clear : function() {
-		// clearing the color buffer is really slow
-		$W.GL.clear($W.GL.COLOR_BUFFER_BIT|$W.GL.DEPTH_BUFFER_BIT);
-	},
+    drawFn: null,
+    updateFn: null,
+
+    /* Begin rendering the scene */
+    start: function $W_start(framelimit) {
+        if (typeof(framelimit) === 'undefined') {
+            framelimit = 10;
+        }
+        setInterval(function $W_redrawFn() {
+            $W.updateFn();
+            $W.drawFn();
+        },framelimit);
+    },
 
     // Classes
     /** @class Quaternion implementation.
@@ -612,8 +595,8 @@ $W = {
         $W.timer      = new $W.Timer();
         $W.fpsTracker = new $W.FPSTracker();
 
-        $W.drawFn = $W.draw;
-        $W.updateFn = $W.update;
+        $W.drawFn = $W.defaultDraw;
+        $W.updateFn = $W.defaultUpdate;
 
         var success = true;
         if (canvasNode === false) {
