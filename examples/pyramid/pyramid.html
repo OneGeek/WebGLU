@@ -1,0 +1,39 @@
+<html><head>
+<script type="text/javascript" src="../../src/webglu.js"></script>
+<script type ="application/x-javascript">
+function start() {
+    if (!$W.initialize()) return;
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+    $W.camera.setPosition(2, 2, 3);
+
+    var pyramidModel = [
+        ["vertex", [0, 1, 0,   // tip 0
+                   -1,-1, 1,   // fl 1
+                    1,-1, 1,   // fr 2
+                   -1,-1,-1,   // bl 3
+                    1,-1,-1]], // br 4 
+ 
+        ["color", [1, 1, 1,    // white
+                   1, 0, 0,    // red
+                   0, 1, 0,    // green
+                   0, 0, 1,    // blue
+                   1, 0, 1 ]], // magenta
+
+        ["wglu_elements", [0, 1, 2,
+                           0, 3, 4,
+                           0, 3, 1,
+                           0, 2, 4 ]]
+        ];
+
+    var pyramid = $W.createObject({ type: $W.GL.TRIANGLES,
+                                    data: pyramidModel });
+    pyramid.setPosition(0, 1, 0);
+    pyramid.animation._update = function() {
+        this.setRotation(this.age / 60, 0, 0);
+    }
+    $W.start();
+};
+</script>
+</head><body onload="start()">
+<canvas id="canvas" width="500" height="500"></canvas>
+</body></html>
