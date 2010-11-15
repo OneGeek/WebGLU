@@ -127,10 +127,7 @@ function updateMaterial() {
 
 function start() {
     if (setup()) {
-        setInterval(function() {
-                $W.update();
-                $W.draw();
-        }, 10);        	
+        $W.start();
     }
 }
 

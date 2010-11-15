@@ -111,15 +111,13 @@ function start() {
             var FPS = document.getElementById('overlay');
 
             $G.initialize();
-            $G.event.bind("a", function(){$W.objects[0].rotation.elements[0] += 3;})
+            $G.event.bind("a", function(){$W.objects[0].rotation.elements[0] += 3;});
 
-            function redraw() {
+            $W.updateFn = function() {
+                $W.util.defaultUpdate();
                 FPS.innerHTML = $W.FPS;
-                $W.update();
-                $W.draw();	
             }
-
-            setInterval(redraw, 10);        	
+            $W.start();
         }
 }
 

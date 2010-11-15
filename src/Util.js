@@ -886,11 +886,11 @@ $W.util.updateState = function UTIL_updateState() {
 $W.util.defaultUpdate = function UTIL_defaultUpdate() {
     $W.util.updateState();
 
-    for (var i = 0; i < this.objects.length; i++) {
+    for (var i = 0; i < $W.objects.length; i++) {
         $W.objects[i].update($W.timer.dt);
     }
 
-    for (var i = 0; i < this.textures.length; i++) {
+    for (var i = 0; i < $W.textures.length; i++) {
         $W.textures[i].update();
     }
 

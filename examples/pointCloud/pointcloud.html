@@ -67,11 +67,12 @@ function start() {
 
             var FPS = document.getElementById('overlay');
 
-            setInterval(function() {
+            $W.updateFn = function() {
                 FPS.innerHTML = $W.FPS;
-                $W.update();
-                $W.draw();	
-            }, 10);        	
+                $W.util.defaultUpdate();
+            }
+
+            $W.start();
         }
 }
 

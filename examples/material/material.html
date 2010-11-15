@@ -59,13 +59,12 @@ function start() {
 
             var FPS = document.getElementById('overlay');
 
-            function redraw() {
+            $W.updateFn = function() {
+                $W.util.defaultUpdate();
                 FPS.innerHTML = $W.FPS;
-                $W.update();
-                $W.draw();	
             }
 
-            setInterval(redraw, 10);        	
+            $W.start();
         }
 }
 

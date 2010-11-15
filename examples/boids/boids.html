@@ -58,13 +58,17 @@ function start() {
     var FPS = document.getElementById('overlay');
     if (init()) {
         var flock = makeFlock();
-        setInterval(function() {
+        $W.updateFn = function() {
+            $W.util.defaultUpdate();
             FPS.innerHTML = $W.FPS;
-            $W.update();
-            $W.draw();	
             flock.update($W.util.clip($W.timer.dt, null, 20) / 9);
+        };
+        $W.drawFn = function() {
+            $W.util.defaultDraw();
             flock.draw();
-        }, 10);        	
+        };
+
+        $W.start();
     }
 }
 </script> </head>

@@ -128,7 +128,6 @@ $W = {
         return new $W.GLSL.ShaderProgram(name);
     },
 
-
     drawFn: null,
     updateFn: null,
 
@@ -259,8 +258,8 @@ $W = {
         $W.timer      = new $W.Timer();
         $W.fpsTracker = new $W.FPSTracker();
 
-        $W.drawFn = $W.defaultDraw;
-        $W.updateFn = $W.defaultUpdate;
+        $W.drawFn = $W.util.defaultDraw;
+        $W.updateFn = $W.util.defaultUpdate;
 
         var success = true;
         if (canvasNode === false) {
