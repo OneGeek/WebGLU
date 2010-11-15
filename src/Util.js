@@ -647,3 +647,188 @@ $W.util.extendArray = function() {
         return undefined;
     };
 };
+
+
+
+// Classes
+/** @class Quaternion implementation.
+ * based on reference implementation at 
+ * http://3dengine.org/Quaternions
+ */
+$W.Quaternion = function() {
+    // Called as Quaternion(x, y, z, theta)
+    if (arguments.length == 4) {
+        var angle = (arguments[3] / 180.0) * Math.PI;
+        var result = Math.sin(angle / 2);
+        this.w = Math.cos(angle / 2);
+        this.x = arguments[0] * result;
+        this.y = arguments[1] * result;
+        this.z = arguments[2] * result;
+
+    // Called as Quaternion([w, x, y, z])
+    }else if (arguments[0] !== undefined && arguments[0].length == 4) {
+        this.w = arguments[0][0];
+        this.x = arguments[0][1];
+        this.y = arguments[0][2];
+        this.z = arguments[0][3];
+
+    // Called as Quaternion()
+    }else {
+        this.w = 1;
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+    }
+
+    this.matrix = function() {
+        var w = this.w;
+        var x = this.x;
+        var y = this.y;
+        var z = this.z;
+        var xx = x * x;
+        var yy = y * y;
+        var zz = z * z;
+        var xy = x * y;
+        var xz = x * z;
+        var xw = x * w;
+        var yz = y * z;
+        var yw = y * w;
+        var zw = z * w;
+
+        var m = [[],[],[],[]];
+
+        m[0][0] = 1 - 2 * (yy + zz);
+        m[0][1] = 2 * (xy + zw);
+        m[0][2] = 2 * (xz - yw);
+        m[0][3] = 0;
+        m[1][0] = 2 * (xy - zw);
+        m[1][1] = 1 - 2 * (xx + zz);
+        m[1][2] = 2 * (yz + xw);
+        m[1][3] = 0;
+        m[2][0] = 2 * (xz + yw);
+        m[2][1] = 2 * (yz - xw);
+        m[2][2] = 1 - 2 * (xx + yy);
+        m[2][3] = 0;
+        m[3][0] = 0;
+        m[3][1] = 0;
+        m[3][2] = 0;
+        m[3][3] = 1;
+        
+        return $M(m);
+    }
+
+    this.multiply = function(q) {
+        var result = new $W.Quaternion();
+        result.w = this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z;
+        result.x = this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y;
+        result.y = this.w * q.y + this.y * q.w + this.z * q.x - this.x * q.z;
+        result.z = this.w * q.z + this.z * q.w + this.x * q.y - this.y * q.x;
+        return result;
+    }
+};
+
+/** 
+ * Useful, but not necessay if provide your own draw calls
+ * @class Keeps track of viewport camera characteristics. 
+ */
+$W.Camera = function() {
+    $W.ObjectState.call(this); // subclass of ObjectState
+
+    /** Vertical field of view in degrees. */
+    this.yfov = 75;
+
+    /** Aspect ratio */
+    this.aspectRatio = 1;
+
+    /** Coordinates the camera will point at.
+     * @type {Vector}
+     */
+    this.target = $V([0,0,0]);
+
+    this.up = $V([0,1,0]);
+
+    /** Set a new target for the camera .
+     * Changes the camera target without recreating the
+     * target vector.
+     */
+    this.setTarget = function(x, y, z) {
+        this.target.elements = [x, y, z];
+    }
+
+    this.dir = function() {
+        return (this.target.subtract(this.position)).toUnitVector();
+    };
+
+    /** Per frame update.
+     * Replace as needed.
+     */
+    this.update = function() {}
+};
+
+
+/** @class Keeps track of time since application start.
+ * Provides delta time between ticks.
+ */
+$W.Timer = function () {
+    /** The time passed since this timer was started to the time of
+     * the most recent tick in milliseconds.
+     */
+    this.age = 0;
+
+    /** The current application time in milliseconds. */
+    this.t  = (new Date()).getTime();
+
+    /** The delta time between the previous two ticks. */
+    this.dt = 0;
+
+    /** The time of the previous tick */
+    this.pt = this.t;
+
+    /** Update the timer */
+    this.tick = function() {
+        this.t = (new Date()).getTime();
+        this.dt = this.t - this.pt;
+        this.pt = this.t;
+        this.age += this.dt;
+    }
+
+    /** The time passed since this timer was started to the time of
+     * the most recent tick in seconds.
+     */
+    this.ageInSeconds = function() {
+        return this.age / 1000;
+    }
+};
+
+/** @class Provides an easy way to track FPS. */
+$W.FPSTracker = function () {
+    /** Number of frames to average over. */
+    this.frameAvgCount = 20;  
+
+    // frame timing statistics
+    
+    /** Milliseconds per frame. */
+    this.mspf= 0; 
+
+    /** Frames per second. */
+    this.fps = 0;
+
+    this.recentFPS = []; // last several FPS calcs to average over
+
+    /** Update the FPS. */
+    this.update = function(dt) {
+        this.mspf += dt; // add this past frame time and renormalize
+        this.mspf /= 2;
+
+        if (this.recentFPS.unshift(Math.floor(1000 / this.mspf)) > this.frameAvgCount) {
+            this.recentFPS.pop();
+        } // average FPS over the past frameAvgCount frames
+        
+        this.fps = 0;
+        for (var i = 0; i < this.recentFPS.length; i++) {
+            this.fps += this.recentFPS[i];
+        }
+        this.fps /= this.recentFPS.length;
+    }
+};
+
