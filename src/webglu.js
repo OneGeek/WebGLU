@@ -256,10 +256,6 @@ $W = {
             'Renderer' ];
 
         for (var i = 0; i < modules.length; i++) {
-            // If this is not the single file version, load each module
-            if (typeof($W['init' + modules[i]] == 'undefined')) {
-                $W.util.include($W.paths.libsrc + modules[i] + '.js');
-            }
             $W['init' + modules[i]]();
         }
 
@@ -280,7 +276,39 @@ $W = {
         }else {
             success = $W.initWebGL(canvasNode);
             new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
-            new $W.Material({path:$W.paths.materials + 'default.json'});
+            var defaultMaterial ={
+                name: "wglu_default",
+                      program: {
+                    name: "default" ,
+                          shaders: [
+                          {name:"wglu_default_vs", type:$W.GL.VERTEX_SHADER,
+       source: "attribute vec3 vertex;                                                   \n"+
+               "attribute vec3 color;                                                    \n"+
+               "                                                                         \n"+
+               "uniform mat4 ProjectionMatrix;                                           \n"+
+               "uniform mat4 ModelViewMatrix;                                            \n"+
+               "                                                                         \n"+
+               "varying vec4 frontColor;                                                 \n"+
+               "                                                                         \n"+
+               "void main(void) {                                                        \n"+
+               "    frontColor = vec4(color,1.0);                                        \n"+
+               "                                                                         \n"+
+               "    gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(vertex, 1.0);\n"+
+               "}                                                                        \n"
+                          },
+                          {name:"wglu_default_fs", type:$W.GL.FRAGMENT_SHADER,
+       source: "#ifdef GL_ES                    \n"+
+               "precision highp float;          \n"+
+               "#endif                          \n"+
+               "varying vec4 frontColor;        \n"+
+               "void main(void) {               \n"+
+               "    gl_FragColor = frontColor;  \n"+
+               "}                               \n"
+                          },
+                          ] 
+                }
+            }
+            new $W.Material(defaultMaterial);
 
         }
 

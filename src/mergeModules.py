@@ -7,7 +7,8 @@ modules = [ 'webglu', 'crazyglu', 'gameglu', 'Util', 'Constants',
             'DefaultUniformActions', 'GLSL', 'GLU', 'Animation', 'Object',
             'Texture', 'Framebuffer', 'Material', 'Renderer' ];
 
-os.remove(mergedFilePath)
+if (os.path.isfile(mergedFilePath)):
+    os.remove(mergedFilePath)
 modules = [os.path.join(os.getcwd(), module + '.js') for module in modules]
 os.mknod(mergedFilePath)
 with open(mergedFilePath, 'w') as mergedFile:

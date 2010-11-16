@@ -15,8 +15,8 @@ $W.initMaterial = function() {
      *                 // As with the program itself, if a shader with the
      *                 // given name already exists it will take precedence
      *                 // over creating a new shader.
-     *          {name: "VS", path: "VS.vert"},
      *          {name: "FS", path: "FS.frag"},
+     *          {name: "VS", type: $W.GL.VERTEX_SHADER, source: "..."},
      *          // etc.
      *      ]
      *  },
@@ -116,8 +116,7 @@ $W.initMaterial = function() {
 
                         // Load shader from source code
                         }else if (typeof(shaderDef.source) !== 'undefined') {
-                            program.attachShader(shaderDef.name, shaderDef.source, 
-                                    shaderDef.type);
+                            program.attachShader(shaderDef.name, shaderDef.source, shaderDef.type);
                         }
                     }
                     program.use();

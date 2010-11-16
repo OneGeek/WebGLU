@@ -437,7 +437,9 @@ $W.initUtil = function() {
     // augment Sylvester some
     // (c) 2009 Vladimir Vukicevic
     $W.util.loadSylvester = function() {
-        $W.util.include($W.paths.external + $W.paths.sylvester);
+        if (typeof(Matrix) == 'undefined') {
+            $W.util.include($W.paths.external + $W.paths.sylvester);
+        }
 
         Matrix.Translation = function MTX_Translation (v) {
             if (v.elements.length == 2) {
