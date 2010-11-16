@@ -133,13 +133,28 @@ $W = {
 
     /* Begin rendering the scene */
     start: function $W_start(framelimit) {
-        if (typeof(framelimit) === 'undefined') {
-            framelimit = 10;
+
+        // use mozRequestAnimationFrame if available
+        if (typeof(window.mozRequestAnimationFrame) != 'undefined') {
+            var redraw = function $W_redrawFn() {
+                $W.updateFn();
+                $W.drawFn();
+                window.mozRequestAnimationFrame();
+            };
+            window.addEventListener("MozBeforePaint", redraw, false);
+            window.mozRequestAnimationFrame();
+
+        // fallback to setinterval
+        }else {
+            if (typeof(framelimit) === 'undefined') {
+                framelimit = 10;
+            }
+            var redraw = function $W_redrawFn() {
+                $W.updateFn();
+                $W.drawFn();
+            };
+            setInterval(redraw ,framelimit);
         }
-        setInterval(function $W_redrawFn() {
-            $W.updateFn();
-            $W.drawFn();
-        },framelimit);
     },
 
 
