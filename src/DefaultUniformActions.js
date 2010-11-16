@@ -1,13 +1,11 @@
-$W.uniformActions = [];
-$W.uniformNames = {};
-$W.uniformNames.ModelView       = 'ModelViewMatrix';
-$W.uniformNames.Projection      = 'ProjectionMatrix';
-$W.uniformNames.NormalMatrix    = 'NormalMatrix';
-$W.uniformNames.SimpleTexture   = 'sampler';
-$W.uniformNames.MaterialTexture = 'wglu_mat_texture';
-
-
-$W.setupUniformActions = function() {
+$W.initDefaultUniformActions = function() {
+    $W.uniformActions = [];
+    $W.uniformNames = {};
+    $W.uniformNames.ModelView       = 'ModelViewMatrix';
+    $W.uniformNames.Projection      = 'ProjectionMatrix';
+    $W.uniformNames.NormalMatrix    = 'NormalMatrix';
+    $W.uniformNames.SimpleTexture   = 'sampler';
+    $W.uniformNames.MaterialTexture = 'wglu_mat_texture';
     ModelViewAction = 
         function DUA_ModelViewAction(_, object, material) {
             $W.GL.uniformMatrix4fv(this.location, false, 
@@ -76,26 +74,24 @@ $W.setupUniformActions = function() {
             
 
 
-    $W.uniformActions = [];
     $W.uniformActions[$W.constants.ModelViewUniform]  = ModelViewAction;
     $W.uniformActions[$W.constants.ProjectionUniform] = ProjectionAction;
     $W.uniformActions[$W.constants.NormalUniform]     = NormalMatrixAction;
     $W.uniformActions[$W.constants.SimpleTextureUniform] = SimpleSamplerAction;
+
+    $W.util.getUniformAction = function(name) {
+        var action = $W.uniformActions[name];
+
+        if (typeof(action) === 'undefined') {
+            action = function(){};
+            $W.debug("\tno default action for uniform `" + name + "` found");
+                
+
+        }else {
+            $W.debug("\tfound `" + action.name + "` for uniform `" + name + "`");
+        }
+
+        return action;
+    };
 };
 
-$W.util.getUniformAction = function(name) {
-    var action = $W.uniformActions[name];
-
-    if (typeof(action) === 'undefined') {
-        action = function(){};
-        $W.debug("\tno default action for uniform `" + name + "` found");
-            
-
-    }else {
-        $W.debug("\tfound `" + action.name + "` for uniform `" + name + "`");
-    }
-
-    return action;
-};
-
-$W.setupUniformActions();

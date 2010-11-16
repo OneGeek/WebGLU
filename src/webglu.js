@@ -212,6 +212,7 @@ $W = {
         include: function(path) {
             $W.info('Including ' + path);
             var script = $W.util.loadFileAsText(path);
+            $W.log(path);
             window.eval(script);
         }
     },
@@ -232,23 +233,21 @@ $W = {
         $W.initLogging();
         $W.log("Initializing WebGLU");
 
-        $W.util.include($W.paths.libsrc + 'Util.js');
         try { WebGLFloatArray; } catch (x) { WebGLFloatArray = Float32Array; }
         try { WebGLUnsignedShortArray; } catch (x) { WebGLUnsignedShortArray = Uint16Array; }
 
-        $W.util.extendArray();
-        $W.util.loadSylvester();
 
-        $W.util.include($W.paths.libsrc + 'Constants.js');
-        $W.util.include($W.paths.libsrc + 'DefaultUniformActions.js');
-        $W.util.include($W.paths.libsrc + 'GLSL.js');
-        $W.util.include($W.paths.libsrc + 'GLU.js');
-        $W.util.include($W.paths.libsrc + 'Animation.js');
-        $W.util.include($W.paths.libsrc + 'Object.js');
-        $W.util.include($W.paths.libsrc + 'Texture.js');
-        $W.util.include($W.paths.libsrc + 'Framebuffer.js');
-        $W.util.include($W.paths.libsrc + 'Material.js');
-        $W.util.include($W.paths.libsrc + 'Renderer.js');
+        var modules = [ 'Util', 'Constants', 'DefaultUniformActions', 'GLSL',
+            'GLU', 'Animation', 'Object', 'Texture', 'Framebuffer', 'Material',
+            'Renderer' ];
+
+        for (var i = 0; i < modules.length; i++) {
+            // If this is not the single file version, load each module
+            if (typeof($W['init' + modules[i]] == 'undefined')) {
+                $W.util.include($W.paths.libsrc + modules[i] + '.js');
+            }
+            $W['init' + modules[i]]();
+        }
 
         // create the matrix stacks we'll be using to store transformations
         $W.modelview  = new $W.GLU.MatrixStack();

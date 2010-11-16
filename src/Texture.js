@@ -1,119 +1,121 @@
-$W.Texture = function(name) {
-    this.glTexture = $W.GL.createTexture();
-    this.name = name;
-    $W.textures[name] = this;
+$W.initTexture = function() {
+    $W.Texture = function(name) {
+        this.glTexture = $W.GL.createTexture();
+        this.name = name;
+        $W.textures[name] = this;
 
-    this.bind = function() {
-        $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
-    };
-        
-    this.unbind = function() {
-        $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
-    };
+        this.bind = function() {
+            $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
+        };
+            
+        this.unbind = function() {
+            $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
+        };
 
-    this.update = function(){};
+        this.update = function(){};
 
-    this.bind();
-    $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_MIN_FILTER, $W.GL.LINEAR);
-    $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_WRAP_S, $W.GL.CLAMP_TO_EDGE);
-    $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_WRAP_T, $W.GL.CLAMP_TO_EDGE);
-
-};
-
-$W.CanvasTexture = function(name, src) {
-    $W.Texture.call(this, name);
-
-    this.canvas = src;
-    this.canvas.texture = this;
-
-    this.update = function() {
-        var gl = $W.GL;
         this.bind();
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
-            gl.UNSIGNED_BYTE, this.canvas);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        this.unbind();
+        $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_MIN_FILTER, $W.GL.LINEAR);
+        $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_WRAP_S, $W.GL.CLAMP_TO_EDGE);
+        $W.GL.texParameteri($W.GL.TEXTURE_2D, $W.GL.TEXTURE_WRAP_T, $W.GL.CLAMP_TO_EDGE);
+
     };
 
-};
+    $W.CanvasTexture = function(name, src) {
+        $W.Texture.call(this, name);
 
-/** A dynamic texture from a `video` element.    
- * @param {String} name The global name this texture will be referenced
- * by elsewhere.
- * @param {String|Video} src Video path or DOM video element.
- */
-$W.VideoTexture = function(name, src) {
-    $W.Texture.call(this, name);
+        this.canvas = src;
+        this.canvas.texture = this;
 
-    this.setSource = function(video) {
-        // Path to video
-        if (typeof(video) === 'string') {
-            this.video = document.createElement('video');
-            document.getElementsByTagName('body')[0].appendChild(this.video);
+        this.update = function() {
+            var gl = $W.GL;
+            this.bind();
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+                gl.UNSIGNED_BYTE, this.canvas);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            this.unbind();
+        };
 
-            this.video.src = video;
+    };
 
-        // DOM Video element
-        }else {
-            this.video = video;
+    /** A dynamic texture from a `video` element.    
+     * @param {String} name The global name this texture will be referenced
+     * by elsewhere.
+     * @param {String|Video} src Video path or DOM video element.
+     */
+    $W.VideoTexture = function(name, src) {
+        $W.Texture.call(this, name);
+
+        this.setSource = function(video) {
+            // Path to video
+            if (typeof(video) === 'string') {
+                this.video = document.createElement('video');
+                document.getElementsByTagName('body')[0].appendChild(this.video);
+
+                this.video.src = video;
+
+            // DOM Video element
+            }else {
+                this.video = video;
+            }
+
+            this.video.texture = this;
+            this.video.autobuffer = true;
+            this.video.loop = true;
+            this.video.play();
+            this.video.addEventListener("timeupdate", this.update, true);
+        };
+
+        this.update = function() {
+            var gl = $W.GL;
+            this.bind();
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+                gl.UNSIGNED_BYTE, this.video);
+            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            //gl.generateMipmap(gl.TEXTURE_2D);
+            //gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
         }
 
-        this.video.texture = this;
-        this.video.autobuffer = true;
-        this.video.loop = true;
-        this.video.play();
-        this.video.addEventListener("timeupdate", this.update, true);
-    };
-
-    this.update = function() {
-        var gl = $W.GL;
-        this.bind();
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
-            gl.UNSIGNED_BYTE, this.video);
-        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        //gl.generateMipmap(gl.TEXTURE_2D);
-        //gl.bindTexture(gl.TEXTURE_2D, null); // clean up after ourselves
-    }
-
-    this.setSource(src);
-};
-
-/** A static texture from an image file.
- * @param {String} name The global name this texture will be referenced
- * by elsewhere.
- * @param {String} src Path to image file.
- */
-$W.ImageTexture = function(name, src) {
-    $W.Texture.call(this, name);
-    this.image = document.createElement('img');
-    this.image.texture = this;
-
-    this.image.onload = function() {
-        var gl = $W.GL;
-        $W.debug('Loaded texture `' + name + "`");
-        this.texture.bind();
-
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
-            gl.UNSIGNED_BYTE, this.texture.image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-
-        this.texture.unbind();
-    }
-
-    this.setSource = function(src) {
-        this.image.src = src;
-    };
-
-    if (src !== undefined) {
         this.setSource(src);
-    }
+    };
+
+    /** A static texture from an image file.
+     * @param {String} name The global name this texture will be referenced
+     * by elsewhere.
+     * @param {String} src Path to image file.
+     */
+    $W.ImageTexture = function(name, src) {
+        $W.Texture.call(this, name);
+        this.image = document.createElement('img');
+        this.image.texture = this;
+
+        this.image.onload = function() {
+            var gl = $W.GL;
+            $W.debug('Loaded texture `' + name + "`");
+            this.texture.bind();
+
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+                gl.UNSIGNED_BYTE, this.texture.image);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+            this.texture.unbind();
+        }
+
+        this.setSource = function(src) {
+            this.image.src = src;
+        };
+
+        if (src !== undefined) {
+            this.setSource(src);
+        }
+    };
 };
 /** @author Benjamin DeLillo */
 /*
-     *  Copyright (c) 2009 Benjamin P. DeLillo
+     *  Copyright (c) 2009-2010 Benjamin P. DeLillo
      *  
      *  Permission is hereby granted, free of charge, to any person
      *  obtaining a copy of this software and associated documentation
