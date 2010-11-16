@@ -136,12 +136,12 @@ $W = {
 
         // use mozRequestAnimationFrame if available
         if (typeof(window.mozRequestAnimationFrame) != 'undefined') {
-            var redraw = function $W_redrawFn() {
-                $W.updateFn();
-                $W.drawFn();
-                window.mozRequestAnimationFrame();
-            };
-            window.addEventListener("MozBeforePaint", redraw, false);
+            var start = window.mozAnimationStartTime;
+            window.addEventListener("MozBeforePaint", function step(event) {
+                    $W.updateFn();
+                    $W.drawFn();
+                    window.mozRequestAnimationFrame();
+                    }, false);
             window.mozRequestAnimationFrame();
 
         // fallback to setinterval
@@ -149,11 +149,10 @@ $W = {
             if (typeof(framelimit) === 'undefined') {
                 framelimit = 10;
             }
-            var redraw = function $W_redrawFn() {
-                $W.updateFn();
-                $W.drawFn();
-            };
-            setInterval(redraw ,framelimit);
+            setInterval(function $W_redrawFn() {
+                    $W.updateFn();
+                    $W.drawFn();
+                    },framelimit);
         }
     },
 
@@ -299,11 +298,17 @@ $W = {
     },
 
     useCrazyGLU: function() {
-        $W.util.include($W.paths.libsrc + 'crazyglu.js');
+        if (typeof($W['initCrazyGLU'] == 'undefined')) {
+            $W.util.include($W.paths.libsrc + 'crazyglu.js');
+        }
+        $W['initCrazyGLU']();
     },
 
     useGameGLU: function() {
-        $W.util.include($W.paths.libsrc + 'gameglu.js');
+        if (typeof($W['initGameGLU'] == 'undefined')) {
+            $W.util.include($W.paths.libsrc + 'gameglu.js');
+        }
+        $W['initGameGLU']();
     },
 
     disableGrouping:function() {
