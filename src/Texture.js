@@ -50,8 +50,10 @@ $W.initTexture = function() {
         this.setSource = function(video) {
             // Path to video
             if (typeof(video) === 'string') {
-                this.video = document.createElement('video');
-                document.getElementsByTagName('body')[0].appendChild(this.video);
+                if (typeof(this.video) === 'undefined') {
+                    this.video = document.createElement('video');
+                    document.getElementsByTagName('body')[0].appendChild(this.video);
+                }
 
                 this.video.src = video;
 
