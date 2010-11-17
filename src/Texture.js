@@ -63,17 +63,17 @@ $W.initTexture = function() {
             }
 
             this.video.texture = this;
-            this.video.autobuffer = true;
-            this.video.loop = true;
-            this.video.play();
-            this.video.addEventListener("timeupdate", this.update, true);
         };
 
         this.update = function() {
             var gl = $W.GL;
             this.bind();
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
-                gl.UNSIGNED_BYTE, this.video);
+            try {
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, 
+                    gl.UNSIGNED_BYTE, this.video);
+            }catch(e) {
+                // Ignore errors
+            }
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             //gl.generateMipmap(gl.TEXTURE_2D);
