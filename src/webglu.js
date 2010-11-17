@@ -329,21 +329,21 @@ $W = {
     },
 
     useControlProfiles: function() {
-        if (typeof($W['initControlProfiles'] == 'undefined')) {
+        if (typeof($W['initControlProfiles']) == 'undefined') {
             $W.util.include($W.paths.libsrc + 'ControlProfiles.js');
         }
         $W.initControlProfiles();
     },
 
     useCrazyGLU: function() {
-        if (typeof($W['initCrazyGLU'] == 'undefined')) {
+        if (typeof($W['initCrazyGLU']) == 'undefined') {
             $W.util.include($W.paths.libsrc + 'crazyglu.js');
         }
         $W.initCrazyGLU();
     },
 
     useGameGLU: function() {
-        if (typeof($W['initGameGLU'] == 'undefined')) {
+        if (typeof($W['initGameGLU']) == 'undefined') {
             $W.util.include($W.paths.libsrc + 'gameglu.js');
         }
         $W.initGameGLU();
