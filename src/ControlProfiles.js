@@ -63,10 +63,6 @@ $W.initControlProfiles = function() {
                 var x = -1 * st.totalM.e(1);
                 var y = st.totalM.e(2);
 
-                if (typeof(st.zoom) !== 'undefined') {
-                    x /= (100 - st.zoom) / 4;
-                    y /= (100 - st.zoom) / 4;
-                }
                 x /= 100;
                 y /= 100;
 
