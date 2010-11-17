@@ -27,63 +27,20 @@ function initCanvas() {
 };
 initCanvas();
 
-function initControls() {
-    // Using GameGLU to add interactivity
-    $W.useGameGLU();
-    $G.initialize();
-    var st = $G.state;
-
-    st.mouseDown    = false;
-    st.wasMouseDown = false;
-    st.lastM  = $V([0,0]);
-    st.posM   = $V([0,0]);
-    st.deltaM = $V([0,0]);
-    st.totalM = $V([Math.PI * 100,0]);
-
-    $G.event.bind('-m1', function(x,y) {
-            st.mouseDown = false;
-    });
-
-    $G.event.bind('+m1', function(x,y) {
-            st.mouseDown = true;
-            st.lastM.elements = [x, y];
-            st.posM.elements = [x,y];
-    });
-
-    $G.event.bind('mousemove', function(x,y) {
-        if (st.mouseDown) {
-        // avoid around when we click then release, move 
-        // the mouse, then click again.
-        if (st.wasMouseDown) 
-            st.lastM.elements = st.posM.elements;
-            st.posM.elements = [x, y];
-            st.deltaM = st.posM.subtract(st.lastM);
-            st.totalM = st.totalM.add(st.deltaM);
-        }
-
-        st.wasMouseDown = st.mouseDown;
-    });
-
-    $W.camera.update = function() {
-        var x = -1 * st.totalM.e(1) / 100;
-        var y = st.totalM.e(2) / 10;
-
-        this.target.elements = [Math.cos(x), y / 10, Math.sin(x)];
-        st.deltaM.elements = [0,0];
-    }
-}
-
 function start() {
     if (!$W.initialize()) return;
-    initControls();
-
-    $W.camera.setTarget(-1,0,10);
+    $W.camera.setTarget(1,0,10);
     $W.camera.yfov = 90;
     $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
 
-    $W.createObject({type     : getRenderType(),
-                     material : new $W.Material({path:'video.json'}),
-                     model    : $W.util.genSphere(20,20)});
+    $W.useGameGLU();
+    $G.useControlProfiles();
+    $G.profiles.DragToRotateCamera.apply();
+    $G.profiles.ScrollToZoomCamera.apply();
+
+    var sphere = $W.createObject({type     : getRenderType(),
+                                  material : new $W.Material({path:'video.json'}),
+                                  model    : $W.util.genSphere(50,50)});
 
     $W.textures.video.setSource(getVideoPath());
 

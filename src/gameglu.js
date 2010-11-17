@@ -72,6 +72,14 @@ $W.initGameGLU = function() {
             right_bracket : 221, single_quote : 222
         },
 
+        bind: function(key, action) {
+            $G.event.bind(key, action);
+        },
+
+        useControlProfiles: function() {
+            $W.useControlProfiles();
+        },
+     
         event:{
             _keys:[],
             _actions:[],
@@ -117,7 +125,7 @@ $W.initGameGLU = function() {
                 }, false);
 
                 BIND("DOMMouseScroll", function(ev) {
-                    actions['mousewheel'](ev);
+                    actions['mousewheel'](ev.detail ? ev.detail * -1 : ev.wheelData / 40);
                 }, false);
             },
 
@@ -193,6 +201,12 @@ $W.initGameGLU = function() {
                 $G.offsetY = $W.canvas.offsetTop;
             }
         }
+    }
+
+    $G.event._initialize();
+    if ($W !== undefined) {
+        $G.offsetX = $W.canvas.offsetLeft;
+        $G.offsetY = $W.canvas.offsetTop;
     }
 
 };
