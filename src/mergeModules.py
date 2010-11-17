@@ -5,7 +5,8 @@ import os
 mergedFilePath = os.path.join(os.getcwd(), "webglu.complete.js")
 modules = [ 'webglu', 'crazyglu', 'gameglu', 'Util', 'Constants',
             'DefaultUniformActions', 'GLSL', 'GLU', 'Animation', 'Object',
-            'Texture', 'Framebuffer', 'Material', 'Renderer' ];
+            'Texture', 'Framebuffer', 'Material', 'Renderer', 'ControlProfiles'
+            ];
 
 if (os.path.isfile(mergedFilePath)):
     os.remove(mergedFilePath)
