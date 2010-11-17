@@ -136,13 +136,12 @@ $W = {
 
         // use mozRequestAnimationFrame if available
         if (typeof(window.mozRequestAnimationFrame) != 'undefined') {
-            var start = window.mozAnimationStartTime;
-            window.addEventListener("MozBeforePaint", function step(event) {
-                    $W.updateFn();
-                    $W.drawFn();
-                    window.mozRequestAnimationFrame();
-                    }, false);
-            window.mozRequestAnimationFrame();
+            var redraw = function $W_mozRedraw() {
+                $W.updateFn();
+                $W.drawFn();
+                window.mozRequestAnimationFrame(redraw);
+            };
+            window.mozRequestAnimationFrame(redraw);
 
         // fallback to setinterval
         }else {
