@@ -257,7 +257,7 @@ $W = {
 
         for (var i = 0; i < modules.length; i++) {
             // If this is not the single file version, load each module
-            if (typeof($W['init' + modules[i]] == 'undefined')) {
+            if (typeof($W['init' + modules[i]]) === 'undefined') {
                 $W.util.include($W.paths.libsrc + modules[i] + '.js');
             }
             $W['init' + modules[i]]();
