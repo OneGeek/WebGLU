@@ -1,0 +1,171 @@
+<html>
+<head>
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../src/webglu.complete.js">
+</script>
+<script type="text/javascript" src="../../external/Sylverster.src.js">
+</script>
+<script type="x-shader/x-fragment" id="ribbon_fs">
+ 
+#ifdef GL_ES
+precision highp float;
+#endif
+varying vec4 frontColor;
+void main(void) {
+    gl_FragColor = vec4(frontColor.rgb, 0.5);
+}
+</script>
+<script type="application/x-javascript">
+function init() {
+    if (!$W.initialize()) return false;
+    $W.GL.clearColor(77/255, 77/255, 77/255, 1.0);
+    $W.camera.setPosition(-2,0,17);
+    $W.camera.setTarget(1,1,0);
+    $W.camera.yfov = 90;
+    $W.camera.aspectRatio = 1;
+    $W.GL.enable($W.GL.BLEND);
+    $W.GL.blendFunc($W.GL.SRC_ALPHA, $W.GL.ONE_MINUS_SRC_ALPHA);
+    return true;
+}
+function makeFlock() {
+    /* Passing false as the second (optional) parameter stops the object 
+     * from being added to the primary object list which means it
+     * won't get rendered when we call $W.draw(), instead we'll
+     * have to call boid.draw() or boid.drawAt(pos,rot,scl) ourselves.
+     * We'll do this because we can just draw the same model a whole
+     * bunch of times (a la instancing) at different positions.
+     */
+	var boid = new $W.Object($W.GL.TRIANGLES, false);
+    // Same model & colors as demo at http://www.red3d.com/cwr/boids/
+    var tip = [0,0,1];
+    var lft = [1/2,0,0];
+    var rgt = [-1/2,0,0];
+    var rdg = [0,1/4,1/10];
+    var yel = [220/255, 220/255,  40/255];
+    var blu = [ 40/255, 220/255, 220/255];
+    var grn = [ 40/255, 220/255,  40/255];
+    var gry = [120/255, 120/255, 120/255]; 
+    boid.vertexCount = 0;
+    boid.fillArray('vertex',
+        [tip,rdg,lft, tip,rdg,rgt, lft,rgt,rdg, lft,rgt,tip]);
+    boid.fillArray('color',
+        [yel,yel,yel, grn,grn,grn, blu,blu,blu, gry,gry,gry]);
+    boid.setScaleUniformly(.7);
+    $W.useCrazyGLU(); // OpenSteer is part of CrazyGLU (for now)
+    /* The Flock object (not part of the original Opensteer)
+     * handles creation, management, and drawing for a bunch
+     * boids, where the first argument is the number of boids and
+     * the second is the model to use for each.
+     */
+    return new $W.OS.Flock(30, boid);
+}
+function start() {
+    var FPS = document.getElementById('overlay');
+    if (init()) {
+        var flock = makeFlock();
+        var ribbonMaterial = new $W.Material({
+            name: "ribbonMaterial",
+            program: {
+                name: "ribbonProgram",
+                shaders: [
+                    {name:"ribbon_vs", path: $W.paths.shaders +
+                    "default.vert"},
+                    {id:"ribbon_fs"}]
+            }
+        });                     
+        for (var i = 0; i < flock.flock.length; i++) {
+            var boid = flock.flock[i];
+            boid.ribbon = $W.createObject({type: $W.GL.TRIANGLE_STRIP});
+            boid.color = [Math.random(), Math.random(), Math.random()];
+            boid.ribbon.fillArray('vertex', [.5,0,0, -.5,0,0]);
+            boid.ribbon.fillArray('color', boid.color.concat(boid.color));
+            boid.ribbon.setMaterial(ribbonMaterial);
+            boid.ribbon.vertexCount = 2;
+            var bindAndBuffer = function() {
+                $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.glBuffer);
+                $W.GL.bufferData($W.GL.ARRAY_BUFFER, this.glData, $W.GL.STATIC_DRAW);
+            };
+            boid.ribbon.vertexBuffer = boid.ribbon.arrayBuffers.vertex;
+            boid.ribbon.colorBuffer = boid.ribbon.arrayBuffers.color;
+            boid.setPosition(V3.$(70 / i+1, 70 - (70 / i+1),0));
+        }
+        var updateRibbon = function(boid) {
+            $W.modelview.pushMatrix();
+                $W.modelview.loadIdentity();
+                                        
+                $W.modelview.translate(V3.elements( 
+                            V3.scale(boid.smoothedPosition(), .2)));
+                $W.modelview.multiply(boid.rotationMatrix());
+                var lVtx = $W.modelview.matrix.multiply(
+                        $V([0.5, 0, 0, 1])).elements;
+                var rVtx = $W.modelview.matrix.multiply(
+                        $V([-0.5, 0, 0, 1])).elements;
+                lVtx.pop(); 
+                rVtx.pop();
+                if (boid.ribbon.vertexCount > 40) {
+                    boid.ribbon.vertexBuffer.setData(
+                            (boid.ribbon.vertexBuffer.data.concat(lVtx.concat(rVtx))).slice(6));
+                }else {
+                    boid.ribbon.vertexBuffer.setData(
+                            boid.ribbon.vertexBuffer.data.concat(lVtx.concat(rVtx)));
+                    boid.ribbon.colorBuffer.setData(
+                            boid.ribbon.colorBuffer.data.concat(boid.color.concat(boid.color)));
+                    boid.ribbon.vertexCount += 2;
+                }
+            $W.modelview.popMatrix();
+        }
+        $W.update = function() {
+            FPS.innerHTML = $W.FPS;
+            flock.update($W.util.clip($W.timer.dt, null, 20) / 20);
+            for (var i = 0; i < flock.flock.length; i++) {
+                updateRibbon(flock.flock[i]);
+            }
+        };
+        $W.draw = function() {
+            flock.draw();
+        };
+        $W.start();
+    }
+}
+</script>
+ 
+</head>
+<body onload='start()'>
+<h1>
+<strong>
+Boids
+</strong>
+</h1>
+ behavioral simulation in WebGL using WebGLU
+<div id="glCanvas">
+ 
+<div id="overlay">
+</div>
+<canvas id='canvas' width='500' height='500'>
+</canvas>
+<br>
+</div>
+</body>
+ 
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->

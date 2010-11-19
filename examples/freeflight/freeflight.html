@@ -31,6 +31,7 @@ function start() {
     var flyer = $W.createObject({type: $W.GL.LINES,
                                  data: flyerData});
     flyer.speed = .07;
+    flyer.turnSpeed = .1;
     flyer.positions = [];
     var ribbon = $W.createObject({type: $W.GL.TRIANGLE_STRIP});
     ribbon.fillArray('vertex', [.5,0,0, -.5,0,0]);
@@ -56,89 +57,47 @@ function start() {
 
     $W.useGameGLU();
     var st = $G.state;
-    st.turning = {
+    st = {
         left: {active: false, time: 0, amount:0},
         right:{active: false, time: 0, amount:0},
         up:   {active: false, time: 0, amount:0},
         down: {active: false, time: 0, amount:0},
+        horiz: 0, vert: 0, hScale: 0, vScale: 0,
+        yaw: 0, pitch: 0
     }
+    $G.bind("+left", function() { st.hScale = -1; });
+    $G.bind("-left", function() { st.hScale = 0; });
+    $G.bind("+right", function() { st.hScale = 1; });
+    $G.bind("-right", function() { st.hScale = 0; });
+    $G.bind("+up", function() { st.vScale = 1; });
+    $G.bind("-up", function() { st.vScale = 0; });
+    $G.bind("+down", function() { st.vScale = -1; });
+    $G.bind("-down", function() { st.vScale = 0; });
 
-    var horizScale = 0;
-    var vertScale = 0;
-    $G.bind("+left", function() {
-        horizScale = -1;
-        st.turning.left.active = true;
-    });
-    $G.bind("-left", function() {
-        horizScale = 0;
-    });
-
-    $G.bind("+right", function() {
-        horizScale = 1;
-    });
-    $G.bind("-right", function() {
-        horizScale = 0;
-    });
-    
-    $G.bind("+up", function() {
-        vertScale = 1;
-    });
-    $G.bind("-up", function() {
-        vertScale = 0;
-    });
-
-    $G.bind("down", function() {
-        vertScale = -1;
-    });
-    $G.bind("-down", function() {
-        vertScale = 0;
-    });
-
-    var turnScale = .1;
-    var ribbonAppendDt = 0;
-    var overlay = document.getElementById('overlay');
-    var horizTurn = 0;
-    var vertTurn = 0;
-    var yaw = 0;
-    var pitch = 0;
-    var lastLeftVert = $V([0,0,0]);
-    var lastRightVert = $V([0,0,0]);
     $W.update = function() {
-        overlay.innerHTML = $W.FPS;
+        document.getElementById('overlay').innerHTML = $W.FPS;
+        st.yaw += $W.timer.dt * st.hScale * flyer.turnSpeed;
+        st.pitch -= $W.timer.dt * st.vScale * flyer.turnSpeed;
+        flyer.setRotation(st.yaw, st.pitch, 0);
 
-        yaw += $W.timer.dt * horizScale * turnScale;
-
-        pitch -= $W.timer.dt * vertScale * turnScale;
-            
-        flyer.setRotation(yaw, pitch, 0);
-
-        var direction;
         $W.modelview.pushMatrix();
             $W.modelview.loadIdentity();
             $W.modelview.translate(flyer.position.elements);
             $W.modelview.multiply(flyer.q.matrix());
             var A = flyer.q.matrix().multiply($V([0,0,1,1]));
             var B = flyer.q.matrix().multiply($V([0,0,0,1]));
-            direction = A.subtract(B);
+            var direction = A.subtract(B);
             direction.elements.pop();
 
-            ribbonAppendDt = 0;
-            var vertices = vertexBuffer.data;
-            var colors = colorBuffer.data;
-
-            var leftVert = $W.modelview.matrix.multiply(
+            var lVtx = $W.modelview.matrix.multiply(
                     $V([0.5, 0, 0, 1])).elements;
-            var rightVert = $W.modelview.matrix.multiply(
+            var rVtx = $W.modelview.matrix.multiply(
                     $V([-0.5, 0, 0, 1])).elements;
+            lVtx.pop(); 
+            rVtx.pop();
 
-            leftVert.pop();
-            rightVert.pop();
-
-            var segment = [].concat(leftVert, rightVert);
-            vertexBuffer.setData(vertices.concat(segment));
-            var newColors = [0,1,0, 0,1,0];
-            colorBuffer.setData(colors.concat(newColors));
-
+            vertexBuffer.setData(vertexBuffer.data.concat(lVtx.concat(rVtx)));
+            colorBuffer.setData(colorBuffer.data.concat([0,1,0, 0,1,0]));
             ribbon.vertexCount += 2;
         $W.modelview.popMatrix();
 
@@ -164,7 +123,6 @@ function start() {
 <br>
 </div>
 </body>
- 
 </html>
 <!--
 Copyright (c) 2009 Benjamin P. DeLillo
