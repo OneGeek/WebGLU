@@ -46,7 +46,7 @@ function makeFlock() {
 
     $W.useCrazyGLU(); // OpenSteer is part of CrazyGLU (for now)
 
-    /* The Flock object (not part of the original Opensteer
+    /* The Flock object (not part of the original Opensteer)
      * handles creation, management, and drawing for a bunch
      * boids, where the first argument is the number of boids and
      * the second is the model to use for each.
@@ -58,13 +58,11 @@ function start() {
     var FPS = document.getElementById('overlay');
     if (init()) {
         var flock = makeFlock();
-        $W.updateFn = function() {
-            $W.util.defaultUpdate();
+        $W.update = function() {
             FPS.innerHTML = $W.FPS;
             flock.update($W.util.clip($W.timer.dt, null, 20) / 9);
         };
-        $W.drawFn = function() {
-            $W.util.defaultDraw();
+        $W.draw = function() {
             flock.draw();
         };
 

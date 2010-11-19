@@ -40,9 +40,9 @@ function createObjects() {
         [COLOR, [C.RED,   C.RED,    C.GREEN, C.GREEN,  C.BLUE,  C.BLUE]]] });
 
 
-	pyramid = $W.createObject({type:$W.GL.TRIANGLES, data:PYRAMID});
+    pyramid = $W.createObject({type:$W.GL.TRIANGLES, data:PYRAMID});
     pyramid.setPosition(0, 1, 0);
-	pyramid.animation.updateRotation = function() { 
+    pyramid.animation.updateRotation = function() { 
         this.setRotation((this.age/60), 0, 0);
     }
 }
@@ -50,9 +50,9 @@ function createObjects() {
 function start() {
         if (init()) {
             createObjects();
-            $W.updateFn = function() {
+            $W.update = function() {
                 document.getElementById('overlay').innerHTML = $W.FPS;
-                $W.util.defaultUpdate();
+
             };
             $W.start()
         }

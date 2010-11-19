@@ -1,76 +1,31 @@
 <html><head>
-
-<link   type="text/css" rel="stylesheet" href="../example.css">
 <script type="text/javascript" src="../../src/webglu.js"></script>
-<script type="text/javascript" src="urlUtils.js"></script>
-
-<style type="text/css">
-    video {
-        display: none;
-    }
-</style>
-
+<style type="text/css"> video { display: none; } </style>
 <script type="application/x-javascript">
+function start() {
+    if ($W.initialize()) {
+        $W.useControlProfiles();
+        $G.profiles.DragToRotateCamera.apply();
+        $G.profiles.ScrollToZoomCamera.apply();
 
-function initCanvas() {
-    var params = getUrlVars();
+        $W.createObject({
+            type     : $W.util.URLParams['wireframe'] === 1 ? $W.GL.LINE_LOOP : $W.GL.TRIANGLES,
+            material : new $W.Material({path:'video.json'}),
+            model    : $W.util.genSphere(50,50)
+        });
 
-    // A different width and height can be defined in the url
-    // as ?width=x&height=y
-    var width  = params['width'];
-    var height = params['height'];
-    var canvas = document.getElementById('canvas');
-    if (width !== undefined && height !== undefined) {
-        canvas.width = width;
-        canvas.height = height;
+        var videoPath = $W.util.URLParams['video'];
+        videoPath = typeof(videoPath) === 'undefined' ? 'new_york.ogv' : videoPath;
+        $W.textures.video.setSource(videoPath);
+        $W.textures.video.video.loop = true;
+        $W.textures.video.video.play();
+
+        $W.start();
     }
 };
-initCanvas();
-
-function start() {
-    if (!$W.initialize()) return;
-    $W.camera.setTarget(1,0,10);
-    $W.camera.yfov = 90;
-    $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
-
-    $W.useGameGLU();
-    $G.useControlProfiles();
-    $G.profiles.DragToRotateCamera.apply();
-    $G.profiles.ScrollToZoomCamera.apply();
-
-    var sphere = $W.createObject({type     : getRenderType(),
-                                  material : new $W.Material({path:'video.json'}),
-                                  model    : $W.util.genSphere(50,50)});
-
-    $W.textures.video.setSource(getVideoPath());
-
-    $W.updateFn = function update(){
-        document.getElementById('overlay').innerHTML = $W.FPS;
-        if ($W.textures.video.video.readyState === 2) 
-            $W.textures.video.video.play();
-        $W.textures.video.update();
-        $W.util.defaultUpdate();
-    };
-    $W.start();
-    $W.textures.video.video.play();
-}
-
-</script>
-
-</head>
-
-<body onload='start()'>
-
-<div id="glCanvas">
-
-<div id="overlay"> </div>
-
-<canvas id='canvas' width='800' height='600'></canvas><br>
-<h1><strong>360 Interactive Video</strong></h1>
-</div>
-
-</body>
-</html>
+</script></head><body onload="start()"> 
+<canvas id='canvas' width='800' height='600'></canvas>
+</body></html>
 <!--
 Copyright (c) 2009 Benjamin P. DeLillo
 

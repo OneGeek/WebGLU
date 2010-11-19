@@ -89,9 +89,6 @@ $W = {
      */
     camera:null,
 
-    /** Keeps track of the FPS */
-    fpsTracker:null,
-
     /** Quick access to FPS */
     FPS : 0,
 
@@ -120,16 +117,17 @@ $W = {
         $W.materials = [];
     },
 
-    /** Create a new ShaderProgram and add it to the program list.
-     * @param {String} name The global name for this program.
-     */
-    newProgram: function(name) {
-        console.error('$W.newProgram is deprecated, use $W.GLSL.ShaderProgram directly');
-        return new $W.GLSL.ShaderProgram(name);
-    },
+    draw: function(){},
+    update: function(){},
 
-    drawFn: null,
-    updateFn: null,
+    _draw: function $W_draw() {
+        $W.util.defaultDraw();
+        $W.draw();
+    },
+    _update: function $W_draw() {
+        $W.util.defaultUpdate();
+        $W.update();
+    },
 
     /* Begin rendering the scene */
     start: function $W_start(framelimit) {
@@ -137,8 +135,8 @@ $W = {
         // use mozRequestAnimationFrame if available
         if (typeof(window.mozRequestAnimationFrame) != 'undefined') {
             var redraw = function $W_mozRedraw() {
-                $W.updateFn();
-                $W.drawFn();
+                $W._update();
+                $W._draw();
                 window.mozRequestAnimationFrame(redraw);
             };
             window.mozRequestAnimationFrame(redraw);
@@ -149,8 +147,8 @@ $W = {
                 framelimit = 10;
             }
             setInterval(function $W_redrawFn() {
-                    $W.updateFn();
-                    $W.drawFn();
+                    $W._update();
+                    $W._draw();
                     },framelimit);
         }
     },
@@ -268,16 +266,13 @@ $W = {
 
         $W.camera     = new $W.Camera();
         $W.timer      = new $W.Timer();
-        $W.fpsTracker = new $W.FPSTracker();
-
-        $W.drawFn = $W.util.defaultDraw;
-        $W.updateFn = $W.util.defaultUpdate;
 
         var success = true;
         if (canvasNode === false) {
             console.log("WebGL init skipped");
         }else {
-            success = $W.initWebGL(canvasNode);
+            success = $W.util.initWebGL(canvasNode);
+            $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
             new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
             var defaultMaterial ={
                 name: "wglu_default",
@@ -348,55 +343,6 @@ $W = {
         }
         $W.initGameGLU();
     },
-
-    disableGrouping:function() {
-        console.oldGroup = console.group;
-        console.group = console.log;
-
-        console.oldGroupCollapsed = console.group;
-        console.groupCollapsed = console.log;
-    },
-
-    enableGrouping:function() {
-        console.group = console.oldGroup;
-        console.groupCollapsed = console.oldGroupCollapsed;
-    },
-
-    /** Setup the WebGL subsytem.
-     * Create a WebGL context on the given canvas.
-     *
-     * XXX Can't yet handle multiple canvii
-     * @param canvas DOM node or element id of a canvas.
-     */
-    initWebGL: function(canvas) {
-        if (canvas === undefined) {
-            $W.canvas = document.getElementById('canvas');
-
-        }else if (typeof(canvas) == "string") {
-            $W.canvas = document.getElementById(canvas);
-
-        }else { $W.canvas = canvas; }
-
-        $W.GL = null;
-        $W.GL = $W.util.getGLContext($W.canvas);
-
-        if (typeof($W.GL) !== "undefined" && $W.GL !== null) {
-            $W.constants.VERTEX = $W.GL.VERTEX_SHADER;
-            $W.constants.FRAGMENT = $W.GL.FRAGMENT_SHADER;
-
-            // on by default
-            $W.GL.enable(this.GL.DEPTH_TEST);
-
-            
-            $W.GL.viewport(0, 0, $W.canvas.width, $W.canvas.height);
-
-            console.log('WebGL initialized');
-            return true;
-        }else {
-            console.log('WebGL init failed');
-            return false;
-		}
-    }
 };
 
 $W.LL = {

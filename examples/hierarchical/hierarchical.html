@@ -113,8 +113,8 @@ function start() {
             $G.initialize();
             $G.event.bind("a", function(){$W.objects[0].rotation.elements[0] += 3;});
 
-            $W.updateFn = function() {
-                $W.util.defaultUpdate();
+            $W.update = function() {
+
                 FPS.innerHTML = $W.FPS;
             }
             $W.start();

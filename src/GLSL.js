@@ -158,8 +158,8 @@ $W.initGLSL = function() {
         // If the source wasn't passed in we assume name is an element
         // ID in the page
         if (source === undefined) {
-            source = getShaderSourceById(name);
-            this.type = getShaderTypeById(name);
+            source = $W.GLSL.util.getShaderSourceById(name);
+            this.type = $W.GLSL.util.getShaderTypeById(name);
 
         // Else we just use the provided source and type
         }else {
@@ -414,7 +414,13 @@ $W.initGLSL = function() {
         this.setUniformAction = function(name, action) {
             this.use();
 
-            var uniform = this.uniforms.findByAttributeValue('name', name);
+            var uniform;
+            for (var i = 0; i < this.uniforms.length; i++) {
+                if (this.uniforms[i].name === name) {
+                    uniform = this.uniforms[i];
+                    break;
+                }
+            }
 
             if (uniform === undefined) {
                 console.error("Cannot set uniform `" + name + "` in shader program `" + this.name + "`, no uniform with that name exists");

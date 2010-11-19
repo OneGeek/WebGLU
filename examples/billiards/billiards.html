@@ -110,8 +110,8 @@ function start() {
 
             overlay = document.getElementById('overlay');
 
-            $W.updateFn = function() {
-                $W.util.defaultUpdate();
+            $W.update = function() {
+
                 overlay.innerHTML = $W.FPS;
                 if (typeof($W.world) != 'undefined') {
                     $W.world.update(35);

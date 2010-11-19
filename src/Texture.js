@@ -3,6 +3,7 @@ $W.initTexture = function() {
         this.glTexture = $W.GL.createTexture();
         this.name = name;
         $W.textures[name] = this;
+        $W.textures.push(this);
 
         this.bind = function() {
             $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);

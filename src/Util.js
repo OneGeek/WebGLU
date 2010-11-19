@@ -67,6 +67,16 @@ $W.initUtil = function() {
         }
     };
 
+    $W.util.URLParams = {};
+    $W.util.parseURLParams = function UTIL_parseURLParams() {
+        var params = document.location.search.substring(1).split("&");
+        for (var i = 0; i < params.length; i++) {
+            var param = params[i].split("=");
+            $W.util.URLParams[unescape(param[0])] = unescape(param[1]);
+        }
+    };
+    $W.util.parseURLParams();
+
     $W.util.loadFileAsJSON = function UTIL_loadFileAsJSON(path) {
         // Get JSON text from file
         var file = $W.util.loadFileAsText(path);
@@ -80,7 +90,7 @@ $W.initUtil = function() {
         return JSON
     };
 
-    $W.initWebGL = function(canvas) {
+    $W.util.initWebGL = function(canvas) {
         if (canvas === undefined) {
             $W.canvas = document.getElementById('canvas');
 
@@ -97,7 +107,7 @@ $W.initUtil = function() {
             $W.constants.FRAGMENT = $W.GL.FRAGMENT_SHADER;
 
             // on by default
-            $W.GL.enable(this.GL.DEPTH_TEST);
+            $W.GL.enable($W.GL.DEPTH_TEST);
 
 
             $W.GL.viewport(0, 0, $W.canvas.width, $W.canvas.height);
@@ -199,10 +209,11 @@ $W.initUtil = function() {
         sphere.texCoords= [];
         sphere.indices  = [];
 
-        for (var ring = 0; ring <= rings; ++ring) {
-            for (var slice   = 0; slice <= slices; ++slice) {
-                var theta    = ring * Math.PI / rings;
-                var phi      = slice * 2 * Math.PI / slices;
+        var piOverRings = Math.PI / rings;
+        var piOverSlices = Math.PI / slices;
+        var genTri = function(ring, slice) {
+                var theta    = ring * piOverRings;
+                var phi      = slice * 2 * piOverSlices
 
                 var sinTheta = Math.sin(theta);
                 var cosTheta = Math.cos(theta);
@@ -214,24 +225,28 @@ $W.initUtil = function() {
                 var y = cosTheta;
                 var z = sinPhi * sinTheta;
 
-                var u = 1 - (slice / slices);
-                var v = Math.abs(ring - 1) * (1 / rings);
+                var u = slice / slices;
+                var v = ring / rings;
                 
                 sphere.vertices = sphere.vertices.concat([r*x, r*y, r*z]);
                 sphere.normals = sphere.normals.concat([x, y, z]);
                 sphere.texCoords = sphere.texCoords.concat([u,v]);
-            }
-        }
+        };
 
-        for (var ring = 0; ring < rings; ring++) {
-            for (var slice = 0; slice < slices; slice++) {
+        var genIndices = function(ring, slice) {
                 var a = (ring * slices) + ring + slice;
                 var b = a + 1;
                 var c = b + slices;
                 var d = c + 1;
+                sphere.indices = sphere.indices.concat([a,b,c, c,d,b]);
+        };
 
-                sphere.indices = sphere.indices.concat([a, b, c]);
-                sphere.indices = sphere.indices.concat([c, d, b]);
+        for (var ring = 0; ring <= rings; ring++) {
+            for (var slice = 0; slice <= slices; slice++) {
+                genTri(ring, slice);
+                if (ring != rings && slice != slices) {
+                    genIndices(ring, slice);
+                }
             }
         }
 
@@ -270,13 +285,13 @@ $W.initUtil = function() {
             // Spherical linear interpolation
             }else {
                 // Ratios
-                var a = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
-                var b = Math.sin(t * halfTheta) / sinHalfTheta;
+                var ratio1 = Math.sin((1 - t) * halfTheta) / sinHalfTheta;
+                var ratio2 = Math.sin(t * halfTheta) / sinHalfTheta;
 
-                result.w = q1.w * a + q2.w * b;
-                result.x = q1.x * a + q2.x * b;
-                result.y = q1.y * a + q2.y * b;
-                result.z = q1.z * a + q2.z * b;
+                result.w = q1.w * ratio1 + q2.w * ratio2;
+                result.x = q1.x * ratio1 + q2.x * ratio2;
+                result.y = q1.y * ratio1 + q2.y * ratio2;
+                result.z = q1.z * ratio1 + q2.z * ratio2;
             }
         }
 
@@ -300,12 +315,39 @@ $W.initUtil = function() {
      * between the two sets of values to interpolate by.
      */
     $W.util.lerpTriple=function UTIL_lerpTriple(t,a,b) {
+        return $W.util.map(function(A,B){
+                               return $W.util.lerp(t,A,B);
+                           }, a, b);
+        /*
         return [$W.util.lerp(t, a[0], b[0]),
                 $W.util.lerp(t, a[1], b[1]),
                 $W.util.lerp(t, a[2], b[2])
         ];
+        */
     };
 
+    /** Map n arrays to a function with n arguments
+     * First argument is a function, each following argument is an array of
+     * values to pass to the function.
+     * @param func A function
+     */
+    $W.util.map = function UTIL_each() {
+        var result = [];
+        var argArrays = [];
+        var func = arguments[0];
+        for (var i = 1; i < arguments.length; i++) {
+            argArrays.push(arguments[i]);
+        }
+
+        for (var i = 0; argArrays[0].length > 0; i++) {
+            var args = [];
+            for (var j = 0; j < argArrays.length; j++) {
+                args[j] = argArrays[j].shift();
+            }
+            result[i] = func.apply(this, args);
+        }
+        return result;
+    };
 
 
     /** Calculates the 3x3 inverse transpose of the Model-View matrix.
@@ -540,118 +582,20 @@ $W.initUtil = function() {
         }
     };
 
-    $W.util.extendArray = function() {
-        $W.util.searchArrayByPropertyValue = function(arr, propertyName, value) {
+    //--------------------------------------------------------------------------
+    // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
+    //--------------------------------------------------------------------------
+    $W.util.flattenArray = function UTIL_flattenArray(arr) {
+        var res = [];
+        if (arr[0].length !== undefined) {
             for (var i = 0; i < arr.length; i++) {
-                if (arr[i][propertyName] === value) {
-                    return arr[i];
-                }
+                res = res.concat(arr[i]);
             }
-            return null;
-        };                                              
-
-        $W.util.searchArrayByName = function(arr, name) {
-            return $W.util.searchArrayByPropertyValue(arr, 'name', name);
-        };
-
-        Array.prototype.findByPropertyValue = function(propertyName, value) {
-            for (var i = 0; i < this.length; i++) {
-                if (this[i][propertyName] === value) {
-                    return this[i];
-                }
-            }
-            return null;
-        };
-
-        Array.prototype.findByName = function(value) {
-            return this.findByPropertyValue('name', value);
-        };
-
-        Array.prototype.findByAttributeValue = Array.prototype.findByPropertyValue;
-
-        /** Returns this array less any objects for which the given attribute
-         * is equal to the given value.
-         * @param {String} attribute The name of the attribute.
-         * @param {Any} value The value to exclude on.
-         */
-        Array.prototype.removeByAttributeValue = function(attribute, value) {
-            var result = [];
-
-            for (var i = 0; i < this.length; i++) {
-                if (this[i][attribute] !== value) {
-                    result.push(this[i]);
-                }
-            }
-        };
-
-        //--------------------------------------------------------------------------
-        // Takes a 2D array [[1,2],[3,4]] and makes it 1D [1,2,3,4]
-        //--------------------------------------------------------------------------
-        Array.prototype.flatten = function ARR_flatten(){
-            var res = [];
-            if (this[0].length !== undefined) {
-                for (var i = 0; i < this.length; i++) {
-                    res = res.concat(this[i]);
-                }
-            }else {
-                res = this;
-            }
-            return res;
-        };
-        $W.util.flattenArray = function UTIL_flattenArray(arr) {
-            var res = [];
-            if (arr[0].length !== undefined) {
-                for (var i = 0; i < arr.length; i++) {
-                    res = res.concat(arr[i]);
-                }
-            }else {
-                res = arr;
-            }
-            return res;
-        };
-
-        Array.prototype.remove = function(item) {
-            var res = [];
-
-            if (item.equals !== undefined) {
-                for (var i = 0; i < this.length; i++) {
-                    if (!(item.equals(this[i]))) {
-                        res.push(this[i]);
-                    }
-                }
-            }else{
-                for (var i = 0; i < this.length; i++) {
-                    if (this[i] != item) {
-                        res.push(this[i]);
-                    }
-                }
-            }
-
-            return res;
-        };
-
-        // returns the index into this array of
-        // if it's an array of arrays it assumes the
-        // item in the first index of each subarry
-        // is the key.
-        Array.prototype.indexOf = function(item) {
-            for (var i = 0; i < this.length; i++) {
-                if (!this[i].length) {
-                    if (this[i] == item) {
-                        return i;
-                    }
-                }else {
-                    if (this[i][0] == item) {
-                        return i;
-                    }
-                }
-            }
-
-            return undefined;
-        };
+        }else {
+            res = arr;
+        }
+        return res;
     };
-
-
 
     // Classes
     /** @class Quaternion implementation.
@@ -770,7 +714,7 @@ $W.initUtil = function() {
 
 
     /** @class Keeps track of time since application start.
-     * Provides delta time between ticks.
+     * Provides delta time between ticks and tracks FPS.
      */
     $W.Timer = function () {
         /** The time passed since this timer was started to the time of
@@ -793,6 +737,7 @@ $W.initUtil = function() {
             this.dt = this.t - this.pt;
             this.pt = this.t;
             this.age += this.dt;
+            this.updateFPSCount(this.dt);
         }
 
         /** The time passed since this timer was started to the time of
@@ -801,14 +746,10 @@ $W.initUtil = function() {
         this.ageInSeconds = function() {
             return this.age / 1000;
         }
-    };
-
-    /** @class Provides an easy way to track FPS. */
-    $W.FPSTracker = function () {
-        /** Number of frames to average over. */
-        this.frameAvgCount = 20;  
 
         // frame timing statistics
+        /** Number of frames to average over. */
+        this.frameAvgCount = 20;  
         
         /** Milliseconds per frame. */
         this.mspf= 0; 
@@ -819,7 +760,7 @@ $W.initUtil = function() {
         this.recentFPS = []; // last several FPS calcs to average over
 
         /** Update the FPS. */
-        this.update = function(dt) {
+        this.updateFPSCount = function(dt) {
             this.mspf += dt; // add this past frame time and renormalize
             this.mspf /= 2;
 
@@ -881,8 +822,7 @@ $W.initUtil = function() {
     /** Update the internal timer and FPS counter */
     $W.util.updateState = function UTIL_updateState() {
         $W.timer.tick();
-        $W.fpsTracker.update($W.timer.dt);
-        $W.FPS = Math.round($W.fpsTracker.fps);
+        $W.FPS = Math.round($W.timer.fps);
     };
 
     /** Update all objects and textures. */
@@ -900,6 +840,5 @@ $W.initUtil = function() {
         $W.camera.update();
     };
 
-    $W.util.extendArray();
     $W.util.loadSylvester();
 };

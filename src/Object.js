@@ -101,6 +101,7 @@ $W.initObject = function() {
         this.setData = function ABUF_setData(data) {
             this.data = data;
             this.glData = new WebGLFloatArray(data);
+            this.buffer();
         };
 
         this.buffer = function ABUF_buffer() {
@@ -284,7 +285,7 @@ $W.initObject = function() {
          * @param {Array} contents The data to pass to the attribute.
          */
         this.fillArray = function OBJ_fillArray(name, data) {
-            data = data.flatten();
+            data = $W.util.flattenArray(data);
             if (typeof(this.arrayBuffers[name]) === 'undefined') {
                 this.arrayBuffers[name] = new $W.ArrayBuffer(name, data);
             }else {

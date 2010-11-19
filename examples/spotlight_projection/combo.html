@@ -114,7 +114,7 @@ function start() {
 
 
         mat = $W.materials.spotlit;
-        $W.updateFn = function redraw() {
+        $W.update = function redraw() {
             mat.maxsteps         = $("#maxsteps").slider("option", "value");
             mat.stepsize         = $("#stepsize").slider("option", "value");
             mat.light.focus      = $("#focus").slider("option", "value");
@@ -125,7 +125,7 @@ function start() {
             $W.update();
         }
 
-        $W.updateFn();
+        $W.update();
         $W.draw()
         $W.start(5000);
 

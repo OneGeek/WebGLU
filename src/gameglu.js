@@ -36,22 +36,21 @@ $W.initGameGLU = function() {
 
         },
 
+        /** Convenience object for putting any interaction state data */
         state:{},
 
-        mouse: {
-            LB:1,
-            RB:2
-        },
+        mouse: [null, 'm1', 'm2'],
 
         keys:{
+            m1: 1, m2: 2,
             backspace :  8, tab  :  9, enter : 13,
             shift     : 16, ctrl : 17, alt   : 18,
             pause_break : 19,
             caps_lock   : 20, esc: 27, space : 32,
-            pgup : 33, pgdown : 34,
-            end  : 35, home   : 36,
+            pgup   : 33, pgdown : 34,
+            end    : 35, home   : 36,
+            insert : 45, del    : 46,
             left : 37, up : 38, right : 39, down : 40,
-            insert : 45, del: 46,
             0 : 48, 1 : 49, 2 : 50, 3 : 51, 4 : 52,
             5 : 53, 6 : 54, 7 : 55, 8 : 56, 9 : 57,
             a : 65, b : 66, c : 67, d : 68, e : 69,
@@ -85,47 +84,51 @@ $W.initGameGLU = function() {
             _actions:[],
 
             _initialize:function() {
-                var BIND = addEventListener;
                 var actions = $G.event._actions;
 
-                BIND("keydown", function(ev) {
-                    if (actions['+' + ev.keyCode] !== undefined) {
-                        actions['+' + ev.keyCode]();
-                    } }, false);
-
-                BIND("keyup", function(ev) {
-                    if (actions['-' + ev.keyCode] !== undefined) {
-                        actions['-' + ev.keyCode]();
-                    } }, false);
-
-                var M = $G.mouse;
-                actions['+mouse'] = [];
-                actions['+mouse'][M.LB] = function(x,y){};
-                actions['+mouse'][M.RB] = function(x,y){};
-
-                actions['-mouse'] = [];
-                actions['-mouse'][M.LB] = function(x,y){};
-                actions['-mouse'][M.RB] = function(x,y){};
-
-                actions['mousemove'] = function(x,y){};
-
-                BIND("mousedown", function(ev) {
-                    actions['+mouse'][ev.which](
-                        ev.clientX - $G.offsetX, ev.clientY - $G.offsetY);
+                addEventListener("keydown", function(ev) {
+                    if (actions[ev.keyCode] !== undefined) {
+                        actions[ev.keyCode](ev);
+                        ev.preventDefault();
+                    } 
                 }, false);
 
-                BIND("mouseup", function(ev) {
-                    actions['-mouse'][ev.which](
-                        ev.clientX -  $G.offsetX, ev.clientY -  $G.offsetY);
+                addEventListener("keyup", function(ev) {
+                    if (actions[-ev.keyCode] !== undefined) {
+                        actions[-ev.keyCode](ev);
+                        ev.preventDefault();
+                    } 
                 }, false);
 
-                BIND("mousemove", function(ev) {
-                    actions['mousemove'](
-                        ev.clientX -  $G.offsetX, ev.clientY -  $G.offsetY);
+                addEventListener("mousedown", function(ev) {
+                    if (actions[ev.which] !== undefined) {
+                        actions[ev.which](ev.clientX - $G.offsetX, 
+                                          ev.clientY - $G.offsetY, ev);
+                        ev.preventDefault();
+                    }
                 }, false);
 
-                BIND("DOMMouseScroll", function(ev) {
-                    actions['mousewheel'](ev.detail ? ev.detail * -1 : ev.wheelData / 40);
+                addEventListener("mouseup", function(ev) {
+                    if (actions[-ev.which] !== undefined) {
+                        actions[-ev.which](ev.clientX - $G.offsetX, 
+                                           ev.clientY - $G.offsetY, ev);
+                        ev.preventDefault();
+                    }
+                }, false);
+
+                addEventListener("mousemove", function(ev) {
+                    if (actions["mousemove"] !== undefined) {
+                        actions["mousemove"](ev.clientX -  $G.offsetX, 
+                                             ev.clientY -  $G.offsetY, ev);
+                        ev.preventDefault();
+                    }
+                }, false);
+
+                addEventListener("DOMMouseScroll", function(ev) {
+                    if (actions["mousewheel"] !== undefined) {
+                        actions["mousewheel"](ev.detail ? ev.detail * -1 : ev.wheelData / 40, ev);
+                        ev.preventDefault();
+                    } 
                 }, false);
             },
 
@@ -154,18 +157,20 @@ $W.initGameGLU = function() {
                 if (arguments.length === 3) {
                     arguments[0].addEventListener(arguments[1], arguments[2]);
 
+                    /*
                 // Mousebuttons XXX Kludge?
                 }else if (key == "+m1" || key == "m1") {
-                    actions['+mouse'][M.LB] = action;
+                    actions['+m1'] = action;
 
                 }else if (key == "+m2" || key == "m2") {
-                    actions['+mouse'][M.RB] = action;
+                    actions['+m2'] = action;
 
                 }else if (key == "-m1") {
-                    actions['-mouse'][M.LB] = action;
+                    actions['-m1'] = action;
 
                 }else if (key == "-m2") {
-                    actions['-mouse'][M.RB] = action;
+                    actions['-m2'] = action;
+                    */
 
                 }else if (key == "mousemove") {
                     actions['mousemove'] = action;
@@ -173,28 +178,28 @@ $W.initGameGLU = function() {
                 }else if (key == "mousewheel") {
                     actions['mousewheel'] = action;
                 
-
                 // Keys
                 }else if (key[0] == "+" || key[0] == "-") {
 
                     if (key[0] == "+") {
                         key = $G.keys[key.slice(1)];
-                        actions['+' + key] = action;
+                        actions[key] = action;
 
                     }else if (key[0] == "-") {
                         key = $G.keys[key.slice(1)];
-                        actions['-' + key] = action;
+                        actions[-key] = action;
                     }
 
                 // Default to keydown
                 }else {
                     key = $G.keys[key];
-                    actions['+' + key] = action;
+                    actions[key] = action;
                 }
             },
         },
 
         initialize:function() {
+            console.warn("initialize is deprecated, it is no longer necessary to call");
             $G.event._initialize();
             if ($W !== undefined) {
                 $G.offsetX = $W.canvas.offsetLeft;

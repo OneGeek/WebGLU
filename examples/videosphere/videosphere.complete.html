@@ -1,0 +1,102 @@
+<html><head>
+<script type="text/javascript" src="path/to/webglu.complete.js">
+</script>
+
+<!-- WebGLU normally loads Sylvester (its vector/matrix math lib) via XHR,
+if we include it directly in the page it won't do that -->
+<script type="text/javascript" src="path/to/Sylvester.js">
+</script>
+
+<style type="text/css"> video { display: none; } </style>
+
+<!-- To avoid XHR with the shaders we embed them in script tags and 
+reference them by element id -->
+<script type="x-shader/x-vertex" id="textured_vs">
+attribute vec3 vertex;
+attribute vec2 texCoord;
+
+uniform mat4 ProjectionMatrix;
+uniform mat4 ModelViewMatrix;
+
+varying vec2 vTexCoord;
+
+void main(void) {
+    vTexCoord = texCoord;
+    gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(vertex, 1.0);
+}  
+</script>
+
+<script type="x-shader/x-fragment" id="textured_fs">
+#ifdef GL_ES
+precision highp float;
+#endif
+
+uniform sampler2D wglu_mat_texture0;
+varying vec2 vTexCoord;
+
+void main(void) {
+    gl_FragColor = texture2D(wglu_mat_texture0, vTexCoord);
+} 
+</script>
+
+<script type="application/x-javascript">
+function start() {
+    if ($W.initialize()) {
+
+        $W.useControlProfiles();
+        $G.profiles.DragToRotateCamera.apply();
+        $G.profiles.ScrollToZoomCamera.apply();
+
+        var videoPath = $W.util.URLParams['video'];
+        videoPath = typeof(videoPath) === 'undefined' ? 'new_york.ogv' : videoPath;
+
+        // Declare the Material procedurally so we don't need to load it from
+        // another file
+        new $W.Material({
+            name: "videoMaterial",
+            program: { name: "wglu_textured",
+                       shaders: [ {id:"textured_vs"}, {id:"textured_fs"} ] }, 
+            textures: [ {name:"video", type:"Video", path:videoPath} ]
+        });
+
+        $W.createObject({
+            type     : $W.GL.TRIANGLES,
+            material : "videoMaterial",
+            model    : $W.util.genSphere(50,50)
+        });
+
+        $W.textures.video.video.loop = true;
+        $W.textures.video.video.play();
+
+        $W.start();
+    }
+}
+
+</script> </head>
+<body onload="start()">
+<canvas id='canvas' width='800' height='600'></canvas><br>
+</body> </html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+    copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following
+    conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+    OTHER DEALINGS IN THE SOFTWARE.
+    --> 

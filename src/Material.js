@@ -43,7 +43,12 @@ $W.initMaterial = function() {
         this.framebuffer= null;
 
         this.setUniformAction = function MAT_setUniformAction(name, action) {
-            var uniform = $W.util.searchArrayByName(this.uniforms, name);
+            var uniform;
+            for (var i = 0; i < this.uniforms.length; i++) {
+                if (this.uniforms[i].name === name) {
+                    uniform = this.uniforms[i];
+                }
+            }
             if (uniform !== null) { 
                 uniform.action = action;
             }else {
@@ -117,6 +122,10 @@ $W.initMaterial = function() {
                         // Load shader from source code
                         }else if (typeof(shaderDef.source) !== 'undefined') {
                             program.attachShader(shaderDef.name, shaderDef.source, shaderDef.type);
+
+                        // Load shader from embedded script
+                        }else {
+                            program.attachShader(shaderDef.id);
                         }
                     }
                     program.use();

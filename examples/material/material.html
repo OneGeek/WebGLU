@@ -59,8 +59,8 @@ function start() {
 
             var FPS = document.getElementById('overlay');
 
-            $W.updateFn = function() {
-                $W.util.defaultUpdate();
+            $W.update = function() {
+
                 FPS.innerHTML = $W.FPS;
             }
 

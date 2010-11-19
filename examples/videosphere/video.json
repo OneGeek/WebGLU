@@ -4,7 +4,7 @@
         name: "wglu_textured" ,
         shaders: [
             {name:"textured_vs", path:$W.paths.shaders+"wglu_texture.vert"},
-            {name:"textured_fs", path:"texture.frag"}
+            {name:"textured_fs", path:$W.paths.shaders+"wglu_texture.frag"}
         ] 
     },
 

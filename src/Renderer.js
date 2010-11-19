@@ -11,7 +11,6 @@ $W.initRenderer = function() {
             } else {
                 try {
                     arrayBuffer.bind();
-                    arrayBuffer.buffer();
                     arrayBuffer.associate(attrib);
                 }catch (e) {
                     console.error(e);
