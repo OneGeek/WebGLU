@@ -1,0 +1,189 @@
+<html>
+<head>
+<link   type="text/css" rel="stylesheet" href="../example.css">
+<script type="text/javascript" src="../../src/webglu.js">
+</script>
+<script type="x-shader/x-fragment" id="ribbon_fs"> 
+#ifdef GL_ES
+precision highp float;
+#endif
+varying vec4 frontColor;
+void main(void) {
+    gl_FragColor = vec4(frontColor.rgb, 0.5);
+}
+</script>
+<script type="application/x-javascript">
+function start() {
+    if (!$W.initialize()) return;
+    $W.camera.yfov = 90;
+    $W.GL.enable($W.GL.BLEND);
+    $W.GL.blendFunc($W.GL.SRC_ALPHA, $W.GL.ONE_MINUS_SRC_ALPHA);
+    
+    var flyerData = [
+        ["vertex",[0,  0, 1,
+                   0,  0, 0,
+                  .5,  0, 0,
+                 -.5,  0, 0,
+                   0, .4, 0]],
+        ["color", $W.util.genDummyArray([0,0,0], 5)],
+        ["wglu_elements", [0,1, 0,2, 0,3, 0,4, 2,3, 1,4]]
+    ];
+    var flyer = $W.createObject({type: $W.GL.LINES,
+                                 data: flyerData});
+    flyer.speed = .07;
+    flyer.positions = [];
+    var ribbon = $W.createObject({type: $W.GL.TRIANGLE_STRIP});
+    ribbon.fillArray('vertex', [.5,0,0, -.5,0,0]);
+    ribbon.fillArray('color', [0,1,0, 0,1,0]);
+    var bindAndBuffer = function() {
+        $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.glBuffer);
+        $W.GL.bufferData($W.GL.ARRAY_BUFFER, this.glData, $W.GL.STATIC_DRAW);
+    };
+    vertexBuffer = ribbon.arrayBuffers.vertex;
+    colorBuffer = ribbon.arrayBuffers.color;
+    ribbon.vertexCount = 2;
+
+    ribbon.setMaterial(new $W.Material({
+        name: "ribbonMaterial",
+        program: {
+            name: "ribbonProgram",
+            shaders: [
+                {name:"ribbon_vs", path: $W.paths.shaders +
+                "default.vert"},
+                {id:"ribbon_fs"}]
+        }
+    }));
+
+    $W.useGameGLU();
+    var st = $G.state;
+    st.turning = {
+        left: {active: false, time: 0, amount:0},
+        right:{active: false, time: 0, amount:0},
+        up:   {active: false, time: 0, amount:0},
+        down: {active: false, time: 0, amount:0},
+    }
+
+    var horizScale = 0;
+    var vertScale = 0;
+    $G.bind("+left", function() {
+        horizScale = -1;
+        st.turning.left.active = true;
+    });
+    $G.bind("-left", function() {
+        horizScale = 0;
+    });
+
+    $G.bind("+right", function() {
+        horizScale = 1;
+    });
+    $G.bind("-right", function() {
+        horizScale = 0;
+    });
+    
+    $G.bind("+up", function() {
+        vertScale = 1;
+    });
+    $G.bind("-up", function() {
+        vertScale = 0;
+    });
+
+    $G.bind("down", function() {
+        vertScale = -1;
+    });
+    $G.bind("-down", function() {
+        vertScale = 0;
+    });
+
+    var turnScale = .1;
+    var ribbonAppendDt = 0;
+    var overlay = document.getElementById('overlay');
+    var horizTurn = 0;
+    var vertTurn = 0;
+    var yaw = 0;
+    var pitch = 0;
+    var lastLeftVert = $V([0,0,0]);
+    var lastRightVert = $V([0,0,0]);
+    $W.update = function() {
+        overlay.innerHTML = $W.FPS;
+
+        yaw += $W.timer.dt * horizScale * turnScale;
+
+        pitch -= $W.timer.dt * vertScale * turnScale;
+            
+        flyer.setRotation(yaw, pitch, 0);
+
+        var direction;
+        $W.modelview.pushMatrix();
+            $W.modelview.loadIdentity();
+            $W.modelview.translate(flyer.position.elements);
+            $W.modelview.multiply(flyer.q.matrix());
+            var A = flyer.q.matrix().multiply($V([0,0,1,1]));
+            var B = flyer.q.matrix().multiply($V([0,0,0,1]));
+            direction = A.subtract(B);
+            direction.elements.pop();
+
+            ribbonAppendDt = 0;
+            var vertices = vertexBuffer.data;
+            var colors = colorBuffer.data;
+
+            var leftVert = $W.modelview.matrix.multiply(
+                    $V([0.5, 0, 0, 1])).elements;
+            var rightVert = $W.modelview.matrix.multiply(
+                    $V([-0.5, 0, 0, 1])).elements;
+
+            leftVert.pop();
+            rightVert.pop();
+
+            var segment = [].concat(leftVert, rightVert);
+            vertexBuffer.setData(vertices.concat(segment));
+            var newColors = [0,1,0, 0,1,0];
+            colorBuffer.setData(colors.concat(newColors));
+
+            ribbon.vertexCount += 2;
+        $W.modelview.popMatrix();
+
+        flyer.position = flyer.position.add(direction.multiply(flyer.speed));
+        flyer.positions.push(flyer.position);
+
+        if (flyer.positions.length > 150) {
+            $W.camera.position = flyer.positions.shift().add($V([2,2,3]));
+        }else {
+            $W.camera.setPosition(2,2,3);
+        }
+        $W.camera.target = flyer.position;
+    };
+    $W.start();
+};
+</script>
+ 
+</head>
+<body onload='start()'>
+<span id='overlay'></span>
+<canvas id='canvas' width='500' height='500'>
+</canvas>
+<br>
+</div>
+</body>
+ 
+</html>
+<!--
+Copyright (c) 2009 Benjamin P. DeLillo
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
