@@ -11,7 +11,6 @@ modules = [ 'webglu', 'crazyglu', 'gameglu', 'Util', 'Constants',
 if (os.path.isfile(mergedFilePath)):
     os.remove(mergedFilePath)
 modules = [os.path.join(os.getcwd(), module + '.js') for module in modules]
-os.mknod(mergedFilePath)
 with open(mergedFilePath, 'w') as mergedFile:
     for module in modules:
         with open(module) as moduleFile:
