@@ -1,9 +1,7 @@
 <html><head>
 
 <link   type="text/css" rel="stylesheet" href="../example.css">
-<script type="text/javascript" src="../../external/Sylvester.src.js"></script>
 <script type="text/javascript" src="../../src/webglu.js"></script>
-<script type="text/javascript" src="../../src/gameglu.js"></script>
 
 <script type="application/x-javascript">
 function init() {
@@ -11,7 +9,6 @@ function init() {
     //--Initialize WebGLU, shaders
     with ($W) {
         if (!initialize()) return false;
-
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         camera.setPosition(2,2,2);
         camera.setTarget(1,0.5,0);
@@ -107,14 +104,8 @@ function createObjects() {
 function start() {
         if (init()) {
             createObjects();
-            
             var FPS = document.getElementById('overlay');
-
-            $G.initialize();
-            $G.event.bind("a", function(){$W.objects[0].rotation.elements[0] += 3;});
-
             $W.update = function() {
-
                 FPS.innerHTML = $W.FPS;
             }
             $W.start();
