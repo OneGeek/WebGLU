@@ -90,32 +90,102 @@ $W.initUtil = function() {
         return JSON
     };
 
-    $W.util.initWebGL = function(canvas) {
+    $W.util.hasWebGLTypes = function() {
+        try {
+            try { 
+                WebGLFloatArray; 
+                WebGLUnsignedShortArray; 
+            } catch (x) {
+                WebGLFloatArray = Float32Array; 
+                WebGLUnsignedShortArray = Uint16Array; 
+            }
+        }catch (x) {
+            return false;
+        }
+        return true;
+    };
+
+    $W.util.setCanvas = function(canvas) {
+        // setCanvas()
         if (canvas === undefined) {
             $W.canvas = document.getElementById('canvas');
 
+        // setCanvas('canvas')
         }else if (typeof(canvas) == "string") {
             $W.canvas = document.getElementById(canvas);
 
-        }else { $W.canvas = canvas; }
+        // setCanvas(document.getElementById('canvas')
+        }else { 
+            $W.canvas = canvas; 
+        }
+    };
 
+    $W.util.displayWebGLFailure = function() {
+        var messageElement = document.createElement("span");
+        var failMessage = "Failed to create WebGL context, " +
+            "check the error console for details.<br>";
+        var getImplLink = "http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation";
+        var implMessage = "Failed to detect WebGL array types, <br>please " +
+            "<a href=\"" + getImplLink + "\">ensure that your browser " +
+            "supports WebGL</a>.<br>";
+        messageElement.id = "failmessage";
+        messageElement.innerHTML = failMessage;
+        if (!$W.util.hasWebGLTypes()) {
+            messageElement.innerHTML += implMessage;
+        }
+        $W.canvas.parentNode.replaceChild(messageElement, canvas);
+    };
+
+    $W.util.loadDefaultAssets = function() {
+        new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
+        var defaultMaterial ={
+            name: "wglu_default",
+                  program: {
+                name: "default" ,
+                      shaders: [
+                      {name:"wglu_default_vs", type:$W.GL.VERTEX_SHADER,
+   source: "attribute vec3 vertex;                                                   \n"+
+           "attribute vec3 color;                                                    \n"+
+           "                                                                         \n"+
+           "uniform mat4 ProjectionMatrix;                                           \n"+
+           "uniform mat4 ModelViewMatrix;                                            \n"+
+           "                                                                         \n"+
+           "varying vec4 frontColor;                                                 \n"+
+           "                                                                         \n"+
+           "void main(void) {                                                        \n"+
+           "    frontColor = vec4(color,1.0);                                        \n"+
+           "                                                                         \n"+
+           "    gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(vertex, 1.0);\n"+
+           "}                                                                        \n"
+                      },
+                      {name:"wglu_default_fs", type:$W.GL.FRAGMENT_SHADER,
+   source: "#ifdef GL_ES                    \n"+
+           "precision highp float;          \n"+
+           "#endif                          \n"+
+           "varying vec4 frontColor;        \n"+
+           "void main(void) {               \n"+
+           "    gl_FragColor = frontColor;  \n"+
+           "}                               \n"
+                      },
+                      ] 
+            }
+        }
+        new $W.Material(defaultMaterial);
+    };
+
+    $W.util.initWebGL = function() {
         $W.GL = null;
         $W.GL = $W.util.getGLContext($W.canvas);
 
         if (typeof($W.GL) !== "undefined" && $W.GL !== null) {
-            $W.constants.VERTEX = $W.GL.VERTEX_SHADER;
-            $W.constants.FRAGMENT = $W.GL.FRAGMENT_SHADER;
-
-            // on by default
+            // depth test on by default
             $W.GL.enable($W.GL.DEPTH_TEST);
-
-
             $W.GL.viewport(0, 0, $W.canvas.width, $W.canvas.height);
-
             $W.log('WebGL initialized');
             return true;
         }else {
             $W.log('WebGL init failed');
+            $W.util.displayWebGLFailure();
             return false;
         }
     };
@@ -127,7 +197,6 @@ $W.initUtil = function() {
         }
         return result;
     };
-
 
     /** Clips a value to a given range.
      * @param {Number|null} min The minimum value this function can

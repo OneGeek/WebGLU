@@ -232,32 +232,38 @@ $W = {
     /** 
      * Initialize the WebGLU system, optionally initizlizing the WebGL
      * subsystem.
-     * canvasNode - the DOM node of a canvas element to init WebGL,
-     *              defaults to using the DOM element with ID 'canvas'.
-     *              Pass `false` to skip init of WebGL subsystem.
+     * canvas - the DOM node or id string of a canvas element to init WebGL,
+     *          defaults to using the DOM element with ID 'canvas'.
+     *          Pass `false` to skip init of WebGL subsystem.
      */
-    initialize:function $W_initialize(canvasNode) {
-
-        // Some hacks for running in both the shell and browser,
-        // and for supporting F32 and WebGLFloat arrays
-
+    initialize:function $W_initialize(canvas) {
         $W.initLogging();
         $W.log("Initializing WebGLU");
 
-        try { WebGLFloatArray; } catch (x) { WebGLFloatArray = Float32Array; }
-        try { WebGLUnsignedShortArray; } catch (x) { WebGLUnsignedShortArray = Uint16Array; }
+        var initModule = function(module) {
+            // If this is not the single file version, load each module
+            if (typeof($W['init' + module]) === 'undefined') {
+                $W.util.include($W.paths.libsrc + module + '.js');
+            }
 
+            // In either case call the appropriate init function
+            $W['init' + module]();
+        };
 
-        var modules = [ 'Util', 'Constants', 'DefaultUniformActions', 'GLSL',
+        // Init Util module early so we can bail out fast.
+        initModule('Util');
+        $W.util.setCanvas(canvas);
+        if (!$W.util.hasWebGLTypes()) {
+           $W.util.displayWebGLFailure(); 
+           return;
+        }
+
+        var modules = ['Constants', 'DefaultUniformActions', 'GLSL',
             'GLU', 'Animation', 'Object', 'Texture', 'Framebuffer', 'Material',
             'Renderer' ];
 
         for (var i = 0; i < modules.length; i++) {
-            // If this is not the single file version, load each module
-            if (typeof($W['init' + modules[i]]) === 'undefined') {
-                $W.util.include($W.paths.libsrc + modules[i] + '.js');
-            }
-            $W['init' + modules[i]]();
+            initModule(modules[i]);
         }
 
         // create the matrix stacks we'll be using to store transformations
@@ -267,50 +273,17 @@ $W = {
         $W.camera     = new $W.Camera();
         $W.timer      = new $W.Timer();
 
-        var success = true;
-        if (canvasNode === false) {
+        if (canvas === false) {
             console.log("WebGL init skipped");
         }else {
-            success = $W.util.initWebGL(canvasNode);
-            $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
-            new $W.ImageTexture('wglu_internal_missing_texture', $W.paths.textures + 'wglu_internal_missing_texture.png');
-            var defaultMaterial ={
-                name: "wglu_default",
-                      program: {
-                    name: "default" ,
-                          shaders: [
-                          {name:"wglu_default_vs", type:$W.GL.VERTEX_SHADER,
-       source: "attribute vec3 vertex;                                                   \n"+
-               "attribute vec3 color;                                                    \n"+
-               "                                                                         \n"+
-               "uniform mat4 ProjectionMatrix;                                           \n"+
-               "uniform mat4 ModelViewMatrix;                                            \n"+
-               "                                                                         \n"+
-               "varying vec4 frontColor;                                                 \n"+
-               "                                                                         \n"+
-               "void main(void) {                                                        \n"+
-               "    frontColor = vec4(color,1.0);                                        \n"+
-               "                                                                         \n"+
-               "    gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(vertex, 1.0);\n"+
-               "}                                                                        \n"
-                          },
-                          {name:"wglu_default_fs", type:$W.GL.FRAGMENT_SHADER,
-       source: "#ifdef GL_ES                    \n"+
-               "precision highp float;          \n"+
-               "#endif                          \n"+
-               "varying vec4 frontColor;        \n"+
-               "void main(void) {               \n"+
-               "    gl_FragColor = frontColor;  \n"+
-               "}                               \n"
-                          },
-                          ] 
-                }
+            if ($W.util.initWebGL()) {
+                $W.camera.aspectRatio = $W.canvas.width / $W.canvas.height;
+                $W.util.loadDefaultAssets();
+                return true;
+            }else {
+                return false;
             }
-            new $W.Material(defaultMaterial);
-
         }
-
-        return success;
     },
 
     /** Ensure that we can log, or at least not error if we try to */
