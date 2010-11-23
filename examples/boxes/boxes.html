@@ -1,0 +1,157 @@
+<html><head>
+<script type="text/javascript" src="../../src/webglu.complete.js"></script>
+<script type="text/javascript" src="../../external/Sylvester.src.js"></script>
+<script type="text/javascript" src="../../external/vecmath.js"></script>
+<script type="text/javascript" src="../../external/bullet.js"></script>
+<script type="x-shader/x-vertex" id="phong_vs">
+attribute vec3 vertex;
+attribute vec3 normal;
+//attribute vec3 color;
+ 
+uniform mat4 ProjectionMatrix;
+uniform mat4 ModelViewMatrix;
+uniform mat3 NormalMatrix;
+
+uniform vec3 eye;
+
+varying vec3 vColor;
+varying vec3 vVertex;
+varying vec3 L;
+varying vec3 E;
+varying vec3 Nf;
+void main(void) {
+    L = (vec4(3.0, 2.0, 3.0, 1.0) ).xyz;
+    E = eye;
+
+    Nf = normal;
+    vColor = vec3(0.3, 0.3, 0.3);
+
+    gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(vertex, 1.0);
+    vVertex = gl_Position.xyz;
+}  
+</script>
+<script type="x-shader/x-fragment" id="phong_fs">
+#ifdef GL_ES
+precision highp float;
+#endif
+varying vec3 vVertex;
+varying vec3 vColor;
+varying vec3 L;
+varying vec3 E;
+varying vec3 Nf;
+void main(void) {
+    vec3 color = vColor;
+    vec3 V = normalize(-E);
+    vec3 Ln = normalize(vVertex - L);
+    float d = distance(vVertex, L);
+
+    float NdotL = dot(Ln, Nf);
+
+    vec3 Ri = (((2.0 * Nf) * NdotL) - Ln);
+    float RdotV = max(dot(Ri, V), 0.0); 
+
+    vec3 Lamb = vec3(0.6, 0.6, 0.6);
+    vec3 Ldiff = vec3(0.5, 0.5, 0.5) * NdotL;
+    vec3 Lspec = vec3(1.0, 1.0, 1.0) * pow(RdotV, 30.0);
+
+    gl_FragColor = vec4(color * (Lamb + Ldiff + Lspec), 1.0);
+}
+</script>
+<script type ="application/x-javascript">
+function start() {
+    if (!$W.initialize()) return;
+    $W.GL.clearColor(0.9, 0.9, 0.9, 1.0);
+    $W.camera.setPosition(5, 15, 15);
+    $W.camera.setTarget(0, 7, 0);
+
+    var boxModel = [
+    /*    ['color', $W.util.genDummyArray([0.3,0.3,0.3],
+                $W.constants.unitCube.vertices.length/3)],*/
+        ['vertex', $W.constants.unitCube.vertices],
+        ['normal', $W.constants.unitCube.normals],
+        ['wglu_elements',$W.constants.unitCube.indices]
+        ];
+
+    var phong = new $W.Material({
+        name: 'phong',
+        program: {
+            shaders: [{id:"phong_vs"}, {id:"phong_fs"}]
+        }
+    });
+
+    phong.setUniformAction('eye', function() {
+        this.set($W.camera.position.elements);
+    });
+
+    var physObjs = [];
+    var PhysBox = function(x, y, z, l, w, h, mass) {
+        this.model = $W.createObject({ 
+            type: $W.GL.TRIANGLES,
+            data: boxModel,
+            material: 'phong'
+            });   
+        this.model.setPosition(x,y,z);
+        this.model.setScale(l,w,h);
+
+        this.shape = new Bullet.BoxShape(new Vecmath.Vec3(l,w,h));
+        this.transform = new Bullet.Transform();
+        this.transform.setIdentity();
+        this.transform.origin.set3(x,y,z);
+        var localInertia = new Vecmath.Vec3(0,0,0);
+        this.shape.calculateLocalInertia(mass, localInertia);
+        this.info = new Bullet.RigidBodyConstructionInfo(
+                mass, null, this.shape, localInertia);
+        this.info.linearDamping = 3;
+        this.info.angularDamping = 3;
+        this.body = new Bullet.RigidBody(this.info);
+        this.body.setWorldTransform(this.transform);
+        dynamicsWorld.addRigidBody(this.body);
+        physObjs.push(this);
+    }
+
+    var collision_config = new Bullet.CollisionConfiguration();
+    var dispatcher = new Bullet.Dispatcher(collision_config);
+    var worldAABBMin = new Vecmath.Vec3(-10000, -10000, -10000);
+    var worldAABBMax = new Vecmath.Vec3( 10000,  10000,  10000);
+    var overlappingPairCache = new Bullet.BroadphaseInterface(
+            worldAABBMin, worldAABBMax, 0xfffe, 0xffff, 16384, null);
+    var constraintSolver = new Bullet.ConstraintSolver();
+    var dynamicsWorld = new Bullet.CollisionWorld(dispatcher,
+            overlappingPairCache, null);
+    dynamicsWorld.setGravity(new Vecmath.Vec3(0, -30, 0));
+
+    var size = 10;
+    for (var i = 0; i < size; i++) {
+        for (var j = 0; j < i; j++) {
+            new PhysBox((i*1.1)*2 - j - size, 5 + (j*1.1)*2, 0, 
+                    1,1,1, 2);
+        }
+    }
+    var ground = new PhysBox(-5,0,-5, 20,2,20, 0);
+
+    var transform = new Bullet.Transform();
+    var rotation = new Vecmath.Quat4();
+    $W.update = function() {
+        dynamicsWorld.stepSimulation1($W.timer.dt/1000);
+        constraintSolver.tmpSolverBodyPool = new Array();
+
+        var collisionObjects = dynamicsWorld.collisionObjects;
+        var boxBody = Bullet.RigidBody.upcast(collisionObjects[1]);
+        for (var i = 0; i < physObjs.length; i++) {
+            var obj = physObjs[i];
+            obj.body.getWorldTransform(transform);
+            var pos = transform.origin;
+            transform.getRotation(rotation);
+            obj.model.q.w = rotation.w;
+            obj.model.q.x = rotation.x;
+            obj.model.q.y = rotation.y;
+            obj.model.q.z = rotation.z;
+            obj.model.setPosition(pos.x, pos.y, pos.z);
+        }
+    };
+    $W.start();
+};
+</script>
+</head><body onload="start()">
+<canvas id="canvas" width="500" height="500"></canvas>
+</body></html>
