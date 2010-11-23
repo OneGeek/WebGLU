@@ -1,70 +1,67 @@
 $W.initUtil = function() {
-    if ($W.util === undefined) {
-        $W.util = {
-            /** Load the file at the given path as text.
-             * @param {String} path The path to the file.
-             * @return {String} Data in the file as text.
-             */
-            loadFileAsText:function(path) {
-                $W.info("Loading file `" + path + "`");
-                var xhr = null;
-                xhr = new XMLHttpRequest();
+    $W.util = {}
+    /** Load the file at the given path as text.
+     * @param {String} path The path to the file.
+     * @return {String} Data in the file as text.
+     */
+    $W.util.loadFileAsText = function(path) {
+        $W.info("Loading file `" + path + "`");
+        var xhr = null;
+        xhr = new XMLHttpRequest();
 
-                if (!xhr) { 
-                    return null; 
-                }
-
-                xhr.overrideMimeType("text/xml");
-
-                // Deal with firefox security for file:// urls
-                try {
-                    var nsPM = null;
-                    if (typeof(netscape) !== 'undefined' && 
-                        typeof(netscape.security) !== 'undefined' && 
-                        typeof(netscape.security.PrivilegeManager) !== 'undefined') {
-                        nsPM = netscape.security.PrivilegeManager;
-                    }
-                    if (document.location.href.match(/^file:\/\//)) {
-                        if (nsPM !== null) {
-                            nsPM.enablePrivilege("UniversalBrowserRead");
-                        }
-                    }
-                }catch (e) {
-                    console.error(e);
-                    throw "\tBrowser security may be restrcting access to local files";
-                }
-
-                try {
-
-                    xhr.open("GET", path, false);
-
-                    // Ignore cache if the file is served from localhost or is at a
-                    // file:// url as it's safe to assume that's a developer.
-                    var url = window.location.href;
-                    if (    url.match(/^http:\/\/localhost/) !== null ||
-                            url.match(/^http:\/\/127\.0\.0\.1/) !== null ||
-                            url.match(/^file:/) !== null) {
-
-                        xhr.setRequestHeader('Pragma', 'Cache-Control: no-cache');
-                    }
-
-                    xhr.send(null);
-
-                }catch (e) { 
-                    throw e; 
-                }
-
-                $W.debug("\tCompleted with status: " + xhr.status);
-
-                return xhr.responseText;
-
-            },
-
-            include: function(path) {
-                var script = $W.util.loadFileAsText(path);
-                window.eval(script);
-            }
+        if (!xhr) { 
+            return null; 
         }
+
+        xhr.overrideMimeType("text/xml");
+
+        // Deal with firefox security for file:// urls
+        try {
+            var nsPM = null;
+            if (typeof(netscape) !== 'undefined' && 
+                typeof(netscape.security) !== 'undefined' && 
+                typeof(netscape.security.PrivilegeManager) !== 'undefined') {
+                nsPM = netscape.security.PrivilegeManager;
+            }
+            if (document.location.href.match(/^file:\/\//)) {
+                if (nsPM !== null) {
+                    nsPM.enablePrivilege("UniversalBrowserRead");
+                }
+            }
+        }catch (e) {
+            console.error(e);
+            throw "\tBrowser security may be restrcting access to local files";
+        }
+
+        try {
+
+            xhr.open("GET", path, false);
+
+            // Ignore cache if the file is served from localhost or is at a
+            // file:// url as it's safe to assume that's a developer.
+            var url = window.location.href;
+            if (    url.match(/^http:\/\/localhost/) !== null ||
+                    url.match(/^http:\/\/127\.0\.0\.1/) !== null ||
+                    url.match(/^file:/) !== null) {
+
+                xhr.setRequestHeader('Pragma', 'Cache-Control: no-cache');
+            }
+
+            xhr.send(null);
+
+        }catch (e) { 
+            throw e; 
+        }
+
+        $W.debug("\tCompleted with status: " + xhr.status);
+
+        return xhr.responseText;
+
+    };
+
+    $W.util.include = function(path) {
+        var script = $W.util.loadFileAsText(path);
+        window.eval(script);
     };
 
     $W.util.URLParams = {};
@@ -384,15 +381,10 @@ $W.initUtil = function() {
      * between the two sets of values to interpolate by.
      */
     $W.util.lerpTriple=function UTIL_lerpTriple(t,a,b) {
-        return $W.util.map(function(A,B){
-                               return $W.util.lerp(t,A,B);
-                           }, a, b);
-        /*
         return [$W.util.lerp(t, a[0], b[0]),
                 $W.util.lerp(t, a[1], b[1]),
                 $W.util.lerp(t, a[2], b[2])
         ];
-        */
     };
 
     /** Map n arrays to a function with n arguments
@@ -711,7 +703,7 @@ $W.initUtil = function() {
             var yw = y * w;
             var zw = z * w;
 
-            var m = [[],[],[],[]];
+            var m = [[],[],[],[0,0,0,1]];
 
             m[0][0] = 1 - 2 * (yy + zz);
             m[0][1] = 2 * (xy + zw);
@@ -725,13 +717,9 @@ $W.initUtil = function() {
             m[2][1] = 2 * (yz - xw);
             m[2][2] = 1 - 2 * (xx + yy);
             m[2][3] = 0;
-            m[3][0] = 0;
-            m[3][1] = 0;
-            m[3][2] = 0;
-            m[3][3] = 1;
             
             return $M(m);
-        }
+        };
 
         this.multiply = function(q) {
             var result = new $W.Quaternion();
@@ -740,7 +728,14 @@ $W.initUtil = function() {
             result.y = this.w * q.y + this.y * q.w + this.z * q.x - this.x * q.z;
             result.z = this.w * q.z + this.z * q.w + this.x * q.y - this.y * q.x;
             return result;
-        }
+        };
+
+        this.multiplied = function(q) {
+            this.w = this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z;
+            this.x = this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y;
+            this.y = this.w * q.y + this.y * q.w + this.z * q.x - this.x * q.z;
+            this.z = this.w * q.z + this.z * q.w + this.x * q.y - this.y * q.x;
+        };
     };
 
     /** 
