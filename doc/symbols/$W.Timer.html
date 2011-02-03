@@ -192,21 +192,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
-	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
-	
-	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
-	
-	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -220,15 +212,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
+	
+	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
+	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
+	
+	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
 	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
-	
-	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
@@ -254,10 +252,10 @@ ul.inheritsList
 				
 				
 			
-				Keeps track of time since application start.Provides delta time between ticks.
+				Keeps track of time since application start.Provides delta time between ticks and tracks FPS.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
 				
 			</p>
 
@@ -323,6 +321,36 @@ ul.inheritsList
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#fps">fps</a></b>
+								</div>
+								<div class="description">Frames per second.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#frameAvgCount">frameAvgCount</a></b>
+								</div>
+								<div class="description">Number of frames to average over.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/%24W.Timer.html#mspf">mspf</a></b>
+								</div>
+								<div class="description">Milliseconds per frame.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								<b><a href="../symbols/%24W.Timer.html#pt">pt</a></b>
 								</div>
 								<div class="description">The time of the previous tick</div>
@@ -375,6 +403,15 @@ ul.inheritsList
 								<div class="fixedFont"><b><a href="../symbols/%24W.Timer.html#tick">tick</a></b>()
 								</div>
 								<div class="description">Update the timer</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Timer.html#updateFPSCount">updateFPSCount</a></b>(dt)
+								</div>
+								<div class="description">Update the FPS.</div>
 							</td>
 						</tr>
 					
@@ -454,6 +491,72 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						The delta time between the previous two ticks.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="fps"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fps</b>
+					
+					</div>
+					<div class="description">
+						Frames per second.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="frameAvgCount"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>frameAvgCount</b>
+					
+					</div>
+					<div class="description">
+						Number of frames to average over.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="mspf"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>mspf</b>
+					
+					</div>
+					<div class="description">
+						Milliseconds per frame.
 						
 						
 					</div>
@@ -567,6 +670,42 @@ ul.inheritsList
 						
 						
 
+					<hr />
+				
+					<a name="updateFPSCount"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>updateFPSCount</b>(dt)
+					
+					</div>
+					<div class="description">
+						Update the FPS.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>dt</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -581,7 +720,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Thu Feb 25 2010 13:43:46 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:34 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

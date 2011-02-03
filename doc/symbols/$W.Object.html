@@ -192,21 +192,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
-	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
-	
-	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
-	
-	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -220,15 +212,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
+	
+	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
+	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
+	
+	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
 	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
-	
-	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
@@ -257,7 +255,7 @@ ul.inheritsList
 				Contains pertinent render information for an individual renderable entity.Make sure to set vertexCount correctlyAnimations are clunky right now, I'm working on it.
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Object.js.html">Object.js</a>.
 				
 			</p>
 
@@ -306,46 +304,6 @@ ul.inheritsList
 								<b><a href="../symbols/%24W.Object.html#animation">animation</a></b>
 								</div>
 								<div class="description">The animation for this object.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.Object.html#arrays">arrays</a></b>
-								</div>
-								<div class="description">WebGL*array's of attribute data.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.Object.html#buffers">buffers</a></b>
-								</div>
-								<div class="description">WebGL array buffers for attribute data.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.Object.html#shaderProgram">shaderProgram</a></b>
-								</div>
-								<div class="description">Name of shader program used to render this object</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/%24W.Object.html#textures">textures</a></b>
-								</div>
-								<div class="description">Names of textures this object uses.</div>
 							</td>
 						</tr>
 					
@@ -419,33 +377,6 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#bindBuffers">bindBuffers</a></b>()
-								</div>
-								<div class="description">XXX Not working Binds the data buffers for rendering.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#bindTextures">bindTextures</a></b>()
-								</div>
-								<div class="description">Bind the textures for this object.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#bufferArrays">bufferArrays</a></b>()
-								</div>
-								<div class="description">XXX Not working Buffers the data for this object once.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#draw">draw</a></b>()
 								</div>
 								<div class="description">draw this object at its internally stored position, rotation, andscale, INCLUDING its current animation state.</div>
@@ -482,18 +413,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#setScaleUniformly">setScaleUniformly</a></b>(s)
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#setMaterial">setMaterial</a></b>(material)
 								</div>
-								<div class="description">Set the x y and z components of the object's scale to the givenvalue.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#setShaderProgram">setShaderProgram</a></b>(program)
-								</div>
-								<div class="description">Set the shader program to the named program</div>
+								<div class="description">Set the material of this object to the indicated material</div>
 							</td>
 						</tr>
 					
@@ -577,94 +499,6 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						The animation for this object.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="arrays"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>arrays</b>
-					
-					</div>
-					<div class="description">
-						WebGL*array's of attribute data.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="buffers"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>buffers</b>
-					
-					</div>
-					<div class="description">
-						WebGL array buffers for attribute data.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="shaderProgram"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>shaderProgram</b>
-					
-					</div>
-					<div class="description">
-						Name of shader program used to render this object
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="textures"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>textures</b>
-					
-					</div>
-					<div class="description">
-						Names of textures this object uses.
 						
 						
 					</div>
@@ -840,88 +674,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="bindBuffers"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>bindBuffers</b>()
-					
-					</div>
-					<div class="description">
-						XXX Not working Binds the data buffers for rendering.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="bindTextures"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>bindTextures</b>()
-					
-					</div>
-					<div class="description">
-						Bind the textures for this object.XXX Will only work with single texturing
-						
-						
-					</div>
-					
-					
-					
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Deprecated:</dt>
-							<dt>
-								Use setTexture(texture, sampler) instead.
-							</dt>
-							</dl>
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="bufferArrays"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>bufferArrays</b>()
-					
-					</div>
-					<div class="description">
-						XXX Not working Buffers the data for this object once.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="draw"> </a>
 					<div class="fixedFont">
 					
@@ -967,22 +719,22 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Vector}</span> <b>pos</b>
+									<span class="light fixedFont">{3 Element Array}</span> <b>pos</b>
 									
 								</dt>
-								<dd>The position to draw at.</dd>
+								<dd>Position array.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Vector}</span> <b>rot</b>
+									<span class="light fixedFont">{Matrix}</span> <b>rot</b>
 									
 								</dt>
-								<dd>The rotation to rotate by.</dd>
+								<dd>Rotation matrix.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Vector}</span> <b>scale</b>
+									<span class="light fixedFont">{3 Element Array}</span> <b>scale</b>
 									
 								</dt>
-								<dd>The scale to scale by.</dd>
+								<dd>Scaling array.</dd>
 							
 							</dl>
 						
@@ -1073,15 +825,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setScaleUniformly"> </a>
+					<a name="setMaterial"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>setScaleUniformly</b>(s)
+					<b>setMaterial</b>(material)
 					
 					</div>
 					<div class="description">
-						Set the x y and z components of the object's scale to the givenvalue.
+						Set the material of this object to the indicated material
 						
 						
 					</div>
@@ -1093,46 +845,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Number}</span> <b>s</b>
+									<b>material</b>
 									
 								</dt>
-								<dd>New scale of the object.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setShaderProgram"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setShaderProgram</b>(program)
-					
-					</div>
-					<div class="description">
-						Set the shader program to the named program
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>program</b>
-									
-								</dt>
-								<dd>Program name.</dd>
+								<dd>{String|Material} Either the name of an existing materialor a Material object.</dd>
 							
 							</dl>
 						
@@ -1193,7 +909,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Thu Feb 25 2010 13:43:46 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:34 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

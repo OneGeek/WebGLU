@@ -192,21 +192,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
-	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
-	
-	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
-	
-	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -220,15 +212,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
+	
+	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
+	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
+	
+	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
 	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
-	
-	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
@@ -305,9 +303,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.clamp">clamp</a></b>(min, max, val)
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.clear">clear</a></b>()
 								</div>
-								<div class="description">Clamps a value to a given range.</div>
+								<div class="description">Clear the canvas</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.clip">clip</a></b>(min, max, val)
+								</div>
+								<div class="description">Clips a value to a given range.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.defaultDraw">defaultDraw</a></b>()
+								</div>
+								<div class="description">Draw all objects from the camera's perspective.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.defaultUpdate">defaultUpdate</a></b>()
+								</div>
+								<div class="description">Update all objects and textures.</div>
 							</td>
 						</tr>
 					
@@ -377,9 +402,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.map">map</a></b>(func)
+								</div>
+								<div class="description">Map n arrays to a function with n argumentsFirst argument is a function, each following argument is an array ofvalues to pass to the function.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.parseOBJ">parseOBJ</a></b>(obj)
 								</div>
-								<div class="description">Parse a .obj model fileXXX Should I build the vertex/normal/texture coordinate arraysexplicitly from the face data? Can it work otherwise?XXX Not quite working.</div>
+								<div class="description">Parse a .obj model fileXXX Not quite working.</div>
 							</td>
 						</tr>
 					
@@ -389,6 +423,15 @@ ul.inheritsList
 								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.slerp">slerp</a></b>(t, q1, q2)
 								</div>
 								<div class="description">Spherical linear interpolation.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.util.<b><a href="../symbols/%24W.util.html#.updateState">updateState</a></b>()
+								</div>
+								<div class="description">Update the internal timer and FPS counter</div>
 							</td>
 						</tr>
 					
@@ -440,15 +483,46 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".clamp"> </a>
+					<a name=".clear"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.util.</span><b>clamp</b>(min, max, val)
+					<span class="light">$W.util.</span><b>clear</b>()
 					
 					</div>
 					<div class="description">
-						Clamps a value to a given range.
+						Clear the canvas
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".clip"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>clip</b>(min, max, val)
+					
+					</div>
+					<div class="description">
+						Clips a value to a given range.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
 						
 						
 					</div>
@@ -475,9 +549,65 @@ ul.inheritsList
 									<span class="light fixedFont">{Number}</span> <b>val</b>
 									
 								</dt>
-								<dd>The value to clamp.</dd>
+								<dd>The value to clip.</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".defaultDraw"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>defaultDraw</b>()
+					
+					</div>
+					<div class="description">
+						Draw all objects from the camera's perspective.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".defaultUpdate"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>defaultUpdate</b>()
+					
+					</div>
+					<div class="description">
+						Update all objects and textures.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -497,6 +627,9 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Generate vertices, normals, texture coordinates, and element indices for a sphere. Intended to be rendered with setElements.XXX Not a 'sliced' sphere, need to fix that.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
 						
 						
 					</div>
@@ -561,6 +694,9 @@ ul.inheritsList
 					<div class="description">
 						Get axis/angle representation of the rotation.Based on http://www.euclideanspace.com/maths/geometry/rotations/conversions/eulerToAngle/index.htmXXX unused
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
 						
 					</div>
 					
@@ -596,6 +732,9 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Create a WebGL context for the specified canvas.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
 						
 						
 					</div>
@@ -640,6 +779,9 @@ ul.inheritsList
 					<div class="description">
 						Calculates the 3x3 inverse transpose of the Model-View matrix.Returns it in a format suitable to be passed directly as shaderuniform.
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
 						
 					</div>
 					
@@ -671,6 +813,9 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Linear interpolation between numbers.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
 						
 						
 					</div>
@@ -719,6 +864,9 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Linear interpolation between triples
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
 						
 						
 					</div>
@@ -801,6 +949,45 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".map"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>map</b>(func)
+					
+					</div>
+					<div class="description">
+						Map n arrays to a function with n argumentsFirst argument is a function, each following argument is an array ofvalues to pass to the function.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>func</b>
+									
+								</dt>
+								<dd>A function</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".parseOBJ"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -809,7 +996,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Parse a .obj model fileXXX Should I build the vertex/normal/texture coordinate arraysexplicitly from the face data? Can it work otherwise?XXX Not quite working.
+						Parse a .obj model fileXXX Not quite working.
 						
 							<br />
 							<i>Defined in: </i> <a href="../symbols/src/src_crazyglu.js.html">crazyglu.js</a>.
@@ -865,6 +1052,9 @@ ul.inheritsList
 					<div class="description">
 						Spherical linear interpolation. For interpolating quaternions.Based on reference implementation at http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
 						
 					</div>
 					
@@ -901,6 +1091,34 @@ ul.inheritsList
 						
 						
 
+					<hr />
+				
+					<a name=".updateState"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.util.</span><b>updateState</b>()
+					
+					</div>
+					<div class="description">
+						Update the internal timer and FPS counter
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -915,7 +1133,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Thu Feb 25 2010 13:43:46 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:34 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

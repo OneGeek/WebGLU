@@ -192,21 +192,13 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
-	<li><a href="../symbols/%24W.anim.html">$W.anim</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrame.html">$W.anim.KeyFrame</a></li>
-	
-	<li><a href="../symbols/%24W.anim.KeyFrameAnimation.html">$W.anim.KeyFrameAnimation</a></li>
-	
-	<li><a href="../symbols/%24W.anim.ProceduralAnimation.html">$W.anim.ProceduralAnimation</a></li>
+	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
-	
-	<li><a href="../symbols/%24W.FPSTracker.html">$W.FPSTracker</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -220,15 +212,21 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
+	
+	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
+	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
+	
+	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
+	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
 	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
-	
-	<li><a href="../symbols/%24W.texture.html">$W.texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
@@ -333,16 +331,6 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								$W.<b><a href="../symbols/%24W.html#.fpsTracker">fpsTracker</a></b>
-								</div>
-								<div class="description">Keeps track of the FPS</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
 								$W.<b><a href="../symbols/%24W.html#.GL">GL</a></b>
 								</div>
 								<div class="description">The raw WebGL object for low level work.</div>
@@ -353,9 +341,9 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								$W.<b><a href="../symbols/%24W.html#.modelview">modelview</a></b>
+								$W.<b><a href="../symbols/%24W.html#.materials">materials</a></b>
 								</div>
-								<div class="description">Model-View transform matrix</div>
+								<div class="description">Materials</div>
 							</td>
 						</tr>
 					
@@ -363,9 +351,9 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								$W.<b><a href="../symbols/%24W.html#.objects">objects</a></b>
+								$W.<b><a href="../symbols/%24W.html#.modelview">modelview</a></b>
 								</div>
-								<div class="description">Renderable objects</div>
+								<div class="description">Model-View transform matrix</div>
 							</td>
 						</tr>
 					
@@ -385,7 +373,7 @@ ul.inheritsList
 								<div class="fixedFont">
 								$W.<b><a href="../symbols/%24W.html#.programs">programs</a></b>
 								</div>
-								<div class="description">GLSL shader programs</div>
+								<div class="description">Shader Programs</div>
 							</td>
 						</tr>
 					
@@ -403,9 +391,19 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								$W.<b><a href="../symbols/%24W.html#.renderables">renderables</a></b>
+								</div>
+								<div class="description">Renderable objects</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								$W.<b><a href="../symbols/%24W.html#.shaders">shaders</a></b>
 								</div>
-								<div class="description">GLSL shaders</div>
+								<div class="description">Shaders</div>
 							</td>
 						</tr>
 					
@@ -453,34 +451,43 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.addObject">addObject</a></b>(obj)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.ImageTexture">ImageTexture</a></b>(name, src)
 								</div>
-								<div class="description">Add the given object to the object list.</div>
+								<div class="description">A static texture from an image file.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.clear">clear</a></b>()
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initCrazyGLU">initCrazyGLU</a></b>()
 								</div>
-								<div class="description">Clear the canvas</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.draw">draw</a></b>()
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initGameGLU">initGameGLU</a></b>()
 								</div>
-								<div class="description">Draw all objects from the camera's perspective.</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initialize">initialize</a></b>(canvasNode)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initGLU">initGLU</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initialize">initialize</a></b>(canvas)
 								</div>
 								<div class="description">Initialize the WebGLU system, optionally initizlizing the WebGLsubsystem.</div>
 							</td>
@@ -489,27 +496,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initLogging">initLogging</a></b>()
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initObject">initObject</a></b>()
 								</div>
-								<div class="description">Ensure that we can log, or at least not error if we try to</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initWebGL">initWebGL</a></b>(canvas)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initRenderer">initRenderer</a></b>()
 								</div>
-								<div class="description">Setup the WebGL subsytem.</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.newProgram">newProgram</a></b>(name)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initTexture">initTexture</a></b>()
 								</div>
-								<div class="description">Create a new ShaderProgram and add it to the program list.</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initUtil">initUtil</a></b>()
+								</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -525,9 +541,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.update">update</a></b>()
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.useWebGLDebug">useWebGLDebug</a></b>()
 								</div>
-								<div class="description">Update all objects.</div>
+								<div class="description">Use debugging context.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.VideoTexture">VideoTexture</a></b>(name, src)
+								</div>
+								<div class="description">A dynamic texture from a `video` element.</div>
 							</td>
 						</tr>
 					
@@ -642,28 +667,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".fpsTracker"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>fpsTracker</b>
-					
-					</div>
-					<div class="description">
-						Keeps track of the FPS
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name=".GL"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -686,15 +689,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".modelview"> </a>
+					<a name=".materials"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>modelview</b>
+					<span class="light">$W.</span><b>materials</b>
 					
 					</div>
 					<div class="description">
-						Model-View transform matrix
+						Materials
 						
 						
 					</div>
@@ -708,15 +711,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".objects"> </a>
+					<a name=".modelview"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>objects</b>
+					<span class="light">$W.</span><b>modelview</b>
 					
 					</div>
 					<div class="description">
-						Renderable objects
+						Model-View transform matrix
 						
 						
 					</div>
@@ -760,7 +763,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						GLSL shader programs
+						Shader Programs
 						
 						
 					</div>
@@ -796,6 +799,28 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".renderables"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>renderables</b>
+					
+					</div>
+					<div class="description">
+						Renderable objects
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".shaders"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -804,7 +829,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						GLSL shaders
+						Shaders
 						
 						
 					</div>
@@ -870,15 +895,18 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".addObject"> </a>
+					<a name=".ImageTexture"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>addObject</b>(obj)
+					<span class="light">$W.</span><b>ImageTexture</b>(name, src)
 					
 					</div>
 					<div class="description">
-						Add the given object to the object list.
+						A static texture from an image file.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
 						
 						
 					</div>
@@ -890,10 +918,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>obj</b>
+									<span class="light fixedFont">{String}</span> <b>name</b>
 									
 								</dt>
-								<dd>The object to add.</dd>
+								<dd>The global name this texture will be referencedby elsewhere.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>src</b>
+									
+								</dt>
+								<dd>Path to image file.</dd>
 							
 							</dl>
 						
@@ -906,17 +940,20 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".clear"> </a>
+					<a name=".initCrazyGLU"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>clear</b>()
+					<span class="light">$W.</span><b>initCrazyGLU</b>()
 					
 					</div>
 					<div class="description">
-						Clear the canvas
 						
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_crazyglu.js.html">crazyglu.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
 					</div>
 					
 					
@@ -931,17 +968,48 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".draw"> </a>
+					<a name=".initGameGLU"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>draw</b>()
+					<span class="light">$W.</span><b>initGameGLU</b>()
 					
 					</div>
 					<div class="description">
-						Draw all objects from the camera's perspective.
 						
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_gameglu.js.html">gameglu.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".initGLU"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>initGLU</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_GLU.js.html">GLU.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
 					</div>
 					
 					
@@ -960,11 +1028,11 @@ ul.inheritsList
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>initialize</b>(canvasNode)
+					<span class="light">$W.</span><b>initialize</b>(canvas)
 					
 					</div>
 					<div class="description">
-						Initialize the WebGLU system, optionally initizlizing the WebGLsubsystem.canvasNode - the DOM node of a canvas element to init WebGL,             defaults to using the DOM element with ID 'canvas'.             Pass `false` to skip init of WebGL subsystem.
+						Initialize the WebGLU system, optionally initizlizing the WebGLsubsystem.canvas - the DOM node or id string of a canvas element to init WebGL,         defaults to using the DOM element with ID 'canvas'.         Pass `false` to skip init of WebGL subsystem.
 						
 						
 					</div>
@@ -976,7 +1044,7 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>canvasNode</b>
+									<b>canvas</b>
 									
 								</dt>
 								<dd></dd>
@@ -992,17 +1060,20 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".initLogging"> </a>
+					<a name=".initObject"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>initLogging</b>()
+					<span class="light">$W.</span><b>initObject</b>()
 					
 					</div>
 					<div class="description">
-						Ensure that we can log, or at least not error if we try to
 						
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Object.js.html">Object.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
 					</div>
 					
 					
@@ -1017,32 +1088,24 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".initWebGL"> </a>
+					<a name=".initRenderer"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>initWebGL</b>(canvas)
+					<span class="light">$W.</span><b>initRenderer</b>()
 					
 					</div>
 					<div class="description">
-						Setup the WebGL subsytem.Create a WebGL context on the given canvas.XXX Can't yet handle multiple canvii
 						
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Renderer.js.html">Renderer.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>canvas</b>
-									
-								</dt>
-								<dd>DOM node or element id of a canvas.</dd>
-							
-							</dl>
 						
 						
 						
@@ -1053,32 +1116,52 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".newProgram"> </a>
+					<a name=".initTexture"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>newProgram</b>(name)
+					<span class="light">$W.</span><b>initTexture</b>()
 					
 					</div>
 					<div class="description">
-						Create a new ShaderProgram and add it to the program list.
 						
 						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
 					</div>
 					
 					
 					
 						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The global name for this program.</dd>
-							
-							</dl>
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".initUtil"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>initUtil</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+						
+						<br /><i>Author: </i>Benjamin DeLillo.
+					</div>
+					
+					
+					
 						
 						
 						
@@ -1114,21 +1197,66 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".update"> </a>
+					<a name=".useWebGLDebug"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>update</b>()
+					<span class="light">$W.</span><b>useWebGLDebug</b>()
 					
 					</div>
 					<div class="description">
-						Update all objects.
+						Use debugging context.Must be called <i>after</i> initialize().
 						
 						
 					</div>
 					
 					
 					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".VideoTexture"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>VideoTexture</b>(name, src)
+					
+					</div>
+					<div class="description">
+						A dynamic texture from a `video` element.
+						
+							<br />
+							<i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>name</b>
+									
+								</dt>
+								<dd>The global name this texture will be referencedby elsewhere.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String|Video}</span> <b>src</b>
+									
+								</dt>
+								<dd>Video path or DOM video element.</dd>
+							
+							</dl>
 						
 						
 						
@@ -1151,7 +1279,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Thu Feb 25 2010 13:43:45 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:33 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

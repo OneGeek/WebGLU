@@ -1,1 +1,1 @@
-java -jar c:\jsdoc-toolkit\jsrun.jar c:\jsdoc-toolkit\app\run.js -t=c:\jsdoc-toolkit\templates\jsdoc src\* -d=doc -v
+java -jar external\jsdoc-toolkit\jsrun.jar external\jsdoc-toolkit\app\run.js -t=external\jsdoc-toolkit\templates\jsdoc src\*.js -d=doc -v
