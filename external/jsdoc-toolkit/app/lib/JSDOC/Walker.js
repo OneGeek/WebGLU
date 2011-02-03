@@ -84,12 +84,6 @@ JSDOC.Walker.prototype.step = function() {
 			var virtualName = doc.getTag("name")[0].desc;
 			if (!virtualName) throw "@name tag requires a value.";
 			
-			if (doc.getTag("memberOf").length > 0) {
-				virtualName = (doc.getTag("memberOf")[0] + "." + virtualName)
-					.replace(/([#.])\./, "$1");
-				doc.deleteTag("memberOf");
-			}
-
 			var symbol = new JSDOC.Symbol(virtualName, [], "VIRTUAL", doc);
 			
 			JSDOC.Parser.addSymbol(symbol);
@@ -149,16 +143,7 @@ JSDOC.Walker.prototype.step = function() {
 				var isInner;
 				
 				if (this.lastDoc) doc = this.lastDoc;
-				
-				if (doc && doc.getTag("memberOf").length > 0) {
-					name = (doc.getTag("memberOf")[0]+"."+name).replace("#.", "#");
-					doc.deleteTag("memberOf");
-				}
-				else {
-					name = this.namescope.last().alias+"-"+name;
-					if (!this.namescope.last().is("GLOBAL")) isInner = true;
-				}
-				
+				name = this.namescope.last().alias+"-"+name;
 				if (!this.namescope.last().is("GLOBAL")) isInner = true;
 				
 				params = JSDOC.Walker.onParamList(this.ts.balance("LEFT_PAREN"));
@@ -182,25 +167,9 @@ JSDOC.Walker.prototype.step = function() {
 			}
 			// foo = function() {}
 			else if (this.ts.look(1).is("ASSIGN") && this.ts.look(2).is("FUNCTION")) {
-				var constructs;
-				var isConstructor = false;
-				if (doc && (constructs = doc.getTag("constructs")) && constructs.length) {
-					if (constructs[0].desc) {
-						name = constructs[0].desc;
-						isConstructor = true;
-					}
-				}
-					
 				var isInner;
 				if (this.ts.look(-1).is("VAR") || this.isInner) {
-					if (doc && doc.getTag("memberOf").length > 0) {
-						name = (doc.getTag("memberOf")[0]+"."+name).replace("#.", "#");
-						doc.deleteTag("memberOf");
-					}
-					else {
-						name = this.namescope.last().alias+"-"+name;
-						if (!this.namescope.last().is("GLOBAL")) isInner = true;
-					}
+					name = this.namescope.last().alias+"-"+name
 					if (!this.namescope.last().is("GLOBAL")) isInner = true;
 				}
 				else if (name.indexOf("this.") == 0) {
@@ -211,16 +180,14 @@ JSDOC.Walker.prototype.step = function() {
 				params = JSDOC.Walker.onParamList(this.ts.balance("LEFT_PAREN"));
 				
 				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc);
-
 				if (isInner) symbol.isInner = true;
-				if (isConstructor) symbol.isa = "CONSTRUCTOR";
 				
 				if (this.ts.look(1).is("JSDOC")) {
 					var inlineReturn = ""+this.ts.look(1).data;
 					inlineReturn = inlineReturn.replace(/(^\/\*\* *| *\*\/$)/g, "");
 					symbol.type = inlineReturn;
 				}
-
+				
 				JSDOC.Parser.addSymbol(symbol);
 				
 				this.namescope.push(symbol);

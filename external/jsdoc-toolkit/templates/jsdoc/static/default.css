@@ -58,7 +58,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .classList li

@@ -173,10 +173,6 @@ JSDOC.DocComment.prototype.getTag = function(/**String*/tagTitle) {
 	return this.tags.filter(function($){return $.title == tagTitle});
 }
 
-JSDOC.DocComment.prototype.deleteTag = function(/**String*/tagTitle) {
-	this.tags = this.tags.filter(function($){return $.title != tagTitle})
-}
-
 /*t:
 	plan(1, "testing JSDOC.DocComment#getTag");
 	requires("../frame/String.js");

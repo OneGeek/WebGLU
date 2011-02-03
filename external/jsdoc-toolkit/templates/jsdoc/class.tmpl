@@ -354,7 +354,7 @@
 						<dl class="detailList">
 						<dt class="heading">Requires:</dt>
 						<for each="item" in="data.requires">
-							<dd>{+ new Link().toSymbol(item) +}</dd>
+							<dd>{+ resolveLinks(item) +}</dd>
 						</for>
 						</dl>
 					</if>

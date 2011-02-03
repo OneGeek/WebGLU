@@ -81,54 +81,36 @@ Link.symbolNameToLinkName = function(symbol) {
 	return Link.hashPrefix+linker+symbol.name;
 }
 
-Link.getSymbol= function(alias) {
-    var symbol= Link.symbolSet.getSymbol(alias);
-    
-    if (symbol)
-        return symbol;
-        
-    if ('#'!==alias.charAt(0) || !Link.currentSymbol)
-        return null;
-    
-    //  resolve relative name
-    var container= Link.currentSymbol;
-    
-    while (container)
-    {
-        symbol= Link.symbolSet.getSymbol(container.alias + alias);
-        if (symbol)
-            return symbol;
-        
-        //  No superclass
-        if (!container.augments.length)
-            return null;
-        
-        container= Link.symbolSet.getSymbol(container.augments[0].desc);
-    }
-    
-    return null;
-}
-
 /** Create a link to another symbol. */
 Link.prototype._makeSymbolLink = function(alias) {
 	var linkBase = Link.base+publish.conf.symbolsDir;
-	var linkTo = Link.getSymbol(alias);
+	var linkTo = Link.symbolSet.getSymbol(alias);
 	var linkPath;
 	var target = (this.targetName)? " target=\""+this.targetName+"\"" : "";
 
+	// is it an internal link?
+	if (alias.charAt(0) == "#") var linkPath = alias;
+	
 	// if there is no symbol by that name just return the name unaltered
-	if (!linkTo)
-	    return this.text || alias;
+	else if (!linkTo) return this.text || alias;
 	
 	// it's a symbol in another file
 	else {
 		if (!linkTo.is("CONSTRUCTOR") && !linkTo.isNamespace) { // it's a method or property
-			linkPath= (Link.filemap) ? Link.filemap[linkTo.memberOf] :
-				      escape(linkTo.memberOf) || "_global_";
-			if (linkTo.isEvent)
+			if (linkTo.isEvent) {
+				linkPath = 
+					(Link.filemap)? Link.filemap[linkTo.memberOf] 
+					:
+					escape(linkTo.memberOf) || "_global_";
 				linkPath += publish.conf.ext + "#event:" + Link.symbolNameToLinkName(linkTo);
-			else
+			}
+			else {
+				linkPath = 
+					(Link.filemap)? Link.filemap[linkTo.memberOf] 
+					:
+					escape(linkTo.memberOf) || "_global_";
 				linkPath += publish.conf.ext + "#" + Link.symbolNameToLinkName(linkTo);
+			}
 		}
 		else {
 			linkPath = (Link.filemap)? Link.filemap[linkTo.alias] : escape(linkTo.alias);
@@ -136,9 +118,9 @@ Link.prototype._makeSymbolLink = function(alias) {
 		}
 		linkPath = linkBase + linkPath
 	}
-        
-	var linkText= this.text || alias;
-    
+	
+	var linkText = this.text || alias;
+	
 	var link = {linkPath: linkPath, linkText: linkText, linkInner: (this.innerName? "#"+this.innerName : "")};
 	
 	if (typeof JSDOC.PluginManager != "undefined") {

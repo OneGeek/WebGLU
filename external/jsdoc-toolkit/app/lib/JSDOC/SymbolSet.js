@@ -111,11 +111,11 @@ if (/#$/.test(borrows[i].alias)) {
 JSDOC.SymbolSet.prototype.resolveMemberOf = function() {
 	for (var p = this._index.first(); p; p = this._index.next()) {
 		var symbol = p.value;
-
 		if (symbol.is("FILE") || symbol.is("GLOBAL")) continue;
 		
 		// the memberOf value was provided in the @memberOf tag
-		else if (symbol.memberOf) {			
+		else if (symbol.memberOf) {
+			
 			// like foo.bar is a memberOf foo
 			if (symbol.alias.indexOf(symbol.memberOf) == 0) {
 				var memberMatch = new RegExp("^("+symbol.memberOf+")[.#-]?(.+)$");
@@ -142,7 +142,6 @@ JSDOC.SymbolSet.prototype.resolveMemberOf = function() {
 		// the memberOf must be calculated
 		else {
 			var parts = symbol.alias.match(/^(.*[.#-])([^.#-]+)$/);
-
 			if (parts) {
 				symbol.memberOf = parts[1];
 				symbol.name = parts[2];				

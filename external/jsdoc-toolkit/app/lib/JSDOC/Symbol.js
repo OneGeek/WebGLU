@@ -429,13 +429,14 @@ JSDOC.Symbol.prototype.setTags = function() {
 	if (properties.length) {
 		thisProperties = this.properties;
 		for (var i = 0; i < properties.length; i++) {
-			var property = new JSDOC.Symbol(this.alias+"#"+properties[i].name, [], "OBJECT", new JSDOC.DocComment("/**"+properties[i].desc+"*/"));
+			var property = new JSDOC.Symbol(this.alias+"#"+properties[i].name, [], "OBJECT", new JSDOC.DocComment("/**"+properties[i].desc+"\n@name "+properties[i].name+"\n@memberOf "+this.alias+"#*/"));
 			// TODO: shouldn't the following happen in the addProperty method of Symbol?
+			property.name = properties[i].name;
+			property.memberOf = this.alias;
 			if (properties[i].type) property.type = properties[i].type;
 			if (properties[i].defaultValue) property.defaultValue = properties[i].defaultValue;
 			this.addProperty(property);
-			if (!JSDOC.Parser.symbols.getSymbolByName(property.name))
-				JSDOC.Parser.addSymbol(property);
+			JSDOC.Parser.addSymbol(property);
 		}
 	}
 	
