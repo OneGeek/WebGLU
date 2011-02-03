@@ -1,18 +1,30 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initTexture = function() {
+
+    /** @class Manages a texture within WebGL
+     * @param {String} name The name this texture will be referred to by
+     */
     $W.Texture = function(name) {
         this.glTexture = $W.GL.createTexture();
         this.name = name;
         $W.textures[name] = this;
         $W.textures.push(this);
 
+        /** Bind this texture in WebGL
+         */
         this.bind = function() {
             $W.GL.bindTexture($W.GL.TEXTURE_2D, this.glTexture);
         };
             
+        /** Unbind this texture in WebGL
+         */
         this.unbind = function() {
             $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
         };
 
+        /** Called between frames to update texture content for dynamic texture
+         * types
+         */
         this.update = function(){};
 
         this.bind();
@@ -22,6 +34,11 @@ $W.initTexture = function() {
 
     };
 
+    /** @extends $W.Texture
+     * @class Manages the use of a 2D canvas as a texture source
+     * @param {String} name The name this texture will be referred to by
+     * @param src A DOM canvas node
+     */
     $W.CanvasTexture = function(name, src) {
         $W.Texture.call(this, name);
 
@@ -40,7 +57,8 @@ $W.initTexture = function() {
 
     };
 
-    /** A dynamic texture from a `video` element.    
+    /** @extends $W.Texture
+     * @class A dynamic texture from a `video` element.    
      * @param {String} name The global name this texture will be referenced
      * by elsewhere.
      * @param {String|Video} src Video path or DOM video element.
@@ -84,7 +102,7 @@ $W.initTexture = function() {
         this.setSource(src);
     };
 
-    /** A static texture from an image file.
+    /** @class A static texture from an image file.
      * @param {String} name The global name this texture will be referenced
      * by elsewhere.
      * @param {String} src Path to image file.

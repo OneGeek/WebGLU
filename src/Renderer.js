@@ -1,17 +1,20 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initRenderer = function() {
+    /** @class Static rendering functions
+     */
     $W.renderer = {};
     $W.renderer.bindObjectAttributes = function RNDR_bindObjectAttributes(obj, mat) {
         var program = mat.program;
         for (var i = 0; i < mat.attributes.length; i++) {
             var attrib = mat.attributes[i];
-            var arrayBuffer = obj.arrayBuffers[attrib.name];
+            var buffer = obj.buffers[attrib.name];
 
-            if (arrayBuffer === null || typeof(arrayBuffer) === 'undefined') {
+            if (buffer === null || typeof(buffer) === 'undefined') {
                 console.warn("No data for attribute `" + attrib.name + "`");
             } else {
                 try {
-                    arrayBuffer.bind();
-                    arrayBuffer.associate(attrib);
+                    buffer.bind();
+                    buffer.associate(attrib);
                 }catch (e) {
                     console.error(e);
                     console.trace();
@@ -46,7 +49,7 @@ $W.initRenderer = function() {
     };
 
     $W.renderer.drawElements = function OBJ_drawElements(obj, mat) {
-        var elements = obj.arrayBuffers.wglu_internal_elements;
+        var elements = obj.buffers.wglu_internal_elements;
         $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, elements.glBuffer);
         try {
             $W.GL.drawElements(obj.type, elements.data.length, 

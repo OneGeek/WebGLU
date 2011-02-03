@@ -28,32 +28,26 @@
  * The primary WebGLU namespace.
  * Holds drawing related data and has useful functions and objects for
  * working with WebGL.
- * @namespace The primary WebGLU namespace.
+ * @namespace WebGLU
  */
 $W = {
 
     createdObjectCount:0,
     
     /** Various paths used by WebGLU. 
-     * Call $W.initPaths before using.
+     * @property {String} libsrc Path to *GLU libraries themselved 
+     * @property {String} shaders Where shaders are stored
+     * @property {String} external Where external libraries, like Sylvester, are stored
+     * @property {String} textures
+     * @property {String} materials
+     * @property {String} sylvester Which Sylvester lib to load, Sylvester.src.js or Sylvester.js
      */
     paths:{
-        /** Path to *GLU libraries themselved */
         libsrc : "../../src/",
-
-        /** Where shaders are stored */
         shaders : "../../shaders/",
-
-        /** Where external libraries, like Sylvester, are stored */
         external : "../../external/",
-
         textures : "../../textures/",
-
         materials : "../../materials/",
-
-        /** Which Sylvester lib to load
-         * Sylvester.src.js or Sylvester.js
-         * */
         sylvester : "Sylvester.src.js"
     },
 
@@ -117,7 +111,12 @@ $W = {
         $W.materials = [];
     },
 
+    /** Override this to provide custom drawing functionality
+     */
     draw: function(){},
+
+    /** Override this to provide custom updating functionality
+     */
     update: function(){},
 
     _draw: function $W_draw() {
@@ -129,7 +128,9 @@ $W = {
         $W.update();
     },
 
-    /* Begin rendering the scene */
+    /** Begin rendering the scene 
+     * @param {Number} [framelimit] Optional framerate cap
+     */
     start: function $W_start(framelimit) {
 
         // use mozRequestAnimationFrame if available
@@ -153,8 +154,9 @@ $W = {
         }
     },
 
-
-    /** @namespace Utility functions. */
+    /** Provides utility functions and classes for working with WebGLU
+     * @namespace Util
+     */
     util: {
         /** Load the file at the given path as text.
          * @param {String} path The path to the file.

@@ -1,8 +1,13 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initControlProfiles = function() {
     if (typeof($G) === 'undefined') {
         $W.useGameGLU();
     }
 
+    
+    /** For dropin control systems
+     * @namespace Control Profiles
+     */
     $G.profiles = {};
         
     $W.camera.profileUpdates = [];
@@ -12,6 +17,10 @@ $W.initControlProfiles = function() {
         }
     };
 
+     
+    /** @class A input handling and camera updating control profile
+     * @memberOf $G.profiles
+     */
     $G.profiles.Profile = function() {
         this.apply = function Profile_apply() {
             this.controls();
@@ -19,6 +28,8 @@ $W.initControlProfiles = function() {
         };
     };
 
+    /** Click-dragging will rotate the camera
+     */
     $G.profiles.DragToRotateCamera = new function() {
         $G.profiles.Profile.call(this);
 
@@ -72,6 +83,8 @@ $W.initControlProfiles = function() {
         };
     }();
 
+    /** Scrolling the mouse will zoom the camera
+     */
     $G.profiles.ScrollToZoomCamera = new function() {
         $G.profiles.Profile.call(this);
 

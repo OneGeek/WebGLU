@@ -1,3 +1,4 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initGLSL = function() {
     /** 
      * @namespace Contains objects for working with GLSL shaders and

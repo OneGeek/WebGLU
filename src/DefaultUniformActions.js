@@ -1,3 +1,4 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initDefaultUniformActions = function() {
     $W.uniformActions = [];
     $W.uniformNames = {};

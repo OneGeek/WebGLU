@@ -1,3 +1,4 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initAnimation = function() {
     /** @class A procedurally generated animation. 
      * Starts updating immediately.

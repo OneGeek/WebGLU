@@ -1,3 +1,4 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initObject = function() {
     
     /** @class Common state representation (position, rotation, scale).
@@ -17,6 +18,9 @@ $W.initObject = function() {
             this.scale      = $V([1,1,1]);
         }
 
+        /** Checks the rotation and updates the quaternion representation if
+         * necessary
+         */
         this.recalculateQuaternion = function() {
             // No need to calc for no rotation
             if (this.rotation.eql(Vector.Zero(3))) {
@@ -33,7 +37,9 @@ $W.initObject = function() {
 
         this.recalculateQuaternion();
 
-        /** Set a new position. */
+        /** Set a new position. 
+         * Takes (x,y,z) or (vector)
+         */
         this.setPosition = function(x, y, z) { 
             // Called as setPosition(x, y, z)
             if (arguments.length == 3) {
@@ -45,7 +51,9 @@ $W.initObject = function() {
             }
         }
 
-        /** Set a new rotation. */
+        /** Set a new rotation. 
+         * Takes (x,y,z) or (vector)
+         */
         this.setRotation = function() { 
             // Called as setRotation(x, y, z)
             if (arguments.length == 3) {
@@ -59,7 +67,9 @@ $W.initObject = function() {
             this.recalculateQuaternion();
         }
 
-        /** Set a new scale. */
+        /** Set a new scale. 
+         * Takes (x,y,z) or (vector)
+         */
         this.setScale = function(x, y, z){ 
             this.scale.elements    = [x, y, z]; 
         }
@@ -98,12 +108,27 @@ $W.initObject = function() {
         this.glData = new WebGLFloatArray(data);
         this.glBuffer = $W.GL.createBuffer();
 
+        /** 
+         * Specify data to store for on demand buffering.
+         *
+         * @param {Array} data Array of data
+         */
         this.setData = function ABUF_setData(data) {
             this.data = data;
             this.glData = new WebGLFloatArray(data);
             this.buffer();
         };
 
+        /** Append data to this buffer
+         * @param {Array} data Data to append
+         */
+        this.append = function ABUF_append(data) {
+            this.setData(this.data.concat(data));
+        };
+
+        /** 
+         * Buffer the stored data into its WebGL ARRAY_BUFFER
+         */
         this.buffer = function ABUF_buffer() {
             try {
                 this.bind();
@@ -114,6 +139,12 @@ $W.initObject = function() {
             }
         };
 
+        /**
+         * Associate this ArrayBuffer with a particular attribute.
+         *
+         * @param {$W.GLSL.Attribute} attrib The attribute this data will be be
+         * used for.
+         */
         this.associate = function ABUF_associate(attrib) {
             try {
                 this.bind();
@@ -129,9 +160,14 @@ $W.initObject = function() {
             }
         };
 
+        /**  Bind this buffer
+         */
         this.bind = function ABUF_bind() {
             $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.glBuffer);
         };
+
+        /**  Unbind this buffer
+         */
         this.unbind = function ABUF_unbind() {
             $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, null);
         };
@@ -140,10 +176,24 @@ $W.initObject = function() {
 
     $W.RENDERABLE   = 1;
     $W.PICKABLE     = 2;
+
+    /** Utility function to help build objects from JSON
+     *
+     * @param params The paramaters object
+     */
+    $W.createObject = function(params) {
+        obj = new $W.Object();
+        obj.setupFromParams(params);
+        return obj;
+    };
+
+
     /** @class Contains pertinent render information for an individual renderable entity.
      *
      * Make sure to set vertexCount correctly
      * Animations are clunky right now, I'm working on it.
+     *
+     * @extends $W.ObjectState
      *
      * @param type The type of rendering to use for this object, possible values
      * are:<br>
@@ -157,42 +207,45 @@ $W.initObject = function() {
      * @param {Boolean} shouldAdd Set to false to not add this the the object
      * list in case you want to handle rendering in a specific manner, e.g. as
      * the child of another object.
+     *
+     * @property {Number} vertexCount Number of vertices in this object. Used
+     * when rendering with drawArrays.
      */
-    $W.createObject = function(params) {
-        var obj = new $W.Object(params.type);
-        var has = function(param){
-            return typeof(param) !== 'undefined';
-        };
-
-        if (has(params.material)){
-            obj.setMaterial(params.material);
-        }
-
-        if (has(params.model)){
-            obj.fromModel(params.model);
-        }else if (has(params.data)){
-            obj.fillArrays(params.data);
-        }
-
-        if (has(params.vertexCount)){
-            obj.vertexCount = params.vertexCount;
-        }
-
-        return obj;
-    };
-
-
     $W.Object = function (type, flags) {
         //console.group("Creating object");
         $W.ObjectState.call(this);
-
-        $W.objects.push(this);
-
         if (typeof(flags) === 'undefined' ||/*backcompat*/ flags === true) {
             flags = $W.RENDERABLE | $W.PICKABLE;
         }/*backcompat*/else if(flags === false) {
             flags = $W.PICKABLE;
         }
+
+        $W.objects.push(this);
+
+        this.setupFromParams = function(params) {
+            var has = function(param){
+                return typeof(param) !== 'undefined';
+            };
+
+            if(has(params.type)) {
+                this.type = params.type;
+            }
+
+
+            if (has(params.material)){
+                this.setMaterial(params.material);
+            }
+
+            if (has(params.model)){
+                this.fromModel(params.model);
+            }else if (has(params.data)){
+                this.fillArrays(params.data);
+            }
+
+            if (has(params.vertexCount)){
+                this.vertexCount = params.vertexCount;
+            }
+        };
 
 
         if (flags & $W.RENDERABLE){
@@ -203,20 +256,14 @@ $W.initObject = function() {
             $W.pickables.push(this);
         }
 
-
-        /** Number of vertices in this object.
-         * Used when rendering with drawArrays.
-         */
         this.vertexCount = 0;
 
         this.id = $W.createdObjectCount++;
 
-        /* The type of rendering to use for this object */
-        this.type = type; 
 
         this.material = $W.materials['wglu_default'];
 
-        this.arrayBuffers = [];
+        this.buffers = [];
 
         this.children = [];
 
@@ -226,7 +273,6 @@ $W.initObject = function() {
         // drawArrays by default
         this._drawFunction = $W.renderer.drawArrays;
 
-        /** Name of shader program used to render this object */
         /** Add an object as a child to this object.
          * @param {Object} obj The object to add as a child.
          */
@@ -237,14 +283,15 @@ $W.initObject = function() {
         /** Set the indices for the elements of this object.
          * Draws this object with drawElements unless set with
          * false.
+         *
          * @param {Array|Boolean} elements The array of indices of the
-         * elements or false, which disabled drawElements rendering
+         * elements or false, which disables drawElements rendering
          * for this object.
          */
         this.setElements = function(elements) {
             // don't use drawElements
             if (elements === false) {
-                this.arrayBuffers.wglu_internal_elements = undefined;
+                this.buffers.wglu_internal_elements = undefined;
                 $W.GL.bindBuffer($W.GL.ELEMENT_ARRAY_BUFFER, null);
 
             // use drawElements
@@ -259,7 +306,7 @@ $W.initObject = function() {
                         new WebGLUnsignedShortArray( elementAB.data), 
                         $W.GL.STATIC_DRAW);
 
-                this.arrayBuffers.wglu_internal_elements = elementAB;
+                this.buffers.wglu_internal_elements = elementAB;
             }
         };
 
@@ -286,15 +333,20 @@ $W.initObject = function() {
          */
         this.fillArray = function OBJ_fillArray(name, data) {
             data = $W.util.flattenArray(data);
-            if (typeof(this.arrayBuffers[name]) === 'undefined') {
-                this.arrayBuffers[name] = new $W.ArrayBuffer(name, data);
+            if (typeof(this.buffers[name]) === 'undefined') {
+                this.buffers[name] = new $W.ArrayBuffer(name, data);
             }else {
-                this.arrayBuffers[name].setData(data);
+                this.buffers[name].setData(data);
             }
 
-            this.arrayBuffers[name].buffer();
+            this.buffers[name].buffer();
         };
 
+        /** Passes several sets of attribute data to $W.Object.fillArray at once
+         *
+         * @param {Array} arrays Arrays of the format ["attribute", [0,0,0,...]]
+         * corresponding to the arguments of $W.Object.fillArray
+         */
         this.fillArrays = function OBJ_fillArrays(arrays) {
             for (var i = 0; i < arrays.length; i++) {
                 var arr = arrays[i];
@@ -306,6 +358,16 @@ $W.initObject = function() {
             }
         };
 
+        /** Uses an object of the format
+         * {
+         *      vertices:   [...],
+         *      normals:    [...],
+         *      texCoords:  [...],
+         *      indices:    [...]
+         * }
+         * to fill the vertex, normal, texCoord and
+         * wglu_elements arrays.
+         */
         this.fromModel = function OBJ_fromModel(model) {
             this.fillArrays([['vertex', model.vertices],
                              ['normal', model.normals],
@@ -336,6 +398,12 @@ $W.initObject = function() {
                 $W.GL.bindTexture($W.GL.TEXTURE_2D, null);
         };
 
+        /**
+         * Draw the children of this object with a particular transform applied
+         * @param {3 Element Array} pos Position array.
+         * @param {Matrix} rot Rotation matrix.
+         * @param {3 Element Array} scale Scaling array.
+         */
         this.drawChildrenAt = function(pos, rot, scale) {
                 $W.modelview.pushMatrix();
 
@@ -361,6 +429,8 @@ $W.initObject = function() {
             );
         };
 
+        /** Draw the children of this object using this object's current state
+         */
         this.drawChildren = function() {
             this.drawChildrenAt(
                 this.animatedPosition().elements, 
@@ -397,6 +467,12 @@ $W.initObject = function() {
             return this.q.multiply(this.animation.q);
         };
 
+        /** @returns {Matrix} The current rotation matrix
+         */
+        this.rotationMatrix = function OBJ_rotationMatrix() {
+            return this.animatedRotation().matrix();
+        };
+
         /** @returns {Vector} The product of the object's base scale and its 
          * animation. 
          */
@@ -407,6 +483,13 @@ $W.initObject = function() {
                 this.scale.e(3) * this.animation.scale.e(3)
             ]);
         };
+
+        /* The type of rendering to use for this object */
+        if (typeof(type) === 'object') {
+            this.setupFromParams(type);
+        }else {
+            this.type = type; 
+        }
 
         //console.groupEnd();
     };

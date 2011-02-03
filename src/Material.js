@@ -1,6 +1,7 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initMaterial = function() {
 
-    /* Creates a new material from the provided definition.
+    /* @class Creates a new material from the provided definition.
      * Definition is JS object (possibly loaded from JSON) in
      * the following format
      * {

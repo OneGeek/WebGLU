@@ -1,4 +1,6 @@
+/** @ignore Wrapper function to allow multifile or single file organization */
 $W.initUtil = function() {
+
     $W.util = {}
     /** Load the file at the given path as text.
      * @param {String} path The path to the file.
@@ -641,6 +643,13 @@ $W.initUtil = function() {
         Vector.prototype.invert = function VEC_invert() {
             return Vector.prototype.vec3Zero.subtract(this);
         }
+
+        Vector.prototype.trimTo3D = function VEC_trimTo3D() {
+            while (this.elements.length > 3) {
+                this.elements.pop();
+            }
+            return this;
+        }
     };
 
     //--------------------------------------------------------------------------
@@ -662,6 +671,11 @@ $W.initUtil = function() {
     /** @class Quaternion implementation.
      * based on reference implementation at 
      * http://3dengine.org/Quaternions
+     * 
+     * Constructor has three overloads:<br><br>
+     * Quaternion(x, y, z, theta); // From axis-angle<br>
+     * Quaternion([w, x, y, z]); // From another quaternion<br>
+     * Quaternion(); // With zeroed rotation
      */
     $W.Quaternion = function() {
         // Called as Quaternion(x, y, z, theta)
@@ -688,6 +702,9 @@ $W.initUtil = function() {
             this.z = 0;
         }
 
+        /** @returns {Matrix} The 4x4 rotation matrix equivalent of this
+         * quaternion
+         */
         this.matrix = function() {
             var w = this.w;
             var x = this.x;
@@ -721,6 +738,10 @@ $W.initUtil = function() {
             return $M(m);
         };
 
+        /** Multiply by another quaternion and return the result in a new
+         * quaternion
+         * @param {$W.Quaternion} q The other quaternion
+         */
         this.multiply = function(q) {
             var result = new $W.Quaternion();
             result.w = this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z;
@@ -730,6 +751,10 @@ $W.initUtil = function() {
             return result;
         };
 
+        /* Multiply by another quaternion and store the result in this
+         * quaternion
+         * @param {$W.Quaternion} q The other quaternion
+         */
         this.multiplied = function(q) {
             this.w = this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z;
             this.x = this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y;
@@ -741,19 +766,16 @@ $W.initUtil = function() {
     /** 
      * Useful, but not necessay if provide your own draw calls
      * @class Keeps track of viewport camera characteristics. 
+     * @extends $W.ObjectState
+     * @property {Number} yfov Vertical field of view in degrees
+     * @property {Number} aspectRatio Aspect ratio 
+     * @property {Vector} target Coordinates the camera will point at
      */
     $W.Camera = function() {
         $W.ObjectState.call(this); // subclass of ObjectState
 
-        /** Vertical field of view in degrees. */
         this.yfov = 75;
-
-        /** Aspect ratio */
         this.aspectRatio = 1;
-
-        /** Coordinates the camera will point at.
-         * @type {Vector}
-         */
         this.target = $V([0,0,0]);
 
         this.up = $V([0,1,0]);
@@ -761,11 +783,17 @@ $W.initUtil = function() {
         /** Set a new target for the camera .
          * Changes the camera target without recreating the
          * target vector.
+         * @param {Number} x
+         * @param {Number} y
+         * @param {Number} z
          */
         this.setTarget = function(x, y, z) {
             this.target.elements = [x, y, z];
         }
 
+        /** @returns {Vector} Unit vector facing the same direction as the
+         * camera
+         */
         this.dir = function() {
             return (this.target.subtract(this.position)).toUnitVector();
         };
@@ -779,20 +807,19 @@ $W.initUtil = function() {
 
     /** @class Keeps track of time since application start.
      * Provides delta time between ticks and tracks FPS.
+     * @property {Number} age The time passed since this timer was started to
+     * the time of the most recent tick in milliseconds.
+     * @property {Number} t The current application time in milliseconds. 
+     * @property {Number} dt The delta time between the previous two ticks. 
+     * @property {Number} pt The time of the previous tick.
+     * @property {Number} frameAvgCount Number of frames to average over.
+     * @property {Number} mspf Milliseconds per frame.
+     * @property {Number} fps Frames per second. 
      */
     $W.Timer = function () {
-        /** The time passed since this timer was started to the time of
-         * the most recent tick in milliseconds.
-         */
         this.age = 0;
-
-        /** The current application time in milliseconds. */
         this.t  = (new Date()).getTime();
-
-        /** The delta time between the previous two ticks. */
         this.dt = 0;
-
-        /** The time of the previous tick */
         this.pt = this.t;
 
         /** Update the timer */
@@ -806,19 +833,15 @@ $W.initUtil = function() {
 
         /** The time passed since this timer was started to the time of
          * the most recent tick in seconds.
+         * @returns {Number} seconds
          */
         this.ageInSeconds = function() {
             return this.age / 1000;
         }
 
         // frame timing statistics
-        /** Number of frames to average over. */
         this.frameAvgCount = 20;  
-        
-        /** Milliseconds per frame. */
         this.mspf= 0; 
-
-        /** Frames per second. */
         this.fps = 0;
 
         this.recentFPS = []; // last several FPS calcs to average over
