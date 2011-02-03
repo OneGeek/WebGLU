@@ -68,7 +68,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .classList li
@@ -170,7 +170,6 @@ ul.inheritsList
 	text-align: right;
 	font-size: 10px;
 }
-
 		</style>
 	</head>
 
@@ -190,11 +189,19 @@ ul.inheritsList
 <h2>Classes</h2>
 <ul class="classList">
 	
+	<li><a href="../symbols/%24G.html">$G</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.html">$G.profiles</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.Profile.html">$G.profiles.Profile</a></li>
+	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
 	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
+	
+	<li><a href="../symbols/%24W.CanvasTexture.html">$W.CanvasTexture</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
@@ -212,6 +219,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.ImageTexture.html">$W.ImageTexture</a></li>
+	
 	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
 	
 	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
@@ -220,23 +229,24 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
-	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
-	
 	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
 	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
-	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
+	<li><a href="../symbols/%24W.renderer.html">$W.renderer</a></li>
+	
+	<li><a href="../symbols/%24W.Texture.html">$W.Texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
-	<li></li>
+	<li><a href="../symbols/%24W.VideoTexture.html">$W.VideoTexture</a></li>
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
 </ul>
 <hr />
-
 			<!-- end publish.classesIndex -->
 		</div>
 		
@@ -252,7 +262,7 @@ ul.inheritsList
 				
 				
 			
-				The primary WebGLU namespace.
+				WebGLU
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/src_webglu.js.html">webglu.js</a>.
@@ -451,36 +461,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.ImageTexture">ImageTexture</a></b>(name, src)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.createObject">createObject</a></b>(params)
 								</div>
-								<div class="description">A static texture from an image file.</div>
+								<div class="description">Utility function to help build objects from JSON</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initCrazyGLU">initCrazyGLU</a></b>()
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.draw">draw</a></b>()
 								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initGameGLU">initGameGLU</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initGLU">initGLU</a></b>()
-								</div>
-								<div class="description"></div>
+								<div class="description">Override this to provide custom drawing functionality</div>
 							</td>
 						</tr>
 					
@@ -496,42 +488,6 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initObject">initObject</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initRenderer">initRenderer</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initTexture">initTexture</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.initUtil">initUtil</a></b>()
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.reset">reset</a></b>()
 								</div>
 								<div class="description">Clears the entire WebGLU system to pre-init state</div>
@@ -541,18 +497,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.useWebGLDebug">useWebGLDebug</a></b>()
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.start">start</a></b>(framelimit)
 								</div>
-								<div class="description">Use debugging context.</div>
+								<div class="description">Begin rendering the scene</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.VideoTexture">VideoTexture</a></b>(name, src)
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.update">update</a></b>()
 								</div>
-								<div class="description">A dynamic texture from a `video` element.</div>
+								<div class="description">Override this to provide custom updating functionality</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">$W.<b><a href="../symbols/%24W.html#.useWebGLDebug">useWebGLDebug</a></b>()
+								</div>
+								<div class="description">Use debugging context.</div>
 							</td>
 						</tr>
 					
@@ -741,7 +706,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Various paths used by WebGLU. Call $W.initPaths before using.
+						Various paths used by WebGLU.
 						
 						
 					</div>
@@ -895,18 +860,18 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".ImageTexture"> </a>
+					<a name=".createObject"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>ImageTexture</b>(name, src)
+					<span class="light">$W.</span><b>createObject</b>(params)
 					
 					</div>
 					<div class="description">
-						A static texture from an image file.
+						Utility function to help build objects from JSON
 						
 							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
+							<i>Defined in: </i> <a href="../symbols/src/src_Object.js.html">Object.js</a>.
 						
 						
 					</div>
@@ -918,16 +883,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
+									<b>params</b>
 									
 								</dt>
-								<dd>The global name this texture will be referencedby elsewhere.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>src</b>
-									
-								</dt>
-								<dd>Path to image file.</dd>
+								<dd>The paramaters object</dd>
 							
 							</dl>
 						
@@ -940,76 +899,17 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".initCrazyGLU"> </a>
+					<a name=".draw"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">$W.</span><b>initCrazyGLU</b>()
+					<span class="light">$W.</span><b>draw</b>()
 					
 					</div>
 					<div class="description">
+						Override this to provide custom drawing functionality
 						
 						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_crazyglu.js.html">crazyglu.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".initGameGLU"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>initGameGLU</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_gameglu.js.html">gameglu.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".initGLU"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>initGLU</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_GLU.js.html">GLU.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
 					</div>
 					
 					
@@ -1060,118 +960,6 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".initObject"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>initObject</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Object.js.html">Object.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".initRenderer"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>initRenderer</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Renderer.js.html">Renderer.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".initTexture"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>initTexture</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".initUtil"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>initUtil</b>()
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
-						
-						<br /><i>Author: </i>Benjamin DeLillo.
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name=".reset"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -1181,6 +969,67 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Clears the entire WebGLU system to pre-init state
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".start"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>start</b>(framelimit)
+					
+					</div>
+					<div class="description">
+						Begin rendering the scene
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>framelimit</b>
+									<i>Optional</i>
+								</dt>
+								<dd>Optional framerate cap</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".update"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">$W.</span><b>update</b>()
+					
+					</div>
+					<div class="description">
+						Override this to provide custom updating functionality
 						
 						
 					</div>
@@ -1220,51 +1069,6 @@ ul.inheritsList
 						
 						
 
-					<hr />
-				
-					<a name=".VideoTexture"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">$W.</span><b>VideoTexture</b>(name, src)
-					
-					</div>
-					<div class="description">
-						A dynamic texture from a `video` element.
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>name</b>
-									
-								</dt>
-								<dd>The global name this texture will be referencedby elsewhere.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String|Video}</span> <b>src</b>
-									
-								</dt>
-								<dd>Video path or DOM video element.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -1279,7 +1083,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:33 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 03 2011 12:43:25 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

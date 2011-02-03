@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.Camera</title>
+		<title>JsDoc Reference - $W.Texture</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -254,26 +254,24 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class $W.Camera
+				Class $W.Texture
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
-				<br />Extends
-					<a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a>.<br />
 				
 			
-				Keeps track of viewport camera characteristics.
+				Manages a texture within WebGL
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Util.js.html">Util.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.Camera.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.Texture.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -286,9 +284,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.Camera.html#constructor">$W.Camera</a></b>()
+								<b><a href="../symbols/%24W.Texture.html#constructor">$W.Texture</a></b>(name)
 							</div>
-							<div class="description">Useful, but not necessay if provide your own draw calls</div>
+							<div class="description"></div>
 						</td>
 					</tr>
 				</tbody>
@@ -297,64 +295,12 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $W.Camera.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								$W.Camera.<b><a href="../symbols/%24W.Camera.html#.aspectRatio">aspectRatio</a></b>
-								</div>
-								<div class="description">Aspect ratio</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								$W.Camera.<b><a href="../symbols/%24W.Camera.html#.target">target</a></b>
-								</div>
-								<div class="description">Coordinates the camera will point at</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								$W.Camera.<b><a href="../symbols/%24W.Camera.html#.yfov">yfov</a></b>
-								</div>
-								<div class="description">Vertical field of view in degrees</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-				<dl class="inheritsList">
-				
-				</dl>
-				
-			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.Camera.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.Texture.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -367,27 +313,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Camera.html#dir">dir</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.Texture.html#bind">bind</a></b>()
 								</div>
-								<div class="description"></div>
+								<div class="description">Bind this texture in WebGL</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Camera.html#setTarget">setTarget</a></b>(x, y, z)
+								<div class="fixedFont"><b><a href="../symbols/%24W.Texture.html#unbind">unbind</a></b>()
 								</div>
-								<div class="description">Set a new target for the camera .</div>
+								<div class="description">Unbind this texture in WebGL</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/%24W.Camera.html#update">update</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/%24W.Texture.html#update">update</a></b>()
 								</div>
-								<div class="description">Per frame update.</div>
+								<div class="description">Called between frames to update texture content for dynamic texturetypes</div>
 							</td>
 						</tr>
 					
@@ -395,10 +341,6 @@ ul.inheritsList
 				</table>
 				
 				
-				
-				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a>: </dt><dd><a href="../symbols/%24W.ObjectState.html#recalculateQuaternion">recalculateQuaternion</a>, <a href="../symbols/%24W.ObjectState.html#setPosition">setPosition</a>, <a href="../symbols/%24W.ObjectState.html#setRotation">setRotation</a>, <a href="../symbols/%24W.ObjectState.html#setScale">setScale</a>, <a href="../symbols/%24W.ObjectState.html#setScaleUniformly">setScaleUniformly</a></dd>
-				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -412,17 +354,28 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.Camera</b>()
+						<b>$W.Texture</b>(name)
 				</div>
 				
 				<div class="description">
-					Useful, but not necessay if provide your own draw calls
+					
 					
 				</div>
 				
 				
 				
 				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{String}</span>  <b>name</b>
+								
+							</dt>
+								<dd>The name this texture will be referred to by</dd>
+						
+						</dl>
 					
 					
 					
@@ -436,77 +389,6 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name=".aspectRatio"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Number}</span>
-					<span class="light">$W.Camera.</span><b>aspectRatio</b>
-					
-					</div>
-					<div class="description">
-						Aspect ratio
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".target"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Vector}</span>
-					<span class="light">$W.Camera.</span><b>target</b>
-					
-					</div>
-					<div class="description">
-						Coordinates the camera will point at
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".yfov"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Number}</span>
-					<span class="light">$W.Camera.</span><b>yfov</b>
-					
-					</div>
-					<div class="description">
-						Vertical field of view in degrees
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -514,15 +396,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="dir"> </a>
+					<a name="bind"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{Vector}</span>
-					<b>dir</b>()
+					
+					<b>bind</b>()
 					
 					</div>
 					<div class="description">
-						
+						Bind this texture in WebGL
 						
 						
 					</div>
@@ -533,57 +415,27 @@ ul.inheritsList
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Vector}</span> Unit vector facing the same direction as thecamera</dd>
-							
-							</dl>
 						
 						
 						
 
 					<hr />
 				
-					<a name="setTarget"> </a>
+					<a name="unbind"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>setTarget</b>(x, y, z)
+					<b>unbind</b>()
 					
 					</div>
 					<div class="description">
-						Set a new target for the camera .Changes the camera target without recreating thetarget vector.
+						Unbind this texture in WebGL
 						
 						
 					</div>
 					
 					
 					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Number}</span> <b>x</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{Number}</span> <b>y</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{Number}</span> <b>z</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
 						
 						
 						
@@ -602,7 +454,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Per frame update.Replace as needed.
+						Called between frames to update texture content for dynamic texturetypes
 						
 						
 					</div>
@@ -631,7 +483,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 03 2011 12:43:25 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 03 2011 12:43:26 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

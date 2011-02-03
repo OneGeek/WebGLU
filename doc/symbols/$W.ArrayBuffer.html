@@ -68,7 +68,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .classList li
@@ -170,7 +170,6 @@ ul.inheritsList
 	text-align: right;
 	font-size: 10px;
 }
-
 		</style>
 	</head>
 
@@ -190,11 +189,19 @@ ul.inheritsList
 <h2>Classes</h2>
 <ul class="classList">
 	
+	<li><a href="../symbols/%24G.html">$G</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.html">$G.profiles</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.Profile.html">$G.profiles.Profile</a></li>
+	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
 	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
+	
+	<li><a href="../symbols/%24W.CanvasTexture.html">$W.CanvasTexture</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
@@ -212,6 +219,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.ImageTexture.html">$W.ImageTexture</a></li>
+	
 	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
 	
 	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
@@ -220,23 +229,24 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
-	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
-	
 	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
 	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
-	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
+	<li><a href="../symbols/%24W.renderer.html">$W.renderer</a></li>
+	
+	<li><a href="../symbols/%24W.Texture.html">$W.Texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
-	<li></li>
+	<li><a href="../symbols/%24W.VideoTexture.html">$W.VideoTexture</a></li>
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
 </ul>
 <hr />
-
 			<!-- end publish.classesIndex -->
 		</div>
 		
@@ -287,6 +297,69 @@ ul.inheritsList
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $W.ArrayBuffer.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.ArrayBuffer.html#associate">associate</a></b>(attrib)
+								</div>
+								<div class="description">Associate this ArrayBuffer with a particular attribute.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.ArrayBuffer.html#bind">bind</a></b>()
+								</div>
+								<div class="description">Bind this buffer</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.ArrayBuffer.html#buffer">buffer</a></b>()
+								</div>
+								<div class="description">Buffer the stored data into its WebGL ARRAY_BUFFER</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.ArrayBuffer.html#setData">setData</a></b>(data)
+								</div>
+								<div class="description">Specify data to store for on demand buffering.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.ArrayBuffer.html#unbind">unbind</a></b>()
+								</div>
+								<div class="description">Unbind this buffer</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -343,6 +416,158 @@ ul.inheritsList
 
 <!-- ============================== method details ========================= -->		
 			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="associate"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>associate</b>(attrib)
+					
+					</div>
+					<div class="description">
+						Associate this ArrayBuffer with a particular attribute.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/%24W.GLSL.Attribute.html">$W.GLSL.Attribute</a>}</span> <b>attrib</b>
+									
+								</dt>
+								<dd>The attribute this data will be beused for.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="bind"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>bind</b>()
+					
+					</div>
+					<div class="description">
+						Bind this buffer
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="buffer"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>buffer</b>()
+					
+					</div>
+					<div class="description">
+						Buffer the stored data into its WebGL ARRAY_BUFFER
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setData"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setData</b>(data)
+					
+					</div>
+					<div class="description">
+						Specify data to store for on demand buffering.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>data</b>
+									
+								</dt>
+								<dd>Array of data</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unbind"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unbind</b>()
+					
+					</div>
+					<div class="description">
+						Unbind this buffer
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
 			
 <!-- ============================== event details ========================= -->		
 			
@@ -354,7 +579,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:33 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 03 2011 12:43:25 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

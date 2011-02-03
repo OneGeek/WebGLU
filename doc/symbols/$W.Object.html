@@ -68,7 +68,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .classList li
@@ -170,7 +170,6 @@ ul.inheritsList
 	text-align: right;
 	font-size: 10px;
 }
-
 		</style>
 	</head>
 
@@ -190,11 +189,19 @@ ul.inheritsList
 <h2>Classes</h2>
 <ul class="classList">
 	
+	<li><a href="../symbols/%24G.html">$G</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.html">$G.profiles</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.Profile.html">$G.profiles.Profile</a></li>
+	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
 	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
+	
+	<li><a href="../symbols/%24W.CanvasTexture.html">$W.CanvasTexture</a></li>
 	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
@@ -212,6 +219,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.ImageTexture.html">$W.ImageTexture</a></li>
+	
 	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
 	
 	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
@@ -220,23 +229,24 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
-	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
-	
 	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
 	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
-	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
+	<li><a href="../symbols/%24W.renderer.html">$W.renderer</a></li>
+	
+	<li><a href="../symbols/%24W.Texture.html">$W.Texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
-	<li></li>
+	<li><a href="../symbols/%24W.VideoTexture.html">$W.VideoTexture</a></li>
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
 </ul>
 <hr />
-
 			<!-- end publish.classesIndex -->
 		</div>
 		
@@ -250,6 +260,8 @@ ul.inheritsList
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a>.<br />
 				
 			
 				Contains pertinent render information for an individual renderable entity.Make sure to set vertexCount correctlyAnimations are clunky right now, I'm working on it.
@@ -321,6 +333,10 @@ ul.inheritsList
 				</table>
 				
 				
+				
+				<dl class="inheritsList">
+				
+				</dl>
 				
 			
 
@@ -395,9 +411,45 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#drawChildren">drawChildren</a></b>()
+								</div>
+								<div class="description">Draw the children of this object using this object's current state</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#drawChildrenAt">drawChildrenAt</a></b>(pos, rot, scale)
+								</div>
+								<div class="description">Draw the children of this object with a particular transform applied</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#fillArray">fillArray</a></b>(name, contents)
 								</div>
 								<div class="description">Fills the array of the given name, where name is a vertex attribute in the shader.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#fillArrays">fillArrays</a></b>(arrays)
+								</div>
+								<div class="description">Passes several sets of attribute data to $W.Object.fillArray at once</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/%24W.Object.html#fromModel">fromModel</a></b>(model)
+								</div>
+								<div class="description">Uses an object of the format{     vertices:   [.</div>
 							</td>
 						</tr>
 					
@@ -432,6 +484,10 @@ ul.inheritsList
 				</table>
 				
 				
+				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a>: </dt><dd><a href="../symbols/%24W.ObjectState.html#recalculateQuaternion">recalculateQuaternion</a>, <a href="../symbols/%24W.ObjectState.html#setPosition">setPosition</a>, <a href="../symbols/%24W.ObjectState.html#setRotation">setRotation</a>, <a href="../symbols/%24W.ObjectState.html#setScale">setScale</a>, <a href="../symbols/%24W.ObjectState.html#setScaleUniformly">setScaleUniformly</a></dd>
+				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -747,6 +803,79 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="drawChildren"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawChildren</b>()
+					
+					</div>
+					<div class="description">
+						Draw the children of this object using this object's current state
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="drawChildrenAt"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>drawChildrenAt</b>(pos, rot, scale)
+					
+					</div>
+					<div class="description">
+						Draw the children of this object with a particular transform applied
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{3 Element Array}</span> <b>pos</b>
+									
+								</dt>
+								<dd>Position array.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Matrix}</span> <b>rot</b>
+									
+								</dt>
+								<dd>Rotation matrix.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{3 Element Array}</span> <b>scale</b>
+									
+								</dt>
+								<dd>Scaling array.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="fillArray"> </a>
 					<div class="fixedFont">
 					
@@ -789,6 +918,78 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name="fillArrays"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fillArrays</b>(arrays)
+					
+					</div>
+					<div class="description">
+						Passes several sets of attribute data to $W.Object.fillArray at once
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>arrays</b>
+									
+								</dt>
+								<dd>Arrays of the format ["attribute", [0,0,0,...]]corresponding to the arguments of $W.Object.fillArray</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="fromModel"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>fromModel</b>(model)
+					
+					</div>
+					<div class="description">
+						Uses an object of the format{     vertices:   [...],     normals:    [...],     texCoords:  [...],     indices:    [...]}to fill the vertex, normal, texCoord andwglu_elements arrays.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>model</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="setElements"> </a>
 					<div class="fixedFont">
 					
@@ -812,7 +1013,7 @@ ul.inheritsList
 									<span class="light fixedFont">{Array|Boolean}</span> <b>elements</b>
 									
 								</dt>
-								<dd>The array of indices of theelements or false, which disabled drawElements renderingfor this object.</dd>
+								<dd>The array of indices of theelements or false, which disables drawElements renderingfor this object.</dd>
 							
 							</dl>
 						
@@ -909,7 +1110,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:48:34 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 03 2011 12:43:26 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

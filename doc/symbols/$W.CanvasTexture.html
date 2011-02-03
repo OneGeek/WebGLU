@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - $W.createObject</title>
+		<title>JsDoc Reference - $W.CanvasTexture</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -68,7 +68,7 @@ pre.code
 	margin: 0 0 0 8px;
 	font-family: arial, sans-serif;
 	font-size: 1em;
-	overflow: hidden;
+	overflow: auto;
 }
 
 .classList li
@@ -170,7 +170,6 @@ ul.inheritsList
 	text-align: right;
 	font-size: 10px;
 }
-
 		</style>
 	</head>
 
@@ -190,17 +189,23 @@ ul.inheritsList
 <h2>Classes</h2>
 <ul class="classList">
 	
+	<li><a href="../symbols/%24G.html">$G</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.html">$G.profiles</a></li>
+	
+	<li><a href="../symbols/%24G.profiles.Profile.html">$G.profiles.Profile</a></li>
+	
 	<li><a href="../symbols/%24W.html">$W</a></li>
 	
 	<li><a href="../symbols/%24W.ArrayBuffer.html">$W.ArrayBuffer</a></li>
 	
 	<li><a href="../symbols/%24W.Camera.html">$W.Camera</a></li>
 	
+	<li><a href="../symbols/%24W.CanvasTexture.html">$W.CanvasTexture</a></li>
+	
 	<li><a href="../symbols/%24W.constants.html">$W.constants</a></li>
 	
 	<li><a href="../symbols/%24W.constants.colors.html">$W.constants.colors</a></li>
-	
-	<li><a href="../symbols/%24W.createObject.html">$W.createObject</a></li>
 	
 	<li><a href="../symbols/%24W.GLSL.html">$W.GLSL</a></li>
 	
@@ -214,29 +219,34 @@ ul.inheritsList
 	
 	<li><a href="../symbols/%24W.GLU.html">$W.GLU</a></li>
 	
+	<li><a href="../symbols/%24W.ImageTexture.html">$W.ImageTexture</a></li>
+	
 	<li><a href="../symbols/%24W.Keyframe.html">$W.Keyframe</a></li>
 	
 	<li><a href="../symbols/%24W.KeyFrameAnimation.html">$W.KeyFrameAnimation</a></li>
 	
-	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
+	<li><a href="../symbols/%24W.Object.html">$W.Object</a></li>
 	
-	<li><a href="../symbols/%24W.PointPartcleEmitter.html">$W.PointPartcleEmitter</a></li>
+	<li><a href="../symbols/%24W.ObjectState.html">$W.ObjectState</a></li>
 	
 	<li><a href="../symbols/%24W.ProceduralAnimation.html">$W.ProceduralAnimation</a></li>
 	
 	<li><a href="../symbols/%24W.Quaternion.html">$W.Quaternion</a></li>
 	
-	<li><a href="../symbols/%24W.SimulatedObject.html">$W.SimulatedObject</a></li>
+	<li><a href="../symbols/%24W.renderer.html">$W.renderer</a></li>
+	
+	<li><a href="../symbols/%24W.Texture.html">$W.Texture</a></li>
 	
 	<li><a href="../symbols/%24W.Timer.html">$W.Timer</a></li>
 	
 	<li><a href="../symbols/%24W.util.html">$W.util</a></li>
 	
-	<li></li>
+	<li><a href="../symbols/%24W.VideoTexture.html">$W.VideoTexture</a></li>
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
 </ul>
 <hr />
-
 			<!-- end publish.classesIndex -->
 		</div>
 		
@@ -244,24 +254,26 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class $W.createObject
+				Class $W.CanvasTexture
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<br />Extends
+					<a href="../symbols/%24W.Texture.html">$W.Texture</a>.<br />
 				
 			
-				Contains pertinent render information for an individual renderable entity.Make sure to set vertexCount correctlyAnimations are clunky right now, I'm working on it.
+				Manages the use of a 2D canvas as a texture source
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Object.js.html">Object.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_Texture.js.html">Texture.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.createObject.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $W.CanvasTexture.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -274,7 +286,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/%24W.createObject.html#constructor">$W.createObject</a></b>(type, shouldAdd)
+								<b><a href="../symbols/%24W.CanvasTexture.html#constructor">$W.CanvasTexture</a></b>(name, src)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -288,6 +300,15 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/%24W.Texture.html">$W.Texture</a>: </dt><dd><a href="../symbols/%24W.Texture.html#bind">bind</a>, <a href="../symbols/%24W.Texture.html#unbind">unbind</a>, <a href="../symbols/%24W.Texture.html#update">update</a></dd>
+				</dl>
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -299,7 +320,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>$W.createObject</b>(type, shouldAdd)
+						<b>$W.CanvasTexture</b>(name, src)
 				</div>
 				
 				<div class="description">
@@ -315,16 +336,16 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								 <b>type</b>
+								<span class="light fixedFont">{String}</span>  <b>name</b>
 								
 							</dt>
-								<dd>The type of rendering to use for this object, possible valuesare:<br>$W.GL.POINTS         <br>$W.GL.LINES          <br>$W.GL.LINE_LOOP      <br>$W.GL.LINE_STRIP     <br>$W.GL.TRIANGLES      <br>$W.GL.TRIANGLE_STRIP <br>$W.GL.TRIANGLE_FAN   <br></dd>
+								<dd>The name this texture will be referred to by</dd>
 						
 							<dt>
-								<span class="light fixedFont">{Boolean}</span>  <b>shouldAdd</b>
+								 <b>src</b>
 								
 							</dt>
-								<dd>Set to false to not add this the the objectlist in case you want to handle rendering in a specific manner, e.g. asthe child of another object.</dd>
+								<dd>A DOM canvas node</dd>
 						
 						</dl>
 					
@@ -354,7 +375,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.3-beta on Wed Feb 02 2011 21:37:57 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Feb 03 2011 12:43:25 GMT-0500 (EST)
 		</div>
 	</body>
 </html>
