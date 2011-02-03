@@ -169,7 +169,7 @@ $W = {
                 return null; 
             }
 
-            xhr.overrideMimeType("text/xml");
+            xhr.overrideMimeType("text/plain");
 
             // Deal with firefox security for file:// urls
             try {
