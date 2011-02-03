@@ -28,20 +28,17 @@ function start() {
         ["color", $W.util.genDummyArray([0,0,0], 5)],
         ["wglu_elements", [0,1, 0,2, 0,3, 0,4, 2,3, 1,4]]
     ];
-    var flyer = $W.createObject({type: $W.GL.LINES,
-                                 data: flyerData});
+    var flyer = new $W.Object({type: $W.GL.LINES, data: flyerData});
     flyer.speed = .07;
     flyer.turnSpeed = .1;
     flyer.positions = [];
-    var ribbon = $W.createObject({type: $W.GL.TRIANGLE_STRIP});
+    var ribbon = new $W.Object({type: $W.GL.TRIANGLE_STRIP});
     ribbon.fillArray('vertex', [.5,0,0, -.5,0,0]);
     ribbon.fillArray('color', [0,1,0, 0,1,0]);
     var bindAndBuffer = function() {
         $W.GL.bindBuffer($W.GL.ARRAY_BUFFER, this.glBuffer);
         $W.GL.bufferData($W.GL.ARRAY_BUFFER, this.glData, $W.GL.STATIC_DRAW);
     };
-    vertexBuffer = ribbon.arrayBuffers.vertex;
-    colorBuffer = ribbon.arrayBuffers.color;
     ribbon.vertexCount = 2;
 
     ribbon.setMaterial(new $W.Material({
@@ -74,40 +71,37 @@ function start() {
     $G.bind("+down", function() { st.vScale = -1; });
     $G.bind("-down", function() { st.vScale = 0; });
 
+    var xfrm = new $W.GLU.MatrixStack();
+    var lVtx = $V([ 0.5, 0, 0, 1]);
+    var rVtx = $V([-0.5, 0, 0, 1]);
+    var A0 = $V([0,0,1,1]);
+    var B0 = $V([0,0,0,1]);
+    var offset = $V([2,2,3]);
     $W.update = function() {
         document.getElementById('overlay').innerHTML = $W.FPS;
         st.yaw += $W.timer.dt * st.hScale * flyer.turnSpeed;
         st.pitch -= $W.timer.dt * st.vScale * flyer.turnSpeed;
         flyer.setRotation(st.yaw, st.pitch, 0);
 
-        $W.modelview.pushMatrix();
-            $W.modelview.loadIdentity();
-            $W.modelview.translate(flyer.position.elements);
-            $W.modelview.multiply(flyer.q.matrix());
-            var A = flyer.q.matrix().multiply($V([0,0,1,1]));
-            var B = flyer.q.matrix().multiply($V([0,0,0,1]));
-            var direction = A.subtract(B);
-            direction.elements.pop();
+        xfrm.loadIdentity();
+        xfrm.translate(flyer.position.elements);
+        xfrm.multiply(flyer.rotationMatrix());
+        var A = flyer.rotationMatrix().x(A0);
+        var B = flyer.rotationMatrix().x(B0);
+        var direction = A.subtract(B).trimTo3D();
 
-            var lVtx = $W.modelview.matrix.multiply(
-                    $V([0.5, 0, 0, 1])).elements;
-            var rVtx = $W.modelview.matrix.multiply(
-                    $V([-0.5, 0, 0, 1])).elements;
-            lVtx.pop(); 
-            rVtx.pop();
-
-            vertexBuffer.setData(vertexBuffer.data.concat(lVtx.concat(rVtx)));
-            colorBuffer.setData(colorBuffer.data.concat([0,1,0, 0,1,0]));
-            ribbon.vertexCount += 2;
-        $W.modelview.popMatrix();
+        ribbon.buffers.vertex.append(xfrm.matrix.x(lVtx).trimTo3D().elements);
+        ribbon.buffers.vertex.append(xfrm.matrix.x(rVtx).trimTo3D().elements);
+        ribbon.buffers.color.append([0,1,0, 0,1,0]);
+        ribbon.vertexCount += 2;
 
         flyer.position = flyer.position.add(direction.multiply(flyer.speed));
         flyer.positions.push(flyer.position);
 
         if (flyer.positions.length > 150) {
-            $W.camera.position = flyer.positions.shift().add($V([2,2,3]));
+            $W.camera.position = flyer.positions.shift().add(offset);
         }else {
-            $W.camera.setPosition(2,2,3);
+            $W.camera.position = offset;
         }
         $W.camera.target = flyer.position;
     };
